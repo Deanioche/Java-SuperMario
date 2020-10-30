@@ -1,9 +1,10 @@
 package Mario;
 
+import java.awt.Dimension;
+import java.awt.TextField;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -47,8 +48,10 @@ public class MarioClient extends JFrame implements Runnable, ActionListener {
 		/* ******************************************************************* */
 		
 		// 윈도우 창 설정 
-		
-		setSize(400,600);										//프레임의 크기
+		Dimension res = Toolkit.getDefaultToolkit().getScreenSize();
+		  System.out.println("해상도 : " + res.width + " x " + res.height);
+		  
+		setSize(res.width,res.height);										//프레임의 크기
 		setResizable(false);									//창의 크기를 변경하지 못하게
 		setLocationRelativeTo(null);							//창이 가운데 나오게
 		setLayout(null);										//레이아웃을 내맘대로 설정가능하게 해줌.

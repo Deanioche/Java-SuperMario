@@ -1,37 +1,73 @@
 package Mario;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Toolkit;
 
 import javax.swing.JComponent;
 
-public class MarioJComponent extends JComponent{
-	
+public class MarioJComponent extends JComponent {
+
 	Image bufferImage, chara;
-	Graphics bufferg;
+	Graphics bufferGraphic;
 
 	public MarioJComponent() {
-		
-		setSize(300,300);
+
 		setVisible(true);
 
+	}
+	
+	@Override
+	public void update(Graphics g) {
+		
+		bufferImage = createImage(this.getWidth(), this.getHeight());
+		bufferGraphic = bufferImage.getGraphics();
+		
+		
+		/* ******************************************************************* */
+		
+		// 배경화면 그리기
+		
+		
+		
+		/* ******************************************************************* */
+		
+		// 맵 요소 그리기
+		
+			/* 
+			 * 1. 고정 블록
+			 * 2. 움직이는 블록, 디딤돌
+			 */
+		
+		
+		
+		
+		/* ******************************************************************* */
+		
+		// 캐릭터 그리기 모든 캐릭터 좌표 받아서 for문안에 그리기
+			
+		/*
+		 * 1. 이펙트 - 아이템 획득 효과
+		 * 2. 		- 목적지점 도착 효과
+		 * 3. 캐릭터	- 멈춤, 이동, 점프
+		 * 4. 캐릭터이름표
+		 * 5. 말풍선
+		 */
+		
+		
+		
+		/* ******************************************************************* */
+
+		paint(g); // 페인트 메소드 호출
+		
 	}
 
 	@Override
 	public void paint(Graphics g) {
 		
-		chara = Toolkit.getDefaultToolkit().getImage("Image/run(blue).png");
-		
-		g.drawImage(chara, 100, 100, this);
-		
-		// 캐릭터 위치
-		int locX = 100, locY = 100;
-		
-		int x2[] = { locX 	  , locX + 80 , locX + 80, locX + 70, locX + 60, locX + 55 , locX};
-		int y2[] = { locY - 70, locY - 70 , locY - 20, locY - 20, locY - 10, locY - 20, locY - 20 };
-		g.drawPolygon( x2, y2, 7 );     //  별그리기
-		
-	}
+		g.drawImage(bufferImage, 0, 0, this); // 더블버퍼링 구현
+
+	} // paint();
 
 }
