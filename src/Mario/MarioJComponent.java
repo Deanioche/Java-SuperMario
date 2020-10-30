@@ -1,17 +1,18 @@
 package Mario;
 
-import java.awt.Canvas;
 import java.awt.Graphics;
 import java.awt.Image;
 
-public class MarioJComponent extends Canvas{
+import javax.swing.JComponent;
+
+public class MarioJComponent extends JComponent{
 	
 	Image bufferImage;
 	Graphics bufferg;
 
 	public MarioJComponent() {
 		
-		setBounds(300, 500, 500, 500);
+		setSize(300,300);
 		setVisible(true);
 
 	}
@@ -23,12 +24,6 @@ public class MarioJComponent extends Canvas{
 		int y2[] = { 50,50,100,100,130,100,100 };
 		g.drawPolygon( x2, y2, 7 );     //  별그리기
 		
-	}
-	
-
-	public static void main(String[] args) {
-		new MarioJComponent();
-
 	}
 
 }

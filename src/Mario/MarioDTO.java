@@ -3,10 +3,32 @@ package Mario;
 import java.awt.Color;
 import java.util.List;
 
+enum Notice {
+	
+	JOIN, EXIT, MOVE, SEND, 
+	
+	/* 	# Notice 프로토콜
+	 * 		입장, 퇴장, 이동, 메세지송수신
+	 */
+	 
+}
+enum Motion {
+	
+	STANDING, RUNNING, JUMPING
+	
+	/* 	# Motion 프로토콜
+	 * 		멈춤, 이동, 점프
+	 */
+	
+}
+
 public class MarioDTO {
 	
 	//필드
-		//회원가입시 입력 정보
+		// 프로토콜
+		private Notice command;
+	
+		// 회원가입시 입력 정보
 		private String realName;
 		private int age;
 		private String clientAccount;
@@ -17,26 +39,26 @@ public class MarioDTO {
 		 * 실명, 나이, 계정명, 비밀번호, 비밀번호재확인
 		 */
 		
-		//ServerSocket과 주고받을 정보
-			/* 닉네임 */
+		// ServerSocket과 주고받을 정보
+		private String nickname;
 		private int playerIdNum;
 		private int score;
 		private Color playerColor;
 		private int playerCoordinateX;
 		private int playerCoordinateY;
-		
+		private Motion motion;
+
 		private String chatMessage;
 		private String goalTime;
+		private int playerRank;
 		
-		private List<MarioDTO> playerInfo;
+		private List<MarioDTO> list_PlayerInfo;
 		
 		/*  
 		 * 플레이어 번호, 점수, 플레이어색상, x좌표, y좌표,
 		 * 채팅 메세지, 도착시간,
 		 * DTO를 담는 모든 플레이어 정보리스트
 		 */
-		
-		
 		
 		//Setter & Getter 
 
@@ -136,12 +158,34 @@ public class MarioDTO {
 			this.goalTime = goalTime;
 		}
 
-		public List<MarioDTO> getPlayerInfo() {
-			return playerInfo;
+		public List<MarioDTO> getList_PlayerInfo() {
+			return list_PlayerInfo;
 		}
 
-		public void setPlayerInfo(List<MarioDTO> playerInfo) {
-			this.playerInfo = playerInfo;
+		public void setList_PlayerInfo(List<MarioDTO> list_PlayerInfo) {
+			this.list_PlayerInfo = list_PlayerInfo;
+		}
+		public Notice getCommand() {
+			return command;
+		}
+
+		public void setCommand(Notice command) {
+			this.command = command;
 		}
 		
+		public Motion getMotion() {
+			return motion;
+		}
+
+		public void setMotion(Motion motion) {
+			this.motion = motion;
+		}
+		public String getNickname() {
+			return nickname;
+		}
+		
+		public void setNickname(String nickname) {
+			this.nickname = nickname;
+		}
+
 }
