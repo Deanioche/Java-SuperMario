@@ -53,7 +53,7 @@ public class MarioClient extends JFrame implements Runnable, ActionListener {
 		setLocationRelativeTo(null);							//창이 가운데 나오게
 		setLayout(null);										//레이아웃을 내맘대로 설정가능하게 해줌.
 		setVisible(true);										//창이 보이게	
-		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);	//windowClosing 이벤트로 종료되도록 
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	//windowClosing 이벤트로 종료되도록 
 
 		
 		/* ******************************************************************* */
@@ -75,33 +75,41 @@ public class MarioClient extends JFrame implements Runnable, ActionListener {
 		
 		//창 종료 이벤트
 		
-		addWindowListener(new WindowAdapter() {
-			
-			@Override
-			public void windowClosing(WindowEvent e) {
-
-				try {
-					// EXIT 프로토콜을 서버로 보낸다.
-					MarioDTO dto = new MarioDTO();
-					dto.setCommand(Notice.EXIT);
-					oos.writeObject(dto);
-					oos.flush();
-
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
-				
-			}
-			
-		});
+//		addWindowListener(new WindowAdapter() {
+//			
+//			@Override
+//			public void windowClosing(WindowEvent e) {
+//
+//				try {
+//					// EXIT 프로토콜을 서버로 보낸다.
+//					MarioDTO dto = new MarioDTO();
+//					dto.setCommand(Notice.EXIT);
+//					oos.writeObject(dto);
+//					oos.flush();
+//
+//				} catch (IOException e1) {
+//					e1.printStackTrace();
+//				}
+//				
+//			}
+//			
+//		});
 		
 		
 		/* ******************************************************************* */
 		
 		// 스레드 생성 & 시작
 		
-		Thread clientThread = new Thread(this);
-		clientThread.start();
+//		Thread clientThread = new Thread(this);
+//		clientThread.start();
+		
+		
+		
+		/* ******************************************************************* */
+		
+		// 버튼 이벤트
+		
+		
 		
 		
 		
@@ -114,48 +122,48 @@ public class MarioClient extends JFrame implements Runnable, ActionListener {
 	/************************************************************************************/
 	
 	// 서버 접속
-	public void init() {
-		
-		try {
-			
-			/* ******************************************************************* */
-			
-			// 서버와 연결
-			
-//			socket = new Socket("아이피", 9500);
-			oos = new ObjectOutputStream(socket.getOutputStream());
-			ois = new ObjectInputStream(socket.getInputStream());
-			System.out.println("MarioClient().init() : socket, oos, ois : 생성 완료");
-			
-			
-			/* ******************************************************************* */
-			
-			// 서버로 JOIN 보내기
-			
-			MarioDTO dto = new MarioDTO();
-			dto.setCommand(Notice.JOIN);
-//			dto.setNickname(nickname);
-//			dto.setScore(0);
-			oos.writeObject(dto);
-			oos.flush();
-			
-			
-			
-			/* ******************************************************************* */
-			
-			// 스레드 생성 & 시작
-			
-			Thread clientThread = new Thread(this);
-			clientThread.start();
-			
-			/* ******************************************************************* */
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		
-	} // init()
+//	public void init() {
+//		
+//		try {
+//			
+//			/* ******************************************************************* */
+//			
+//			// 서버와 연결
+//			
+//				socket = new Socket("아이피", 9500);
+//				oos = new ObjectOutputStream(socket.getOutputStream());
+//				ois = new ObjectInputStream(socket.getInputStream());
+//				System.out.println("MarioClient().init() : socket, oos, ois : 생성 완료");
+//			
+//			
+//			/* ******************************************************************* */
+//			
+//			// 서버로 JOIN 보내기
+//			
+//				MarioDTO dto = new MarioDTO();
+//				dto.setCommand(Notice.JOIN);
+//				dto.setNickname(nickname);
+//				dto.setScore(0);
+//				oos.writeObject(dto);
+//				oos.flush();
+//			
+//			
+//			
+//			/* ******************************************************************* */
+//			
+//			// 스레드 생성 & 시작
+//			
+//			Thread clientThread = new Thread(this);
+//			clientThread.start();
+//			
+//			/* ******************************************************************* */
+//			
+//		} catch (IOException e) 
+//			e.printStackTrace();
+//		}
+//		
+//		
+//	} // init()
 	
 	/************************************************************************************/
 	
@@ -193,8 +201,8 @@ public class MarioClient extends JFrame implements Runnable, ActionListener {
 //				 sendDTO.setPlayerCoordinateX(playerCoordinateX);
 //				 sendDTO.setPlayerCoordinateY(playerCoordinateY);
 				 
-				 oos.writeObject(sendDTO);
-				 oos.flush();
+//				 oos.writeObject(sendDTO);
+//				 oos.flush();
 				 
 				 /* ******************************************************************* */
 				 
@@ -244,7 +252,8 @@ public class MarioClient extends JFrame implements Runnable, ActionListener {
 	
 	
 	public static void main(String[] args) {
-		new MarioClient().init();
+//		new MarioClient().init();
+		new MarioClient();
 	}
 
 }
