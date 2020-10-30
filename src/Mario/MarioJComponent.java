@@ -20,9 +20,9 @@ public class MarioJComponent extends JFrame {
 	@Override
 	public void paint(Graphics g) {
 		
-		int x2[] = { 50,150,150,110,210,310,270,360,245,210 };
-		int y2[] = { 50,150,160,225,340,270,340,225,160,160,60 };
-		g.drawPolygon( x2, y2, 10 );     //  별그리기
+		int x2[] = { 50,150,150,100,85,70,50 };
+		int y2[] = { 50,50,100,100,130,100,100 };
+		g.drawPolygon( x2, y2, 7 );     //  별그리기
 		
 	}
 	
