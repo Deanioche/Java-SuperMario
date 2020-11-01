@@ -201,12 +201,14 @@ public class MarioDAO {
 /*
  상의할 내용
  1. DTO에 seq항목 추가 및 setter&getter / playerRank setter&getter 추가
+ 2. 닉네임은 마인드마이스터 상에서 회원가입시로 되어있는데 어느 타이밍?(테이블 notnull, insertArticle 수정필요)
+ 	마인드마이스터에 회원가입 정보 다시한번 정리(생년월일, 성별, 이메일, 나머지 텍스트 필드는 구체적으로?)
  2. nickname,playerIdNum 유사한 기능? playerIdNum의 역할
  2. DAO의 메소드 파라미터 MarioDAO dto로 되어있던데 오타? 아니면 다른 형식으로 구성?
  3. DB테이블은 아래와 같은 항목, 상세 정보는 갤탭, playerColorString 추가 필요여부 확인
  4. insertArticel()은 회원가입시, updateArticle()은 
        채팅방 입장(캐릭터 생성), 회원정보수정, 게임종료 후로 생각하는데 맞는지?
-       닉네임은 마인드마이스터 상에서 회원가입시로 되어있는데 어느 타이밍?(테이블 notnull, insertArticle 수정필요)
+
  5. updateArticle(), deleteArticel()은 seq번호 받아오는 방법 주의, 
       어디서 어떻게 받아올지? 로그인하고 있는 계정과 삭제버튼을 누르는 계정이 같은지 조회?(게시판 작성 참조)
  6. 테이블에서 정보가져오는 메소드 미완성
