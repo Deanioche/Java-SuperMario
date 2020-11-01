@@ -1,34 +1,61 @@
 package Mario;
 
+import java.awt.Color;
+import java.util.List;
+
+enum Notice {
+	
+	JOIN, EXIT, MOVE, SEND, 
+	
+	/* 	# Notice 프로토콜
+	 * 		입장, 퇴장, 이동, 메세지송수신
+	 */
+	 
+}
+enum Motion {
+	
+	STANDING, RUNNING, JUMPING
+	
+	/* 	# Motion 프로토콜
+	 * 		멈춤, 이동, 점프
+	 */
+	
+}
+
 public class MarioDTO {
-<<<<<<< Updated upstream
-=======
 	
 	//필드
-		//회원가입시 입력 정보
+		// 프로토콜
+		private Notice command;
+	
+		// 회원가입시 입력 정보
+		private int seq; //★
 		private String realName;
 		private int age;
 		private String clientAccount;
 		private String password;
 		private String passwordCheck;
-		private String nickname;
 		
 		/* 
-		 * 실명, 나이, 계정명, 비밀번호, 비밀번호재확인, 닉네임
+		 * 실명, 나이, 계정명, 비밀번호, 비밀번호재확인
 		 */
 		
-		//ServerSocket과 주고받을 정보
-		/* private String nickname;*/ 
+		// ServerSocket과 주고받을 정보
+		private String nickname;
 		private int playerIdNum;
 		private int score;
+
 		private Color playerColor;
+		private String playerColorString; //★★
 		private int playerCoordinateX;
 		private int playerCoordinateY;
-		
+		private Motion motion;
+
 		private String chatMessage;
 		private String goalTime;
+		private int playerRank;
 		
-		private List<MarioDTO> playerInfo;
+		private List<MarioDTO> list_PlayerInfo;
 		
 		/*  
 		 * 플레이어 번호, 점수, 플레이어색상, x좌표, y좌표,
@@ -38,6 +65,14 @@ public class MarioDTO {
 		
 		//Setter & Getter 
 
+		public int getSeq() { //★
+			return seq;
+		}
+		
+		public void setSeq(int seq) { //★
+			this.seq = seq;
+		}
+		
 		public String getRealName() {
 			return realName;
 		}
@@ -102,6 +137,24 @@ public class MarioDTO {
 			this.playerColor = playerColor;
 		}
 
+		public String getPlayerColorString() {//★★
+			return playerColorString;
+		}
+		
+		public void setPlayerColorString(String playerColorstring) {//★★
+			if(getPlayerColor() == Color.RED) {
+				this.playerColorString = "RED";
+			}else if(getPlayerColor() == Color.BLUE) {
+				this.playerColorString = "BLUE";
+			}else if(getPlayerColor() == Color.YELLOW) {
+				this.playerColorString = "YELLOW";
+			}else if(getPlayerColor() == Color.GREEN) {
+				this.playerColorString = "GREEN";
+			}else if(getPlayerColor() == Color.PINK) {
+				this.playerColorString = "PINK";
+			}
+		}
+		
 		public int getPlayerCoordinateX() {
 			return playerCoordinateX;
 		}
@@ -134,9 +187,41 @@ public class MarioDTO {
 			this.goalTime = goalTime;
 		}
 
-		public List<MarioDTO> getPlayerInfo() {
-			return playerInfo;
+		public List<MarioDTO> getList_PlayerInfo() {
+			return list_PlayerInfo;
 		}
->>>>>>> Stashed changes
 
+		public void setList_PlayerInfo(List<MarioDTO> list_PlayerInfo) {
+			this.list_PlayerInfo = list_PlayerInfo;
+		}
+		public Notice getCommand() {
+			return command;
+		}
+
+		public void setCommand(Notice command) {
+			this.command = command;
+		}
+		
+		public Motion getMotion() {
+			return motion;
+		}
+
+		public void setMotion(Motion motion) {
+			this.motion = motion;
+		}
+		public String getNickname() {
+			return nickname;
+		}
+		
+		public void setNickname(String nickname) {
+			this.nickname = nickname;
+		}
+
+		public int getPlayerRank() { //★
+			return playerRank;
+		}
+		
+		public void setPlayerRank(int playerRank) { //★
+			this.playerRank = playerRank;
+		}
 }
