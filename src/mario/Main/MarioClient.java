@@ -1,4 +1,4 @@
-package Mario;
+package mario.Main;
 
 import java.awt.Dimension;
 import java.awt.TextField;
@@ -17,7 +17,7 @@ import javax.swing.JFrame;
 public class MarioClient extends JFrame implements Runnable, ActionListener {
 
 	// 필드
-	private MarioJComponent marioComp;
+	private MarioCanvas marioComp;
 
 	private Socket socket;
 	private ObjectOutputStream oos;
@@ -43,7 +43,7 @@ public class MarioClient extends JFrame implements Runnable, ActionListener {
 
 	// 생성자
 	public MarioClient() {
-		super("Mario");
+		super("Marioㅐㅐ");
 		
 		/* ******************************************************************* */
 		
@@ -70,8 +70,13 @@ public class MarioClient extends JFrame implements Runnable, ActionListener {
 		
 		//JComponent 생성 및 화면에 출력
 
+<<<<<<< Updated upstream:src/Mario/MarioClient.java
 		marioComp = new MarioJComponent();
 		add(marioComp);
+=======
+//		marioComp = new MarioJComponent();
+		add(new MarioCanvas());
+>>>>>>> Stashed changes:src/mario/Main/MarioClient.java
 		
 		
 		/* ******************************************************************* */
@@ -124,6 +129,10 @@ public class MarioClient extends JFrame implements Runnable, ActionListener {
 	
 	/************************************************************************************/
 	
+<<<<<<< Updated upstream:src/Mario/MarioClient.java
+=======
+	
+>>>>>>> Stashed changes:src/mario/Main/MarioClient.java
 	// 서버 접속
 //	public void init() {
 //		
@@ -214,11 +223,11 @@ public class MarioClient extends JFrame implements Runnable, ActionListener {
 				 dto = (MarioDTO) ois.readObject(); 
 				 System.out.println("getDTO = (MarioDTO) ois.readObject() : 성공 ");
 				 
-				 if(dto.getCommand() == Notice.SEND) {			// 메세지 받기
+				 if(dto.getProtocol() == Protocols.SEND) {			// 메세지 받기
 					 
-				 }else if(dto.getCommand() == Notice.JOIN) {	// 입장
+				 }else if(dto.getProtocol() == Protocols.JOIN) {	// 입장
 					 
-				 }else if(dto.getCommand() == Notice.EXIT) {	// 퇴장
+				 }else if(dto.getProtocol() == Protocols.EXIT) {	// 퇴장
 					 
 				 }
 				 
@@ -250,13 +259,6 @@ public class MarioClient extends JFrame implements Runnable, ActionListener {
 	
 	
 	/************************************************************************************/
-	
-	
-	
-	
-	public static void main(String[] args) {
-//		new MarioClient().init();
-		new MarioClient();
-	}
+
 
 }

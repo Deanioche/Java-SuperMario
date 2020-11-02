@@ -1,4 +1,4 @@
-package Mario;
+package mario.Main;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

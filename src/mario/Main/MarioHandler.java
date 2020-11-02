@@ -1,4 +1,4 @@
-package Mario;
+package mario.Main;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -71,14 +71,14 @@ public class MarioHandler extends Thread {
 				nickname = dto.getNickname();
 				/* 아래 코드 작성하기 편하게 닉네임 정보를 미리 저장 */
 
-				if (dto.getCommand() == Notice.MOVE) {
+				if (dto.getProtocol() == Protocols.MOVE) {
 					/* 모든 클라이언트 좌표수신 후 저장 */
 					/* 클라이언트 캐릭터의 모션정보 broadcast */
 
-				} else if (dto.getCommand() == Notice.SEND) {
+				} else if (dto.getProtocol() == Protocols.SEND) {
 					/* 메세지 송수신 */
 
-				} else if (dto.getCommand() == Notice.JOIN) {
+				} else if (dto.getProtocol() == Protocols.JOIN) {
 					
 					
 					
@@ -86,7 +86,7 @@ public class MarioHandler extends Thread {
 					/* 닉네임, 좌표정보 수신 */
 					/* 입장 메세지 broadcast */
 
-				} else if (dto.getCommand() == Notice.EXIT) {
+				} else if (dto.getProtocol() == Protocols.EXIT) {
 					
 					
 					

@@ -1,4 +1,4 @@
-package Mario;
+package mario.Main;
 
 import java.io.IOException;
 import java.net.ServerSocket;
