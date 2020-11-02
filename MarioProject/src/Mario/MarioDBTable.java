@@ -112,7 +112,7 @@ public class MarioDBTable extends JFrame implements ActionListener, TableColumnM
 	}
 	
 	
-	
+	//★★★★★★★★미완성
 	private void updateArticle() {
 		
 		int seq = (int)table.getValueAt(table.getSelectedRow(), 0);
@@ -127,6 +127,7 @@ public class MarioDBTable extends JFrame implements ActionListener, TableColumnM
 		//테이블 새로 출력 : tableModel.set
 	}
 	
+	//★★★★★★★★미완성
 	private void deleteArticle() {
 		//int seq = 선택한 테이블 레코드
 		
@@ -139,12 +140,7 @@ public class MarioDBTable extends JFrame implements ActionListener, TableColumnM
 
 	
 	
-
-	public static void main(String[] args) {
-		new MarioDBTable().event();
-
-	}
-
+	//★★★★★★★★미완성
 	@Override
 	public void columnAdded(TableColumnModelEvent e) {
 		// TODO Auto-generated method stub
@@ -176,4 +172,8 @@ public class MarioDBTable extends JFrame implements ActionListener, TableColumnM
 	}
 
 
+	public static void main(String[] args) {
+		new MarioDBTable().event();
+		
+	}
 }
