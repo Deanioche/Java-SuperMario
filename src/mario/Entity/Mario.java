@@ -10,14 +10,7 @@ public class Mario {
 	public int x, y; // 좌표
 	public int width = 50, height = 50;
 	public int picNum = 0;
-	/*
-	 * # picNum
-	 * 0 = 벽돌
-	 * 1 = 깨짐
-	 * 2 = 피라미드
-	 * 3 = 철판
-	 * 4 = 물음표
-	 */
+
 
 	public Mario(int picNum, int x, int y) {
 		this.picNum = picNum;
@@ -34,26 +27,67 @@ public class Mario {
 	}
 	
 	/*
-	 * 0 =	왼서
-	 * 1 =	왼달1
-	 * 2 =	왼달2
-	 * 3 =	왼점
-	 * 4 =	왼밀
-	 * 5 =	오서
-	 * 6 =	오달1
-	 * 7 =	오달2
-	 * 8 =	오점
-	 * 9 =	오밀
-	 */
+	 * # picNum
+	 * [0] = 왼서
+	 * [1] = 오서
+	 * [2] = 왼달
+	 * [3] = 오달
+	 * [4] = 왼달2
+	 * [5] = 오달2
+	 * [6] = 왼점
+     * [7] = 오점
+	 * [8] = 왼밀
+     * [9] = 오밀   
+	 */ 
 
 	public void render(Graphics g) {
 		
-		if(picNum < 5) {
-		g.drawImage(ImageBox.mario_red[picNum][0], x, y, width, height, MarioCanvas.mCanvas);
-		}else if (picNum >= 5){
-			g.drawImage(ImageBox.mario_red[picNum - 5][1], x, y, width, height, MarioCanvas.mCanvas);
-		}
+		g.drawImage(ImageBox.mario_red[picNum], x, y, width, height, MarioCanvas.mCanvas);
+
 
 	}
+	
+	
+	/**************************************************************************************/
+	
 
+	public int getX() {
+		return x;
+	}
+
+	public void setX(int x) {
+		this.x = x;
+	}
+
+	public int getY() {
+		return y;
+	}
+
+	public void setY(int y) {
+		this.y = y;
+	}
+
+	public int getWidth() {
+		return width;
+	}
+
+	public void setWidth(int width) {
+		this.width = width;
+	}
+
+	public int getHeight() {
+		return height;
+	}
+
+	public void setHeight(int height) {
+		this.height = height;
+	}
+
+	
+	
+	
+	
+	
+	
+	
 }
