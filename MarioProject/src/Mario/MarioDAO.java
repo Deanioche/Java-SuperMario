@@ -263,6 +263,9 @@ playerrank number);
 2.
 create sequence seq_mario nocycle nocache;
 
+3.
+select seq_mario.nextval from dual;
+
  */
 
 
