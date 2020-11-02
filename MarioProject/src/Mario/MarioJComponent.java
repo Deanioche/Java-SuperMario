@@ -22,15 +22,11 @@ public class MarioJComponent extends JPanel implements KeyListener {
 
 		setBackground(new Color(200, 250, 250));
 		setVisible(true);
-<<<<<<< Updated upstream
 		setBounds(500,500,500,500);
 		
 		System.out.println("JComponent 실행");
 		
 		addKeyListener(this);
-=======
-		setForeground(new Color(250, 200, 250));
->>>>>>> Stashed changes
 		
 
 	} // MarioJComponent();
@@ -42,19 +38,12 @@ public class MarioJComponent extends JPanel implements KeyListener {
 	@Override
 	public void paintComponent(Graphics g) {
 		
-<<<<<<< Updated upstream
 		System.out.println("update 작동");
 
 		bufferImage = createImage(this.getWidth(), this.getHeight());
 		bufferGraphic = bufferImage.getGraphics();
 
 		/* ******************************************************************* */
-=======
-		int x2[] = { 50,150,150,100,85,70,50 };
-		int y2[] = { 50,50,100,100,130,100,100 };
-		g.fillPolygon( x2, y2, 7 );     //  별그리기
-		
->>>>>>> Stashed changes
 		
 		// 이미지 불러오기
 		
