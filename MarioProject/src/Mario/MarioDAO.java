@@ -201,7 +201,7 @@ public class MarioDAO {
 	//★DB테이블에 저장되어있는 정보 가져오는 메소드 
 	//테이블 정보 어디에 출력할지 레이아웃 확인
 	public List<MarioDTO> getMarioList(){
-		List<MarioDTO> dtolist = new ArrayList<MarioDTO>();
+		List<MarioDTO> dtoList = new ArrayList<MarioDTO>();
 		String sql = "select * from mario order by seq";
 		getConnection();
 		try {
@@ -223,7 +223,7 @@ public class MarioDAO {
 				dto.setGoalTime(rs.getString("goaltime"));
 				dto.setPlayerRank(rs.getInt("playerrank"));
 				
-				dtolist.add(dto);
+				dtoList.add(dto);
 				
 			}//while
 		} catch (SQLException e) {
@@ -238,7 +238,7 @@ public class MarioDAO {
 			}
 		}//finally
 		
-		return dtolist;
+		return dtoList;
 	
 	}//getMarioList()
 	/* ******************************************************************* */
