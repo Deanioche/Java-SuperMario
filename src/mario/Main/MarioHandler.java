@@ -125,7 +125,7 @@ public class MarioHandler extends Thread {
 	private void broadcast(MarioDTO sendDTO) {
 
 		for (MarioHandler handler : list_Handler) {
-			System.out.println("broadcast 동작 : " + sendDTO.getCommand());
+			System.out.println("broadcast 동작 : " + sendDTO.getProtocol());
 
 			try {
 				handler.oos.writeObject(sendDTO);

@@ -18,6 +18,8 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 	Image bufferImage;
 	Graphics bufferGraphic;
 	
+	MarioClient marioClient;
+	
 	
 	// 캐릭터 동작
 	boolean pushing_Left = false;
@@ -34,13 +36,15 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 	 */
 
 	// 생성자
-	public MarioCanvas() {
+	public MarioCanvas(MarioClient marioClient) {
 
+		this.marioClient = marioClient;
 		mCanvas = MarioCanvas.this;
+		
 
 		setBackground(new Color(200, 150, 255));
 		setVisible(true);
-		setBounds(500, 500, 500, 500);
+		setBounds(0, 0, marioClient.getWidth(), marioClient.getHeight());
 
 		System.out.println("캔버스 실행");
 

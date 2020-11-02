@@ -17,7 +17,7 @@ import javax.swing.JFrame;
 public class MarioClient extends JFrame implements Runnable, ActionListener {
 
 	// 필드
-	private MarioCanvas marioComp;
+	private MarioCanvas marioCanvas;
 
 	private Socket socket;
 	private ObjectOutputStream oos;
@@ -56,7 +56,7 @@ public class MarioClient extends JFrame implements Runnable, ActionListener {
 		setLocationRelativeTo(null);							//창이 가운데 나오게
 		setLayout(null);										//레이아웃을 내맘대로 설정가능하게 해줌.
 		setVisible(true);										//창이 보이게	
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	//windowClosing 이벤트로 종료되도록 
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);			//windowClosing 이벤트로 종료되도록 
 
 		
 		/* ******************************************************************* */
@@ -70,14 +70,9 @@ public class MarioClient extends JFrame implements Runnable, ActionListener {
 		
 		//JComponent 생성 및 화면에 출력
 
-<<<<<<< Updated upstream:src/Mario/MarioClient.java
-		marioComp = new MarioJComponent();
-		add(marioComp);
-=======
-//		marioComp = new MarioJComponent();
-		add(new MarioCanvas());
->>>>>>> Stashed changes:src/mario/Main/MarioClient.java
-		
+		marioCanvas = new MarioCanvas(MarioClient.this);
+		add("Center", marioCanvas);
+
 		
 		/* ******************************************************************* */
 		
@@ -129,10 +124,6 @@ public class MarioClient extends JFrame implements Runnable, ActionListener {
 	
 	/************************************************************************************/
 	
-<<<<<<< Updated upstream:src/Mario/MarioClient.java
-=======
-	
->>>>>>> Stashed changes:src/mario/Main/MarioClient.java
 	// 서버 접속
 //	public void init() {
 //		
