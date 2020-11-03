@@ -6,7 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class MarioDAO {
+public class MarioDAO_old {
 
 	private Connection conn;
 	private PreparedStatement pstmt;
@@ -17,11 +17,11 @@ public class MarioDAO {
 	private String username = "c##java";
 	private String password = "bit";
 
-	private static MarioDTO instance;
+	private static MarioDTO_old instance;
 
 	/* ******************************************************************* */
 	// 생성자
-	public MarioDAO() {
+	public MarioDAO_old() {
 		try {
 			Class.forName(driver);
 		} catch (ClassNotFoundException e) {
@@ -48,7 +48,7 @@ public class MarioDAO {
 	
 	/* ******************************************************************* */
 
-	public int insertArticle(MarioDAO dto) {
+	public int insertArticle(MarioDAO_old dto) {
 
 	}
 	
@@ -56,7 +56,7 @@ public class MarioDAO {
 	
 	/* ******************************************************************* */
 
-	public int updateArticle(MarioDAO dto) {
+	public int updateArticle(MarioDAO_old dto) {
 
 	}
 	

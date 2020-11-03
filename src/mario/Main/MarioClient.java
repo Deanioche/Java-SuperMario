@@ -30,7 +30,7 @@ public class MarioClient extends JFrame implements Runnable, ActionListener {
 //	private JLabel label_~~~;
 //	private JTextField tf_~~~;
 
-	private List<MarioDTO> list_PlayerInfo;
+	private List<MarioDTO_old> list_PlayerInfo;
 	
 	/*	 # 필드
 	 * 
@@ -190,14 +190,14 @@ public class MarioClient extends JFrame implements Runnable, ActionListener {
 	@Override
 	public void run() {
 		
-		MarioDTO dto = null;
+		MarioDTO_old dto = null;
 		
 		 while(true) {
 			 
 			 try {
 				// 0.02초마다 내 캐릭터의 좌표와 모션을 서버로 보내기
 				 	
-				 MarioDTO sendDTO = new MarioDTO();
+				 MarioDTO_old sendDTO = new MarioDTO_old();
 				 
 //				 sendDTO.setCommand(Notice.MOVE);
 //				 sendDTO.setMotion(Motion.~~~); 
@@ -211,7 +211,7 @@ public class MarioClient extends JFrame implements Runnable, ActionListener {
 				 
 				// 0.02초마다 서버로부터 dto객체 데이터 수신
 				 
-				 dto = (MarioDTO) ois.readObject(); 
+				 dto = (MarioDTO_old) ois.readObject(); 
 				 System.out.println("getDTO = (MarioDTO) ois.readObject() : 성공 ");
 				 
 				 if(dto.getProtocol() == Protocols.SEND) {			// 메세지 받기

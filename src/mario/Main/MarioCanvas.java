@@ -375,11 +375,6 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 
 		/* 바닥 */
 
-//			bufferGraphic.drawImage(block, 0, 0, null);
-
-		bufferGraphic.drawString("이건 되는데 왜 이미지는 안불러와져", 500, 550);
-
-		
 		
 		
 		
@@ -565,11 +560,15 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 				//달리기 모션
 				runTimer--;
 				if(runTimer <= 0 && runMotion) {
+					
 					runMotion = false;
 					runTimer = 3;
+					
 				}else if(runTimer <= 0 && !runMotion){
+					
 					runMotion = true;
 					runTimer = 3;
+					
 				}
 				
 				

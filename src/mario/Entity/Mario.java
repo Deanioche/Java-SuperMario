@@ -43,8 +43,7 @@ public class Mario {
 
 	public void render(Graphics g) {
 		
-		g.drawImage(ImageBox.mario_red[picNum], x, y, width, height, MarioCanvas.mCanvas);
-
+		g.drawImage(ImageBox.mario_purple[picNum], x, y, width, height, MarioCanvas.mCanvas);
 
 	}
 	

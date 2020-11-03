@@ -18,7 +18,7 @@ public class MarioHandler extends Thread {
 
 	private String nickname;
 
-	private static List<MarioDTO> list_PlayerInfo;
+	private static List<MarioDTO_old> list_PlayerInfo;
 
 	/*
 	 *	  # 필드 
@@ -61,12 +61,12 @@ public class MarioHandler extends Thread {
 
 		try {
 
-			MarioDTO dto = null;
+			MarioDTO_old dto = null;
 
 			/* ******************************************************************* */
 
 			while (true) {
-				dto = (MarioDTO) ois.readObject();
+				dto = (MarioDTO_old) ois.readObject();
 
 				nickname = dto.getNickname();
 				/* 아래 코드 작성하기 편하게 닉네임 정보를 미리 저장 */
@@ -122,7 +122,7 @@ public class MarioHandler extends Thread {
 
 	/********************************************************************************/
 	
-	private void broadcast(MarioDTO sendDTO) {
+	private void broadcast(MarioDTO_old sendDTO) {
 
 		for (MarioHandler handler : list_Handler) {
 			System.out.println("broadcast 동작 : " + sendDTO.getProtocol());

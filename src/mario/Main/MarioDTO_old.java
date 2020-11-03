@@ -5,7 +5,7 @@ import java.util.List;
 
 import mario.Coordinate;
 
-public class MarioDTO {
+public class MarioDTO_old {
 
 	// 필드
 	// 프로토콜
@@ -38,7 +38,7 @@ public class MarioDTO {
 
 	private String chatMessage;
 
-	private List<MarioDTO> list_PlayerInfo;
+	private List<MarioDTO_old> list_PlayerInfo;
 
 	/*
 	 * 플레이어 번호, 점수, 플레이어색상, x좌표, y좌표, 채팅 메세지, 도착시간, DTO를 담는 모든 플레이어 정보리스트
@@ -126,11 +126,11 @@ public class MarioDTO {
 		this.goalTime = goalTime;
 	}
 
-	public List<MarioDTO> getList_PlayerInfo() {
+	public List<MarioDTO_old> getList_PlayerInfo() {
 		return list_PlayerInfo;
 	}
 
-	public void setList_PlayerInfo(List<MarioDTO> list_PlayerInfo) {
+	public void setList_PlayerInfo(List<MarioDTO_old> list_PlayerInfo) {
 		this.list_PlayerInfo = list_PlayerInfo;
 	}
 
