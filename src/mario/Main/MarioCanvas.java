@@ -463,7 +463,7 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 
 		g.drawImage(bufferImage, 0, 0, this); // 더블버퍼링 구현
 
-		g.drawString("왜 안되지", 500, 500);
+		g.drawString("깜빡깜빡", 500, 500);
 
 //		repaint();
 
