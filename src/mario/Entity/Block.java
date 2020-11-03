@@ -1,6 +1,7 @@
 package mario.Entity;
 
 import java.awt.Graphics;
+import java.awt.Rectangle;
 
 import mario.ImageBox;
 import mario.Main.MarioCanvas;
@@ -39,8 +40,17 @@ public class Block {
 
 		
 		g.drawImage(ImageBox.block[picNum], x, y, width, height, MarioCanvas.mCanvas);
-
+		
+		
 	}
+	
+	
+	public Rectangle getbounds() {
+		
+		return new Rectangle(x, y, width, height);
+		
+	}
+	
 	
 	/**************************************************************************************/
 	
