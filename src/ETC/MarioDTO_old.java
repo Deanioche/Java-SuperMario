@@ -1,9 +1,10 @@
-package mario.Main;
+package ETC;
 
 import java.awt.Color;
 import java.util.List;
 
 import mario.Coordinate;
+import mario.Protocols;
 
 public class MarioDTO_old {
 

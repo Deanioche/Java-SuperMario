@@ -7,13 +7,13 @@ import java.awt.Image;
 import java.awt.Toolkit;
 
 public class MarioStage1Canvas extends Canvas {
-	private MarioStage1 marioStage1;
+	private MarioClient marioClient;
 	private Image bufferImage;
 	private Graphics bufferGraphic;
 	private Image img;
 
-	public MarioStage1Canvas(MarioStage1 marioStage1) {
-		this.marioStage1 = marioStage1;
+	public MarioStage1Canvas(MarioClient marioClient) {
+		this.marioClient = marioClient;
 		
 		img = Toolkit.getDefaultToolkit().getImage("Image/background/MarioBackground2.png");
 		

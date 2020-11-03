@@ -3,35 +3,25 @@ package mario.dto;
 import java.awt.Color;
 import java.util.List;
 
-enum Notice {
-
-	JOIN, EXIT, MOVE, SEND,
-
-	/*
-	 * # Notice 프로토콜 입장, 퇴장, 이동, 메세지송수신
-	 */
-
-}
-
-enum Motion {
-
-	STANDING, RUNNING, JUMPING
-
-	/*
-	 * # Motion 프로토콜 멈춤, 이동, 점프
-	 */
-
-}
+import mario.Protocols;
 
 public class MarioDTO {
 
 	// 필드
 	// 프로토콜
-	private Notice command;
+	private Protocols protocol;
 
 	// 회원가입시 입력 정보
 	private int seq;
 	private String clientAccount; // 이메일
+	public Protocols getProtocol() {
+		return protocol;
+	}
+
+	public void setProtocol(Protocols protocol) {
+		this.protocol = protocol;
+	}
+
 	private String password;
 	private String passwordCheck;
 
@@ -64,7 +54,6 @@ public class MarioDTO {
 	private Color playerColor;
 	private int playerCoordinateX;
 	private int playerCoordinateY;
-	private Motion motion;
 
 	private String chatMessage;
 	
@@ -170,22 +159,6 @@ public class MarioDTO {
 
 	public void setList_PlayerInfo(List<MarioDTO> list_PlayerInfo) {
 		this.list_PlayerInfo = list_PlayerInfo;
-	}
-
-	public Notice getCommand() {
-		return command;
-	}
-
-	public void setCommand(Notice command) {
-		this.command = command;
-	}
-
-	public Motion getMotion() {
-		return motion;
-	}
-
-	public void setMotion(Motion motion) {
-		this.motion = motion;
 	}
 
 	public String getNickname() {

@@ -1,4 +1,4 @@
-package mario.Main;
+package mario;
 
 public enum Protocols {
 

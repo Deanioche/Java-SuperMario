@@ -6,11 +6,14 @@ import java.awt.Toolkit;
 public class ImageBox {
 	
 	public static Image block[] = new Image[5];
+	
 	public static Image[] mario_red = new Image[10]; 
     public static Image[] mario_blue = new Image[10];
     public static Image[] mario_yellow = new Image[10];
     public static Image[] mario_green = new Image[10];
     public static Image[] mario_purple = new Image[10];
+    
+    public static Image background;
 
 	public ImageBox() {
 		
@@ -143,7 +146,6 @@ public class ImageBox {
 	      mario_purple[9] = Toolkit.getDefaultToolkit().getImage("Image/Mario/purple/right/pushback(purple).png");
 
 		
-		
 		/*
 		 *[0] =	왼서
 		 *[1] =	오서
@@ -156,6 +158,11 @@ public class ImageBox {
 		 *[8] = 왼밀
          *[9] = 오밀   
 		 */ 
+	      
+	      
+	      // 배경화면
+	      
+	      
 	}     
 }
              

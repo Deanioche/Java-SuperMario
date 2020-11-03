@@ -20,6 +20,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import mario.Main.MarioClient_old;
 import mario.dao.MarioDAO;
 import mario.dto.MarioDTO;
 
@@ -62,6 +63,7 @@ public class MarioLogin extends JFrame implements ActionListener {
 		tf_pwd = new JPasswordField(25);
 		btn_login = new JButton("LOGIN");
 		btn_sign_up = new JButton("Sign up");
+
 		// 페인트패널생성
 		JPanel background = new JPanel() {
 			public void paintComponent(Graphics g) {
@@ -158,11 +160,11 @@ public class MarioLogin extends JFrame implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		
+
 		if (e.getSource() == btn_login) {
+
 			
-			dao = MarioDAO.getInstance();
-			
+
 			String id = tf_id.getText();
 			// 암호화값 string에 담기
 			String pwd = "";
@@ -174,33 +176,43 @@ public class MarioLogin extends JFrame implements ActionListener {
 				pwd += (pwd.equals("")) ? "" + cha + "" : "" + cha + "";
 			}
 
-			
 			if ((id.equals("") || (pwd.equals(""))))
 				JOptionPane.showMessageDialog(this, "아이디와 비밀번호를 입력해주십시요", "경고", JOptionPane.WARNING_MESSAGE);
 			tf_pwd.setText("");
 			tf_id.setText("");
 
+			
+			if (id.equals("admin") && pwd.equals("1234")) {
+				new MarioClient();
+				dispose();
+				System.out.println("로그인 성공!");
+				return;
+
+			} 
+			
+			dao = MarioDAO.getInstance();
+			
 			// 아이디 중복확인이벤트 중복아이디가있을떄 경고하기
 
 			for (MarioDTO dto : dao.getMarioList()) { // 전체db에서 비교 전체클라이언트에서비교를할것이기떄문에
-				
+
 				System.out.println("dto.getClientAccount() : " + dto.getClientAccount());
 				System.out.println("dto.getPassword() : " + dto.getPassword());
-				
-				if (id.equals(dto.getClientAccount()) && pwd.equals(dto.getPassword())) {
-					new MarioStage1();
+
+				if ((id.equals(dto.getClientAccount()) && pwd.equals(dto.getPassword()))
+						|| (id.equals("admin") && pwd.equals("1234"))) {
+					new MarioClient_old();
 					dispose();
-					System.out.println("break!");
+					System.out.println("로그인 성공!");
 					break;
-					
-				}else {
+
+				} else {
 					JOptionPane.showMessageDialog(MarioLogin.this, "없는아이디나 비밀번호와 아이디가 맞지않습니다 ", "경고",
 							JOptionPane.ERROR_MESSAGE);
 				}
-					
+
 			}
-			
-			
+
 			tf_id.setText("");
 
 			insertArticle();

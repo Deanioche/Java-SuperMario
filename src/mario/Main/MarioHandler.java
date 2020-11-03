@@ -6,6 +6,9 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.List;
 
+import ETC.MarioDTO_old;
+import mario.Protocols;
+
 
 public class MarioHandler extends Thread {
 

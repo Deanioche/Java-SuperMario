@@ -4,7 +4,7 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 
 import mario.ImageBox;
-import mario.Main.MarioCanvas;
+import mario.Frame.MarioCanvas;
 
 public class Block {
 

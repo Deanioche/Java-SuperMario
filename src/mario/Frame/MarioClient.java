@@ -7,6 +7,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -25,8 +26,9 @@ import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.table.DefaultTableModel;
 
-public class MarioStage1 extends JFrame implements ActionListener ,Runnable{
-	private MarioStage1Canvas marioStage1Canvas;
+public class MarioClient extends JFrame implements ActionListener ,Runnable{
+	
+	private MarioCanvas marioCanvas;
 	private String nickName;
 	private JTextArea textArea;
 	private JTextField textField;
@@ -37,12 +39,12 @@ public class MarioStage1 extends JFrame implements ActionListener ,Runnable{
 	public JButton btn_send, btn_start;
 	private Image img;
 	private Thread t;
-	public MarioStage1() {
+	
+	public MarioClient() {
+		super("Mario");
 		
 		JScrollPane scroll_chat = new JScrollPane(textArea);
-		marioStage1Canvas = new MarioStage1Canvas(MarioStage1.this); //페인트 객체 생성
-		
-		
+		marioCanvas = new MarioCanvas(MarioClient.this);
 		
 		
 		//라벨생성 위두개 분 초 
@@ -51,11 +53,6 @@ public class MarioStage1 extends JFrame implements ActionListener ,Runnable{
 		
 		//텍스트필드
 		textField = new JTextField("");
-		
-		
-		
-		
-		
 		
 		//버튼생성
 		btn_start =  new JButton("게임생성");
@@ -133,11 +130,11 @@ public class MarioStage1 extends JFrame implements ActionListener ,Runnable{
 		
 		
 		//컨테이너 생성
-		Container c = getContentPane(); 
+//		Container c = getContentPane(); 
 		//c.add(btn_dd);
-		c.add("East",p_score);
-		c.add("Center",marioStage1Canvas);
-		c.add("North",p_time);
+		add("East",p_score);
+		add("Center",marioCanvas);
+		add("North",p_time);
 		
 		//c.add("West",p_text);
 		
@@ -150,17 +147,16 @@ public class MarioStage1 extends JFrame implements ActionListener ,Runnable{
 		textArea.setEditable(false); //사용자가 텍스트를 입력할 수 있는지 없는지를 설정하고 반환한다.
 		
 		
-		
-		
-		
-		
-		
-		
+
 	
-		setSize(1900, 1000);
+		Dimension res = Toolkit.getDefaultToolkit().getScreenSize();
+		  System.out.println("해상도 : " + res.width + " x " + res.height);
+		  
+		setSize(res.width,res.height);
 		setLocationRelativeTo(null);
 		setVisible(true);
-		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setLayout(null);
 		
 		
 		
@@ -172,7 +168,7 @@ public class MarioStage1 extends JFrame implements ActionListener ,Runnable{
 			addWindowListener(new WindowAdapter() {
 				@Override
 				public void windowClosing(WindowEvent e) {
-					int result = JOptionPane.showConfirmDialog(MarioStage1.this, "게임을 종료하시겠습니까?", "종료창",
+					int result = JOptionPane.showConfirmDialog(MarioClient.this, "게임을 종료하시겠습니까?", "종료창",
 							JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 					if (result == JOptionPane.YES_OPTION) {
 						dispose();	
@@ -227,6 +223,6 @@ public class MarioStage1 extends JFrame implements ActionListener ,Runnable{
 		}
 	
 	public static void main(String[] args) {
-		new MarioStage1();
+		new MarioClient();
 	}
 }

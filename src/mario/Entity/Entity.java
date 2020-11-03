@@ -4,8 +4,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 import mario.ImageBox;
-import mario.Main.MarioCanvas;
-import mario.Main.Protocols;
+import mario.Protocols;
+import mario.Frame.MarioCanvas;
 
 public abstract class Entity {
 		
