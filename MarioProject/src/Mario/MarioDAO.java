@@ -133,8 +133,8 @@ public class MarioDAO {
 				   + ",gender=?"//6
 				   + ",infoagree=?"//7
 				   + ",score=?"//8
-				   + "goaltime=?"//9
-				   + "playerrank=?"//10
+				   + ",goaltime=?"//9
+				   + ",playerrank=?"//10
 				   + "where seq=?"; //11
 		        
 		getConnection();	
@@ -148,9 +148,10 @@ public class MarioDAO {
 			pstmt.setInt(6, dto.getGender());
 			pstmt.setInt(7, dto.getInfoAgree());
 			pstmt.setInt(8,dto.getScore());
-			pstmt.setInt(9, dto.getPlayerRank());
-			pstmt.setString(10, dto.getGoalTime());
+			pstmt.setString(9, dto.getGoalTime());
+			pstmt.setInt(10, dto.getPlayerRank());
 			pstmt.setInt(11, dto.getSeq()); //★★★★중요!!객체에서 선택한 seq(새로 생성한 시퀀스X)로 넘겨주고 있는지 확인
+											//->MarioDBTable에서 받고있음
 			                                //★★★★seq 현재 로그인하고 있는 유저로 구분?(게시판 작성 참조) 
 			                                //->새로 정보 받음
 			
@@ -184,6 +185,7 @@ public class MarioDAO {
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, seq); //★★★★중요!!객체에서 선택한 seq(새로 생성한 시퀀스X)로 넘겨주고 있는지 확인
 								 //★★★★seq 현재 로그인하고 있는 유저로 구분?(게시판 작성 참조)
+			pstmt.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -295,4 +297,4 @@ select seq_mario.nextval from dual;
       레이아웃 상, 어디서 어떤 정보를 출력할 것인지 확인하기
 */
  
-
+//insert into mario values(1,'www','1234','바둑이',10,'바둑바둑',1,1,90,'100000',1);
