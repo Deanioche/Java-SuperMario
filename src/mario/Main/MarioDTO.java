@@ -3,6 +3,8 @@ package mario.Main;
 import java.awt.Color;
 import java.util.List;
 
+import mario.Coordinate;
+
 public class MarioDTO {
 
 	// 필드
@@ -31,8 +33,8 @@ public class MarioDTO {
 	// ServerSocket과 주고받을 정보
 
 	private Color playerColor;
-	private int playerCoordinateX;
-	private int playerCoordinateY;
+	private Coordinate playerCoordinate;
+	private Coordinate blockCoordinate;
 
 	private String chatMessage;
 
@@ -100,20 +102,12 @@ public class MarioDTO {
 		this.playerColor = playerColor;
 	}
 
-	public int getPlayerCoordinateX() {
-		return playerCoordinateX;
+	public Coordinate getPlayerCoordinate() {
+		return playerCoordinate;
 	}
 
-	public void setPlayerCoordinateX(int playerCoordinateX) {
-		this.playerCoordinateX = playerCoordinateX;
-	}
-
-	public int getPlayerCoordinateY() {
-		return playerCoordinateY;
-	}
-
-	public void setPlayerCoordinateY(int playerCoordinateY) {
-		this.playerCoordinateY = playerCoordinateY;
+	public void setPlayerCoordinate(Coordinate playerCoordinate) {
+		this.playerCoordinate = playerCoordinate;
 	}
 
 	public String getChatMessage() {
@@ -178,5 +172,12 @@ public class MarioDTO {
 
 	public void setPlayerRank(int playerRank) {
 		this.playerRank = playerRank;
+	}
+	public Coordinate getBlockCoordinate() {
+		return blockCoordinate;
+	}
+
+	public void setBlockCoordinate(Coordinate blockCoordinate) {
+		this.blockCoordinate = blockCoordinate;
 	}
 }

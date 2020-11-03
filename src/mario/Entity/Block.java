@@ -13,13 +13,13 @@ public class Block {
 	
 	
 	public Block(int picNum, int x, int y) {
-		this.picNum = picNum * 50;
+		this.picNum = picNum;
 		this.x = x;
 		this.y = y;
 	}
 
 	public Block(int picNum, int x, int y, int width, int height) {
-		this.picNum = picNum * 50;
+		this.picNum = picNum;
 		this.x = x;
 		this.y = y;
 		this.width = width;
@@ -37,7 +37,8 @@ public class Block {
 	
 	public void render(Graphics g) {
 
-		g.drawImage(ImageBox.block[0], x, y, width, height, MarioCanvas.mCanvas);
+		
+		g.drawImage(ImageBox.block[picNum], x, y, width, height, MarioCanvas.mCanvas);
 
 	}
 	
