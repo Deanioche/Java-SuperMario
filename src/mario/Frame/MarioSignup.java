@@ -6,10 +6,13 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.TextEvent;
 import java.awt.event.TextListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -28,14 +31,15 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
+import mario.EmailAutho;
 import mario.dao.MarioDAO;
 import mario.dto.MarioDTO;
 
-public class MarioSignup extends JFrame implements ActionListener, TextListener {
+public class MarioSignup extends JFrame implements ActionListener, Runnable {
 
 	// 라벨
 	private JLabel label_signup_info, label_emailAccount, label_pwd, label_pwdCheck, label_nick_name, label_name, label_age,
-			label_gender, label_atMark; // 경고메세지 창말고 라벨로 대체 true false 로 아직구상중
+			label_gender, label_atMark, label_timer, label_pwdChkLabel, label_NicknameChkLabel; 
 
 	private JTextField tf_emailAccount, tf_nickname, tf_name, tf_age, tf_emailAuth;
 	private JPasswordField tf_pwd, tf_pwd_check; // 비밀번호 암호화
@@ -50,17 +54,27 @@ public class MarioSignup extends JFrame implements ActionListener, TextListener 
 	private DefaultTableModel model;
 	private Vector<String> vector;
 
-	private List<MarioDTO> dtoList = new ArrayList<MarioDTO>();
+	private List<MarioDTO> dtoList;
+	
+	// 타이머
+	private boolean timerStart = false;
+	private int min = 3, sec = 0;
+	private boolean AuthScuccess = false;
+	private Thread timerThread;
+	
+	//메일 인증
+	private int code;
 
 	public MarioSignup() {
 
 		super("Sign up");
 		
-		setBounds(0, 0, 500, 600);
+		setBounds(0, 0, 550, 600);
 		setLocationRelativeTo(null);
 		setResizable(false);
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		setUndecorated(true);
+		setAlwaysOnTop(true);
 
 		
 		/* ******************************************************************* */
@@ -77,6 +91,9 @@ public class MarioSignup extends JFrame implements ActionListener, TextListener 
 			label_age = new JLabel("나    이");
 			label_gender = new JLabel("성    별");
 			label_atMark = new JLabel("@");
+			label_timer = new JLabel("남은시간 : " + min + " : " + new DecimalFormat("00").format(sec));
+			label_pwdChkLabel = new JLabel();
+			label_NicknameChkLabel = new JLabel("이메일을 먼저 인증해주세요");
 
 			// 텍스트필드
 			tf_emailAccount = new JTextField(20);
@@ -86,13 +103,13 @@ public class MarioSignup extends JFrame implements ActionListener, TextListener 
 			tf_nickname = new JTextField(20);
 			tf_name = new JTextField(20);
 			tf_age = new JTextField(20);
-			tf_emailAuth = new JTextField(20);
+			tf_emailAuth = new JTextField("입력 후 엔터", 20);
 
 			// 버튼
 			btn_EmailAuth = new JButton("인증받기");
 			btn_signup = new JButton("회원가입");
 			btn_cancel = new JButton("취소");
-			btn_nickname_check = new JButton("중복확인");
+			btn_nickname_check = new JButton("check");
 		
 			// 성별 체크박스 & 버튼 그룹
 			ButtonGroup group_gender = new ButtonGroup();
@@ -128,14 +145,19 @@ public class MarioSignup extends JFrame implements ActionListener, TextListener 
 			label_age.setFont(new Font("MD개성체", Font.BOLD, 15));
 			label_gender.setFont(new Font("MD개성체", Font.BOLD, 15));
 			label_atMark.setFont(new Font("MD개성체", Font.BOLD, 15));
-
+			label_timer.setFont(new Font("MD개성체", Font.BOLD, 13));
+			label_pwdChkLabel.setFont(new Font("MD개성체", Font.BOLD, 13));
+			label_NicknameChkLabel.setFont(new Font("MD개성체", Font.BOLD, 13));
+			
 			// 글자 색
 			tf_pwd.setForeground(Color.BLACK);
 			tf_emailAccount.setForeground(Color.BLACK);
 			label_atMark.setForeground(Color.BLACK);
 			btn_signup.setBackground(Color.getHSBColor(150, 200, 240));
 			btn_cancel.setBackground(Color.getHSBColor(150, 200, 240));
-			
+			tf_emailAuth.setForeground(new Color(170, 170, 170));
+			label_timer.setForeground(new Color(240, 100, 100));
+			label_pwdChkLabel.setForeground(new Color(250, 50, 50));
 			
 			
 			/* ******************************************************************* */
@@ -151,8 +173,11 @@ public class MarioSignup extends JFrame implements ActionListener, TextListener 
 			tf_emailAccount.setBounds				(x + 100,	y + 95, 	110, 28);
 			label_atMark.setBounds					(x + 216,	y + 100,    30,  20);
 			comboBox_email.setBounds				(x + 240, 	y + 95, 	100, 28);
+			
+			/* 이메일 인증  */
 			btn_EmailAuth.setBounds					(x + 345,	y + 95,		90, 28);
 			tf_emailAuth.setBounds					(x + 345,	y + 95,		100, 28);
+			label_timer.setBounds					(x + 330,	y + 125,	160, 20);
 			
 			/* 비밀번호 */
 			label_pwd.setBounds						(x, 		y + 140,	120, 20);
@@ -161,11 +186,13 @@ public class MarioSignup extends JFrame implements ActionListener, TextListener 
 			/* 비밀번호 확인*/
 			label_pwdCheck.setBounds				(x,			y + 180,	120, 20);
 			tf_pwd_check.setBounds					(x + 100, 	y + 175, 	110, 28);
+			label_pwdChkLabel.setBounds				(x + 215,	y + 180,	200, 20);				
 			
 			/* 닉네임 */
 			label_nick_name.setBounds				(x, 		y + 220, 	120, 20);
 			tf_nickname.setBounds					(x + 100, 	y + 215, 	110, 28);
-			btn_nickname_check.setBounds			(x + 220, 	y + 215, 	100, 26);
+			btn_nickname_check.setBounds			(x + 213, 	y + 215, 	69, 27); 
+			label_NicknameChkLabel.setBounds		(x + 285, 	y + 220, 	230, 20);
 			
 			/* 실명 */
 			label_name.setBounds					(x, 		y + 260, 	120, 20);
@@ -184,8 +211,8 @@ public class MarioSignup extends JFrame implements ActionListener, TextListener 
 			cb_person_info.setBounds				(x + 100, 	y + 375, 	250, 30);
 		
 			/* 가입 & 취소 */
-			btn_signup.setBounds					(x + 95, 	y + 420, 		100, 40);
-			btn_cancel.setBounds					(x + 205, 	y + 420, 		100, 40);
+			btn_signup.setBounds					(x + 95, 	y + 420, 	100, 40);
+			btn_cancel.setBounds					(x + 205, 	y + 420, 	100, 40);
 		
 			
 		
@@ -214,7 +241,20 @@ public class MarioSignup extends JFrame implements ActionListener, TextListener 
 		background.add(label_atMark);
 		background.add(label_emailAccount);
 		
+		background.add(label_NicknameChkLabel);
+		label_NicknameChkLabel.setVisible(false);
+		
+		background.add(label_timer);
+		label_timer.setVisible(false);
+		
+		background.add(label_pwdChkLabel);
+		label_pwdChkLabel.setVisible(false);
+		
 		background.add(tf_emailAccount);
+		
+		background.add(tf_emailAuth);
+		tf_emailAuth.setVisible(false);
+		
 		background.add(tf_pwd);
 		background.add(tf_pwd_check);
 		background.add(tf_nickname);
@@ -238,8 +278,10 @@ public class MarioSignup extends JFrame implements ActionListener, TextListener 
 		
 		/* ******************************************************************* */
 
-		setVisible(true);
+		//스레드
 		
+		timerThread = new Thread(this);
+		timerThread.start();
 		
 		
 		/* ******************************************************************* */
@@ -250,7 +292,25 @@ public class MarioSignup extends JFrame implements ActionListener, TextListener 
 		btn_cancel.addActionListener(this);
 		btn_EmailAuth.addActionListener(this);
 		btn_nickname_check.addActionListener(this);
+		
+		/* 클릭하면 텍스트필드가 공백이 되는 이벤트 */
+		tf_emailAuth.addFocusListener( new FocusListener() {
+			
+			@Override
+			public void focusLost(FocusEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void focusGained(FocusEvent e) {
+				tf_emailAuth.setText("");
+				
+			}
+		});
 
+		
+		/* 창 닫기 이벤트 */
 		addWindowListener(new WindowAdapter() {
 			
 			@Override
@@ -269,6 +329,9 @@ public class MarioSignup extends JFrame implements ActionListener, TextListener 
 		
 		/* ******************************************************************* */
 		
+		
+		setVisible(true);
+		
 	}// MarioSignup ()
 	
 	
@@ -281,181 +344,65 @@ public class MarioSignup extends JFrame implements ActionListener, TextListener 
 	
 	/*************************************************************************************************************/
 
-
-	private void insertArticle() { // 값보내기 dto 에
-
-		// 데이터 받아오기
-		// int seq = 0; 출력할떄만사용하기에 필요없다 .
-
-		// 비밀번호받아오기
-		String pwd = "";
-		// tf_pw 필드에서 패스워드를 얻어옴,
-		char[] secret_pw = tf_pwd.getPassword(); // secret_pw 배열에 저장된 암호의 자릿수 만큼 for문 돌리면서 cha 에 한 글자씩 저장
-		for (char cha : secret_pw) {
-			Character.toString(cha); // cha 에 저장된 값 string으로 변환
-			// pw 에 저장하기, pw 에 값이 비어있으면 저장, 값이 있으면 이어서 저장하는 삼항연산자
-			pwd += (pwd.equals("")) ? "" + cha + "" : "" + cha + "";
-
-		}
-
-		String id = tf_emailAccount.getText();
-		// 패스워드는 이미 전환해서 String에 담겨있음
-		String nickName = tf_nickname.getText().trim();
-		String name = tf_name.getText().trim();
-
-		int age = 0;
-
-		if (tf_age != null) {
-
-			age = Integer.parseInt((tf_age.getText() + ""));
-
-			return;
-		} else {
-			age = 0;
-		}
-
-		int gender = 0;
-		int person_info = 0;
-		if (cb_person_info.isSelected())
-			person_info = 1;
-		if (checkBox_man.isSelected())
-			gender = 0;
-		else if (checkBox_woman.isSelected())
-			gender = 1;
-		int score = 0;
-		String goalTime = null;
-		int playerRank = 0;
-		dtoList = new ArrayList<MarioDTO>();
-
-		System.out.println("아이디" + id);
-		System.out.println("비밀번호" + pwd);
-
-		// MarioDTO
-		MarioDTO signupdto = new MarioDTO();
-		signupdto.setClientAccount(id);
-		signupdto.setPassword(pwd);
-		signupdto.setNickname(nickName);
-		signupdto.setRealName(name);
-		signupdto.setAge(age);
-		signupdto.setGender(gender);
-		signupdto.setInfoAgree(person_info);
-		signupdto.setScore(score);
-		signupdto.setGoalTime(goalTime);
-		signupdto.setPlayerRank(playerRank);
-		System.out.println("dto에 보내기");
-
-		MarioDAO dao = MarioDAO.getInstance();
-		int seq = dao.getSeq();// 시퀀스번호를 그냥받았는데 지금은 다시 DB에서 객체로 넣어주었다.
-		signupdto.setSeq(seq);
-		dao.insertArticle(signupdto);
-		System.out.println("dao성공");
-
-	}
-
-	// model.set(listT.getSelectedIndex(), dto);
-	// updateArticle()
 	
 	
 	
+	/*************************************************************************************************************/
 	
+	// 입력값 검사 메소드
 	
 	public void CheckArticle() {
 
-		String pwd = "";
-		// tf_pw 필드에서 패스워드를 얻어옴,
-		char[] secret_pw = tf_pwd.getPassword(); // secret_pw 배열에 저장된 암호의 자릿수 만큼 for문 돌리면서 cha 에 한 글자씩 저장
-		for (char cha : secret_pw) {
-			Character.toString(cha); // cha 에 저장된 값 string으로 변환
-			// pw 에 저장하기, pw 에 값이 비어있으면 저장, 값이 있으면 이어서 저장하는 삼항연산자
-			pwd += (pwd.equals("")) ? "" + cha + "" : "" + cha + "";
+		String error = "";
+		
+		if(tf_emailAccount.getText().length() == 0 || tf_emailAccount.getText() == null) 								{ error += "이메일"; }
+		else if(new String(tf_pwd.getPassword()).length() == 0 || new String(tf_pwd.getPassword()) == null) 			{ error += "비밀번호"; }
+		else if(new String(tf_pwd_check.getPassword()).length() == 0 || new String(tf_pwd_check.getPassword()) == null) { error += "비밀번호 확인"; }
+		else if(tf_nickname.getText().length() == 0 || tf_nickname.getText() == null) 									{ error += "닉네임"; }
+		else if(tf_name.getText().length() == 0 || tf_name.getText() == null)											{ error += "이름"; }
+		else if(tf_age.getText().length() == 0 || tf_age.getText() == null && !tf_age.getText().matches("\\d*") ) 		{ error += "나이"; }
+		
+		if(error.length() != 0) {
+			JOptionPane.showMessageDialog(this, error + " 입력란을 확인해주세요.");
+		}else if(!tf_emailAuth.getText().equals("1234")) {
+			JOptionPane.showMessageDialog(this, "이메일 인증번호를 확인해주세요.");
 		}
-		String pwd_cf = "";
-		char[] secret_pw2 = tf_pwd_check.getPassword();
-		for (char cha2 : secret_pw2) {
-			Character.toString(cha2);
-			pwd_cf += (pwd_cf.equals("")) ? "" + cha2 + "" : "" + cha2 + "";
+		else {
+			
+			
 
+			// MarioDTO
+			MarioDTO signupdto = new MarioDTO();
+			
+			signupdto.setClientAccount(tf_emailAccount.getText() + "@" + (String)comboBox_email.getSelectedItem());
+			signupdto.setPassword(new String(tf_pwd.getPassword()));
+			signupdto.setNickname(tf_nickname.getText());
+			signupdto.setRealName(tf_age.getText());
+			signupdto.setAge(Integer.parseInt(tf_age.getText()));
+			signupdto.setGender(checkBox_man.isSelected() ? 0 : 1); 	// 여자 : 1
+			signupdto.setInfoAgree(cb_person_info.isSelected() ? 1 : 0);
+			signupdto.setScore(0);
+			signupdto.setGoalTime(null);
+			signupdto.setPlayerRank(0);
+			
+			System.out.println("dto객체를 DB로 전송");
+
+			MarioDAO dao = MarioDAO.getInstance();
+			
+			int seq = dao.getSeq();// 시퀀스번호를 그냥받았는데 지금은 다시 DB에서 객체로 넣어주었다.
+			signupdto.setSeq(seq);
+			dao.insertArticle(signupdto);
+			
+			System.out.println("dto객체를 DB로 전송 성공");
+			
+			JOptionPane.showMessageDialog(this, signupdto.getNickname() + "님 환영합니다!");
+			dispose();
+			
 		}
-
-		// 비밀번호 중복일떄 경고문
-		if (!(pwd.equals(pwd_cf))) {
-			JOptionPane.showMessageDialog(MarioSignup.this, "비밀번호가맞지않습니다", "경고", JOptionPane.ERROR_MESSAGE);
-			tf_pwd.setText("");
-			tf_pwd_check.setText("");
-
-			System.out.println("비밀번호 일치기능 완료 " + pwd + "-----" + pwd_cf);
-		}
-
-		String id = tf_emailAccount.getText();
-		// 패스워드는 이미 전화해서 String에 담겨있음
-		String nickName = tf_nickname.getText();
-		String name = tf_name.getText();
-		String age = tf_age.getText();
-
-		int gender = 0;
-		int person_info = 0;
-		if (cb_person_info.isSelected())
-			person_info = 1;
-		else
-			person_info = -1;
-		if (checkBox_man.isSelected())
-			gender = 0;
-		else if (checkBox_woman.isSelected())
-			gender = 1;
-		else
-			gender = -1;
-
-		// 항목에대한 구체화
-		if (id.equals("")) {
-			JOptionPane.showMessageDialog(MarioSignup.this, "아이디를 입력해주세요", "경고", JOptionPane.ERROR_MESSAGE);
-		} else if (nickName.equals("")) {
-			JOptionPane.showMessageDialog(MarioSignup.this, "비밀번호을입력해주세요", "경고", JOptionPane.ERROR_MESSAGE);
-
-		} else if (pwd_cf.equals("")) {
-			JOptionPane.showMessageDialog(MarioSignup.this, "비밀번호을입력해주세요", "경고", JOptionPane.ERROR_MESSAGE);
-
-		} else if (name.equals("")) {
-			JOptionPane.showMessageDialog(MarioSignup.this, "이름을입력해주세요", "경고", JOptionPane.ERROR_MESSAGE);
-		} else if (age.equals("")) {
-			JOptionPane.showMessageDialog(MarioSignup.this, "나이을입력해주세요", "경고", JOptionPane.ERROR_MESSAGE);
-
-		} else if (gender == -1) {
-			JOptionPane.showMessageDialog(MarioSignup.this, "성별을입력해주세요", "경고", JOptionPane.ERROR_MESSAGE);
-		} else if (person_info == -1) {
-			JOptionPane.showMessageDialog(MarioSignup.this, "수락을눌러주세요", "경고", JOptionPane.ERROR_MESSAGE);
-
-		}
-
+		
 	}
 	
-	
-
-	private void ArrayList() {
-		// dtoList = new ArrayList<MarioDTO> ();
-
-		String pwd = "";
-		// tf_pw 필드에서 패스워드를 얻어옴,
-		char[] secret_pw = tf_pwd.getPassword(); // secret_pw 배열에 저장된 암호의 자릿수 만큼 for문 돌리면서 cha 에 한 글자씩 저장
-		for (char cha : secret_pw) {
-			Character.toString(cha); // cha 에 저장된 값 string으로 변환
-			// pw 에 저장하기, pw 에 값이 비어있으면 저장, 값이 있으면 이어서 저장하는 삼항연산자
-			pwd += (pwd.equals("")) ? "" + cha + "" : "" + cha + "";
-		}
-		String pwd_cf = "";
-		char[] secret_pw2 = tf_pwd_check.getPassword();
-		for (char cha2 : secret_pw2) {
-			Character.toString(cha2);
-			pwd_cf += (pwd_cf.equals("")) ? "" + cha2 + "" : "" + cha2 + "";
-
-		}
-
-		// 패스워드는 이미 전화해서 String에 담겨있음
-		String nickName = tf_nickname.getText();
-		String name = tf_name.getText();
-		String age2 = tf_age.getText();
-
-	}
-	
+	/*************************************************************************************************************/
 	
 	
 	/*************************************************************************************************************/
@@ -471,16 +418,8 @@ public class MarioSignup extends JFrame implements ActionListener, TextListener 
 		// 회원가입 버튼 이벤트
 		
 		if (e.getSource() == btn_signup) {
-			if (tf_age == null || tf_emailAccount == null || tf_name == null || tf_pwd == null || tf_pwd_check == null) {
-
-				JOptionPane.showMessageDialog(this, "입력란을 확인해주세요");
-
-			} else {
 
 				CheckArticle();
-				insertArticle();
-				dispose();
-			}
 			
 		} 
 		
@@ -520,7 +459,7 @@ public class MarioSignup extends JFrame implements ActionListener, TextListener 
 			for (MarioDTO dto : dtoList) { 
 				
 				if (emailAccount.equals(dto.getClientAccount())) {
-					JOptionPane.showMessageDialog(this, "[ " + emailAccount + " ] 는 \n이미 존재하는 계정입니다.");
+					JOptionPane.showMessageDialog(this, "[ " + emailAccount + " ] \n 해당 계정은 이미 존재합니다.");
 					return;
 				}
 			}
@@ -529,43 +468,47 @@ public class MarioSignup extends JFrame implements ActionListener, TextListener 
 		
 			tf_emailAccount.setEnabled(false); // 창 비활성화
 			btn_EmailAuth.setVisible(false);	// 버튼 사라짐
+			
 			tf_emailAuth.setVisible(true);
+			label_timer.setVisible(true);
+			timerStart = true;
 			
+			code = (int)(Math.random() * 90000) + 100000;
+			System.out.println(code);
+			new EmailAutho(emailAccount, code).gmailSend();
 			
-			
-			// 인증번호값 가져오기
-			String email = JOptionPane.showInputDialog(this, "이메일인증번호를 입력해주세요", "이메일 인증번호",
-					JOptionPane.INFORMATION_MESSAGE);
-			
-			if (email == null || email.length() == 0) {
-				JOptionPane.showMessageDialog(MarioSignup.this, "인증번호를 입력해주세요", "경고", JOptionPane.ERROR_MESSAGE);
-				// 같지않을떄 if 문
+			AuthScuccess = true;
 
-				// 잘성사되면버튼닫기 이메일인증번호완료후 버튼닫기
-				btn_EmailAuth.setEnabled(false);
 			}
+		
 
 		/* ******************************************************************* */
 			
 		// 닉네임 중복검사 버튼 이벤트
 			
-		} else if (e.getSource() == btn_nickname_check) {
-
-			// dto 에서 닉네임정보가져오기
-			String nickName_cf = tf_nickname.getText();
-			for (MarioDTO dto : dtoList) { // 전체db에서 비교 전체클라이언트에서비교를할것이기떄문에
-				if (nickName_cf.equals(dto.getNickname())) {
-					JOptionPane.showMessageDialog(MarioSignup.this, "중복된닉네임입니다 다시입력해주세요.", "경고",
-							JOptionPane.ERROR_MESSAGE);
-
-				} else {
-					// 잘 성사되면 버튼 닫기
-					btn_nickname_check.setEnabled(false);
-					return;
+		 else if (e.getSource() == btn_nickname_check) {
+			 
+			 if(!AuthScuccess) {
+				 label_NicknameChkLabel.setForeground(new Color(200, 50, 50));
+				 label_NicknameChkLabel.setVisible(true);
+				 return;
+			 }else {
+				 
+				 for (MarioDTO dto : dtoList) {
+					if (tf_nickname.getText().equals(dto.getNickname())) {
+						 label_NicknameChkLabel.setForeground(new Color(100, 50, 50));
+						 label_NicknameChkLabel.setText("해당 닉네임이 이미 존재합니다.");
+						 label_NicknameChkLabel.setVisible(true);
+						 
+							return;
+					}else {
+						label_NicknameChkLabel.setForeground(new Color(100, 200, 150));
+						label_NicknameChkLabel.setText("해당 닉네임을 사용할 수 있습니다.");
+						label_NicknameChkLabel.setVisible(true);
+						
+					}
 				}
-
 			}
-
 		}
 		
 		
@@ -577,16 +520,75 @@ public class MarioSignup extends JFrame implements ActionListener, TextListener 
 	
 	
 	/*************************************************************************************************************/
+
+
+	@Override
+	public void run() {
+		try {
+			
+			while(true) {
+				
+				/* ******************************************************************* */
+				
+				// 인증시간 타이머
+				
+				if(sec > 0 && timerStart) {
+					
+				sec--;
+				}else if(sec == 0) {
+					
+					if(min > 1) {
+						min--;
+						sec = 59;
+					}else if (min == 0){
+						timerStart = false;
+						label_timer.setText("시간초과");
+					}
+				}
+				label_timer.setText("남은 시간 " + min + " : " + new DecimalFormat("00").format(sec));
+				
+				
+				/* ******************************************************************* */
+				
+				// 비밀번호 체크
+				
+				String pwd = new String(tf_pwd.getPassword());
+				String pwd_check = new String(tf_pwd_check.getPassword());
+				
+				if(pwd.length() != 0 && pwd_check.length() != 0) {
+					
+					label_pwdChkLabel.setVisible(true);
+					if(pwd.equals(pwd_check)) {
+						label_pwdChkLabel.setForeground(new Color(50, 200, 50));
+						label_pwdChkLabel.setText("비밀번호가 일치합니다.");
+					}else {
+						label_pwdChkLabel.setForeground(new Color(200, 50, 50));
+						label_pwdChkLabel.setText("비밀번호가 일치하지 않습니다.");
+					}
+				}
+				
+				
+				
+				/* ******************************************************************* */
+				
+				
+				Thread.sleep(1000);
+			}
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+	} // run();
 	
+	
+	/*************************************************************************************************************/
+
 
 	public static void main(String[] args) {
 		new MarioSignup();
 	}
 
-	@Override
-	public void textValueChanged(TextEvent e) {
-		// TODO Auto-generated method stub
-
-	}
 
 }
