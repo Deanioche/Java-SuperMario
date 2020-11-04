@@ -20,7 +20,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import mario.Main.MarioClient_old;
 import mario.dao.MarioDAO;
 import mario.dto.MarioDTO;
 
@@ -32,6 +31,8 @@ public class MarioLogin extends JFrame implements ActionListener {
 	private JPasswordField tf_pwd;
 	private JButton btn_login, btn_sign_up;
 	private MarioDAO dao;
+	
+	private boolean loginSuccess = false;
 
 	// private Dimension Dimension_windowSize =
 	// Toolkit.getDefaultToolkit().getScreenSize(); 로그인창이라 전체화면할필요없을거같아서 1000으로맞춤 근데
@@ -196,21 +197,24 @@ public class MarioLogin extends JFrame implements ActionListener {
 
 			for (MarioDTO dto : dao.getMarioList()) { // 전체db에서 비교 전체클라이언트에서비교를할것이기떄문에
 
-				System.out.println("dto.getClientAccount() : " + dto.getClientAccount());
-				System.out.println("dto.getPassword() : " + dto.getPassword());
+//				System.out.println("dto.getClientAccount() : " + dto.getClientAccount());
+//				System.out.println("dto.getPassword() : " + dto.getPassword());
 
 				if ((id.equals(dto.getClientAccount()) && pwd.equals(dto.getPassword()))
 						|| (id.equals("admin") && pwd.equals("1234"))) {
-					new MarioClient_old();
+					new MarioClient();
 					dispose();
 					System.out.println("로그인 성공!");
+					loginSuccess = true;
 					break;
 
-				} else {
-					JOptionPane.showMessageDialog(MarioLogin.this, "없는아이디나 비밀번호와 아이디가 맞지않습니다 ", "경고",
-							JOptionPane.ERROR_MESSAGE);
-				}
+				}  
 
+			}
+			
+			if(!loginSuccess) {
+			JOptionPane.showMessageDialog(MarioLogin.this, "없는아이디나 비밀번호와 아이디가 맞지않습니다 ", "경고",
+					JOptionPane.ERROR_MESSAGE);
 			}
 
 			tf_id.setText("");
