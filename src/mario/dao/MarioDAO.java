@@ -208,9 +208,11 @@ public class MarioDAO {
    //★DB테이블에 저장되어있는 정보 가져오는 메소드 
    //테이블 정보 어디에 출력할지 레이아웃 확인
    public List<MarioDTO> getMarioList(){
+	   
       List<MarioDTO> dtoList = new ArrayList<MarioDTO>();
       String sql = "select * from mario order by seq";
       getConnection();
+      
       try {
          pstmt = conn.prepareStatement(sql);
          rs = pstmt.executeQuery();
@@ -244,6 +246,7 @@ public class MarioDAO {
             e.printStackTrace();
          }
       }//finally
+      
       
       return dtoList;// 업데이트 
    
