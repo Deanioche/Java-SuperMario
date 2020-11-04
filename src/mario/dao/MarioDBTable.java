@@ -1,9 +1,13 @@
 package mario.dao;
 
+import java.awt.Color;
 import java.awt.Container;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 import java.util.Vector;
 
@@ -14,7 +18,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 
 import mario.dto.MarioDTO;
 
@@ -25,13 +33,19 @@ public class MarioDBTable extends JFrame implements ActionListener {
    //1.필드선언
    private JButton updateBtn, deleteBtn, exitBtn;
    private JLabel titleL;
+   private JLabel noticeL;
    private Vector<String> vector; //테이블 필드용 및 내용 생성용
    private DefaultTableModel model; //테이블 생성용
    private JTable table;
    public static int SUBJECT_COUNT = 11; //테이블에 저장된 항목 수
+   public String editorID, editorPW;
    
    
-   public MarioDBTable() {
+   public MarioDBTable(MarioDTO attempt) {
+      
+      this.editorID = attempt.getClientAccount();
+      this.editorPW = attempt.getPassword();
+      
       //4.테이블 필드명 생성
       vector = new Vector<String>();
       vector.add("일련번호");
@@ -46,6 +60,13 @@ public class MarioDBTable extends JFrame implements ActionListener {
       vector.add("소요시간");
       vector.add("순위");
       
+      
+//      if(editorID.equals("admin") && editorPW.equals("123")) {
+//         
+//      }else {
+//         display();
+//      }
+//      
       //5.테이블 생성
       model = new DefaultTableModel(vector,0) {
          public boolean isCellEditable(int row, int column) {
@@ -54,6 +75,9 @@ public class MarioDBTable extends JFrame implements ActionListener {
       };
       table = new JTable(model);
       JScrollPane scroll = new JScrollPane(table);
+      scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+      
+      
       
       //6.DB정보를 List에 담기
       MarioDAO dao = MarioDAO.getInstance(); //DAO객체 생성
@@ -67,8 +91,17 @@ public class MarioDBTable extends JFrame implements ActionListener {
          v.add(dto.getRealName());
          v.add(dto.getAge() + "");
          v.add(dto.getNickname());
-         v.add(dto.getGender() + "");
-         v.add(dto.getInfoAgree() + "");
+         if(dto.getGender() == 0) {
+            v.add("남성");
+            
+         }else if(dto.getGender() == 1) {
+            v.add("여성");
+         }
+         if(dto.getInfoAgree() == 0) {
+            v.add("비동의");
+         }else if(dto.getInfoAgree() == 1) {
+            v.add("동의");
+         }
          v.add(dto.getScore() + "");
          v.add(dto.getGoalTime());
          v.add(dto.getPlayerRank() + "");
@@ -77,24 +110,40 @@ public class MarioDBTable extends JFrame implements ActionListener {
       }
    
       //3.컴포넌트 생성
-      updateBtn = new JButton("수정");
-      deleteBtn = new JButton("삭제");
+      updateBtn = new JButton("정보수정");
+      deleteBtn = new JButton("계정삭제");
       exitBtn = new JButton("종료");
       titleL = new JLabel("회원정보 관리");
-      titleL.setFont(new Font("HY센스L", Font.BOLD, 20));
+      titleL.setFont(new Font("MD개성체", Font.BOLD, 20));
+      noticeL = new JLabel("※회원정보 수정 후, 반드시 Enter를 눌러주세요");
+      noticeL.setFont(new Font("MD개성체", Font.PLAIN, 10));
+      noticeL.setForeground(new Color(0,0,255));
       
-      JPanel p1 = new JPanel();
+      JPanel p1 = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+      p1.add(noticeL);
       p1.add(updateBtn);
       p1.add(deleteBtn);
       p1.add(exitBtn);
       
-      JPanel p2 =new JPanel();
+      JPanel p2 = new JPanel();
       p2.add(titleL);
+      
       
       Container container = this.getContentPane();
       container.add("South",p1);
       container.add("North",p2);
       container.add("Center",scroll);
+      
+      
+      //테이블 내용 가운데 정렬
+      DefaultTableCellRenderer dtcr = new DefaultTableCellRenderer();
+      dtcr.setHorizontalAlignment(SwingConstants.CENTER);
+      TableColumnModel tcm = table.getColumnModel(); //테이블에서 컬럼가져오기
+      
+      for(int i = 0; i < tcm.getColumnCount(); i++) { //컬럼 수만큼 가운데 정렬
+         tcm.getColumn(i).setCellRenderer(dtcr);
+      }
+      
       
       //2.프레임 생성
       setBounds(700, 300, 1000, 300);
@@ -106,7 +155,7 @@ public class MarioDBTable extends JFrame implements ActionListener {
       updateBtn.addActionListener(this);
       deleteBtn.addActionListener(this);
       exitBtn.addActionListener(this);
-      
+     
    }
    
    @Override
@@ -116,7 +165,7 @@ public class MarioDBTable extends JFrame implements ActionListener {
       }else if(e.getSource() == deleteBtn) {
          deleteArticle();
       }else if(e.getSource() == exitBtn) {
-         System.exit(0); //★★★★★이 부분 관리창말고 프로그램 전체가 삭제되는지 확인
+         dispose(); //해당 창만 종료
       }
    }
    
@@ -132,11 +181,22 @@ public class MarioDBTable extends JFrame implements ActionListener {
       String realName = (String)table.getValueAt(table.getSelectedRow(), 3);
       String age = (String)table.getValueAt(table.getSelectedRow(), 4); //int 형변환 필요
       String nickName = (String)table.getValueAt(table.getSelectedRow(), 5);
-      String gender = (String)table.getValueAt(table.getSelectedRow(), 6);
-      String infoAgree = (String)table.getValueAt(table.getSelectedRow(), 7);
-      String score = (String)table.getValueAt(table.getSelectedRow(), 8);
+      String gender = null;
+      if(((String)table.getValueAt(table.getSelectedRow(), 6)).equals("남성")) {
+        gender = "0";
+      }else if(((String)table.getValueAt(table.getSelectedRow(), 6)).equals("여성")) {
+        gender = "1";
+      }
+      String infoAgree = null;
+      if(((String)table.getValueAt(table.getSelectedRow(), 7)).equals("비동의")){
+         infoAgree = "0";
+      }else if(((String)table.getValueAt(table.getSelectedRow(), 7)).equals("동의")) {
+         infoAgree = "1";
+      }
+      String score = (String)table.getValueAt(table.getSelectedRow(), 8); //int 형변환 필요
       String goalTime = (String)table.getValueAt(table.getSelectedRow(), 9);
-      String playerRank = (String)table.getValueAt(table.getSelectedRow(), 10);
+      String playerRank = (String)table.getValueAt(table.getSelectedRow(), 10); //int 형변환 필요
+
       
       //DTO작성
       MarioDTO dto = new MarioDTO();
@@ -189,7 +249,7 @@ public class MarioDBTable extends JFrame implements ActionListener {
    
 
    public static void main(String[] args) {
-      new MarioDBTable().event();
+      new MarioDBTable(null).event();
       
    }
 }

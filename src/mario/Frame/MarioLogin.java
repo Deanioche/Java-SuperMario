@@ -18,13 +18,12 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import mario.dao.MarioDAO;
-import mario.dao.MarioDBTable;
+import mario.dao.MarioDBTLogIn;
 import mario.dto.MarioDTO;
-
-import javax.swing.JPasswordField;
 
 public class MarioLogin extends JFrame implements ActionListener {
 	private JLabel label_id, label_pwd;
@@ -221,7 +220,7 @@ public class MarioLogin extends JFrame implements ActionListener {
 		} else if (e.getSource() == btn_sign_up) {
 			new MarioSignup();
 		}else if (e.getSource() == btn_dataManage) {
-			new MarioDBTable();
+	        new MarioDBTLogIn();
 		}
 
 	}

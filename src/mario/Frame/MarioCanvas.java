@@ -31,14 +31,14 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 	boolean pushing_Right = false;
 	boolean pushing_Up = false;
 	
-	public int movePower = 0;
-	public int jumpPower = 0;
+	public int movePower = 0;  // -30 ~ 30 음수 : 좌, 양수 : 우측
+	public int jumpPower = 0;	// 35;
 	
 	boolean direction = true; // false = 왼쪽, true = 오른쪽
 	boolean runMotion = false; // true = run1, false = run2
-	boolean isJumping = false;
-	boolean isInAir = false;
-	boolean isFalling = false;
+	boolean isJumping = false;  // 상승중
+	boolean isInAir = false;	// 공중
+	boolean isFalling = false;  // 낙하중 : gravity 
 	
 	public int marioX = 200, marioY = 300;
 	public int gravity = 0;
@@ -47,14 +47,9 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 	Rectangle marioR;
 	Rectangle blockR;
 	
-	
 	List<Block> list_Block;
 	
-	
-	/*
-	 * # 캐릭터 동작
-	 * 
-	 */
+	/************************************************************************************************/
 	
 	// 생성자
 	public MarioCanvas(MarioClient marioClient) {
@@ -83,24 +78,7 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 	} // MarioCanvas();
 	
 	
-	/*********************************************************************/
-	
-	
-	
-	
-	/*********************************************************************/
-	
-	//상하좌우 키 버튼 boolean(pushing_Left 등) true가 되있는 동안 이동 게이지가 천천히 최대값 까지 상승 double 0.1 씩?
-	// 상승한 값만큼 좌표 이동하다가 최대값 되면 등속으로
-	// 키에서 손을 떼면 (pushing_Left가 false가 되면) 이동 게이지가 줄면서 감속하다가 0이되면 멈춤
-
-	//점프
-	// up키를 누르면 점프력만큼 게이지가 full인 상태로 생성되고 
-	// 점점 게이지가 감소하며 게이지만큼 y에서 빼는 값이 줄어든다 (상승속도가 줄어듬) 
-	// 점프력 게이지가 0이 되면 중력 게이지가 올라간다?
-	
-	//대각선 이동 구현 
-	// 좌우측으로 점프
+	/************************************************************************************************/
 	
 	
 	private void characterControl() {
@@ -173,10 +151,6 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 			 * 점프파워 = 20
 			 */
 		
-		/* 위 버튼 떼짐 */
-		}else if (!pushing_Up) {
-			
-		}
 		
 		if(jumpPower > 0) {
 			
@@ -224,6 +198,7 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 			marioY = -50;
 			gravity = 0;
 		}
+	}
 		
 		
 	} // characterControl();
@@ -249,7 +224,7 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 				
 				if(isFalling && marioY + gravity < blockY) {
 					marioY = blockY - 50;
-					}
+				}
 				
 				jumpPower = 0;
 				gravity = 0;
