@@ -21,6 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import mario.dao.MarioDAO;
+import mario.dao.MarioDBTable;
 import mario.dto.MarioDTO;
 
 import javax.swing.JPasswordField;
@@ -29,9 +30,9 @@ public class MarioLogin extends JFrame implements ActionListener {
 	private JLabel label_id, label_pwd;
 	private JTextField tf_id;
 	private JPasswordField tf_pwd;
-	private JButton btn_login, btn_sign_up;
+	private JButton btn_login, btn_sign_up, btn_dataManage;
 	private MarioDAO dao;
-	
+
 	private boolean loginSuccess = false;
 
 	// private Dimension Dimension_windowSize =
@@ -41,19 +42,13 @@ public class MarioLogin extends JFrame implements ActionListener {
 	private ImageIcon ic_bg_login = new ImageIcon("Image/background/loginBackground.jpg"); // 배경아이콘
 	private Image im_bg_login = ic_bg_login.getImage(); // 이미지에넣기
 
-	private Font f1, f2, f3, f4;
 	private List<MarioDTO> dtoList = new ArrayList<MarioDTO>();
 
 	public MarioLogin() {
 
 		super("Login");
-		// 생성
+		
 
-		// 페널로 우선순위를 잡는다 .
-		f1 = new Font("Hobo BT", Font.BOLD, 20);
-		f2 = new Font("Hobo BT", Font.BOLD, 15);
-		f3 = new Font("Forte", Font.BOLD, 10);
-		f4 = new Font("Forte", Font.BOLD, 12);
 
 		// 라벨생성
 		label_id = new JLabel("ID"); // 이메일주소입력하라고 표시남기기
@@ -64,6 +59,7 @@ public class MarioLogin extends JFrame implements ActionListener {
 		tf_pwd = new JPasswordField(25);
 		btn_login = new JButton("LOGIN");
 		btn_sign_up = new JButton("Sign up");
+		btn_dataManage = new JButton("회원 데이터 관리");
 
 		// 페인트패널생성
 		JPanel background = new JPanel() {
@@ -82,20 +78,22 @@ public class MarioLogin extends JFrame implements ActionListener {
 		tf_pwd.setBounds(430, 900, 140, 40);
 		tf_id.setBounds(100, 900, 140, 40);
 
-		btn_login.setBounds(750, 900, 100, 40);
-		btn_sign_up.setBounds(850, 900, 120, 40);
+		btn_login.setBounds(750, 890, 100, 40);
+		btn_sign_up.setBounds(850, 890, 120, 40);
+		btn_dataManage.setBounds(750, 930, 220, 30);
 
 		// 폰트
-		label_id.setFont(f1);
-		label_pwd.setFont(f1);
-		tf_id.setFont(f2);
-		btn_login.setFont(f3);
-		btn_sign_up.setFont(f4);
+		label_id.setFont(new Font("Hobo BT", Font.BOLD, 20));
+		label_pwd.setFont(new Font("Hobo BT", Font.BOLD, 20));
+		tf_id.setFont(new Font("Hobo BT", Font.BOLD, 20));
+		btn_login.setFont(new Font("Forte", Font.BOLD, 15));
+		btn_sign_up.setFont(new Font("Forte", Font.BOLD, 15));
 
 		tf_pwd.setForeground(Color.white);
 		tf_id.setForeground(Color.white);
 		btn_login.setBackground(Color.getHSBColor(150, 100, 240));
 		btn_sign_up.setBackground(Color.getHSBColor(150, 100, 240));
+		btn_dataManage.setBackground(Color.getHSBColor(150, 100, 240));
 
 		// 테두리속없애기
 		tf_pwd.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -113,6 +111,7 @@ public class MarioLogin extends JFrame implements ActionListener {
 
 		background.add(btn_login);
 		background.add(btn_sign_up);
+		background.add(btn_dataManage);
 
 		// 컨테이너
 		Container c = this.getContentPane();
@@ -132,6 +131,7 @@ public class MarioLogin extends JFrame implements ActionListener {
 		// 이벤트
 		btn_login.addActionListener(this);
 		btn_sign_up.addActionListener(this);
+		btn_dataManage.addActionListener(this);
 
 		// 마우스좌표확인 지울거임
 //      addMouseListener(new MouseAdapter() {
@@ -164,8 +164,6 @@ public class MarioLogin extends JFrame implements ActionListener {
 
 		if (e.getSource() == btn_login) {
 
-			
-
 			String id = tf_id.getText();
 			// 암호화값 string에 담기
 			String pwd = "";
@@ -182,17 +180,16 @@ public class MarioLogin extends JFrame implements ActionListener {
 			tf_pwd.setText("");
 			tf_id.setText("");
 
-			
 			if (id.equals("admin") && pwd.equals("1234")) {
 				new MarioClient();
 				dispose();
 				System.out.println("로그인 성공!");
 				return;
 
-			} 
-			
+			}
+
 			dao = MarioDAO.getInstance();
-			
+
 			// 아이디 중복확인이벤트 중복아이디가있을떄 경고하기
 
 			for (MarioDTO dto : dao.getMarioList()) { // 전체db에서 비교 전체클라이언트에서비교를할것이기떄문에
@@ -208,13 +205,13 @@ public class MarioLogin extends JFrame implements ActionListener {
 					loginSuccess = true;
 					break;
 
-				}  
+				}
 
 			}
-			
-			if(!loginSuccess) {
-			JOptionPane.showMessageDialog(MarioLogin.this, "없는아이디나 비밀번호와 아이디가 맞지않습니다 ", "경고",
-					JOptionPane.ERROR_MESSAGE);
+
+			if (!loginSuccess) {
+				JOptionPane.showMessageDialog(MarioLogin.this, "없는아이디나 비밀번호와 아이디가 맞지않습니다 ", "경고",
+						JOptionPane.ERROR_MESSAGE);
 			}
 
 			tf_id.setText("");
@@ -223,6 +220,8 @@ public class MarioLogin extends JFrame implements ActionListener {
 
 		} else if (e.getSource() == btn_sign_up) {
 			new MarioSignup();
+		}else if (e.getSource() == btn_dataManage) {
+			new MarioDBTable();
 		}
 
 	}
