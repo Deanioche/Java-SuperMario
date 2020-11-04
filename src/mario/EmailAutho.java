@@ -43,13 +43,13 @@ public class EmailAutho {
 			message.setFrom(new InternetAddress(user));
 
 			// 수신자메일주소
-			message.addRecipient(Message.RecipientType.TO, new InternetAddress("sdchikappp@gmail.com"));
+			message.addRecipient(Message.RecipientType.TO, new InternetAddress(clientEmail));
 
 			// Subject
 			message.setSubject("마리오 회원가입 인증 코드"); // 메일 제목을 입력
 
 			// Text
-			message.setText("가입 인증 코드 : " + 1234); // 메일 내용을 입력
+			message.setText("가입 인증 코드 : " + code); // 메일 내용을 입력
 
 			// send the message
 			Transport.send(message); //// 전송
@@ -63,7 +63,4 @@ public class EmailAutho {
 		}
 	}
 	
-	public static void main(String[] args) {
-		new EmailAutho("sdchikappp@gmail.com", 1234);
-	}
 }

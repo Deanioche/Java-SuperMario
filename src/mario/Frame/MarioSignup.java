@@ -45,7 +45,7 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 	private JPasswordField tf_pwd, tf_pwd_check; // 비밀번호 암호화
 
 	private JCheckBox cb_person_info, checkBox_man, checkBox_woman; // 개인정보 취급방침에 대해 동의합니다
-	private JButton btn_EmailAuth, btn_nickname_check, btn_signup, btn_cancel;
+	private JButton btn_EmailAuth, btn_nickname_check, btn_signup, btn_cancel, btn_AuthCancel;
 
 	private JComboBox<String> comboBox_email; // 네이버 이메일선택
 	private ImageIcon ic_bg_signup = new ImageIcon("image/background/signupBackground.png"); // 배경아이콘
@@ -59,21 +59,33 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 	// 타이머
 	private boolean timerStart = false;
 	private int min = 3, sec = 0;
-	private boolean AuthScuccess = false;
+	private boolean AuthSuccess = false;
 	private Thread timerThread;
+	private boolean threadStop = false;
 	
 	//메일 인증
-	private int code;
+	private int authCode;
+	
+	// 닉네임 인증
+	private boolean nicknameCheck = false;
+	
+	
+	/***************************************************************************************************************************/
 
+	
+	// 생성자
+	
 	public MarioSignup() {
 
-		super("Sign up");
 		
+		// 윈도우 창 설정
+		
+		super("입소신청서");
 		setBounds(0, 0, 550, 600);
 		setLocationRelativeTo(null);
 		setResizable(false);
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-		setUndecorated(true);
+		setUndecorated(false);
 		setAlwaysOnTop(true);
 
 		
@@ -110,6 +122,7 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 			btn_signup = new JButton("회원가입");
 			btn_cancel = new JButton("취소");
 			btn_nickname_check = new JButton("check");
+			btn_AuthCancel = new JButton("인증 취소");
 		
 			// 성별 체크박스 & 버튼 그룹
 			ButtonGroup group_gender = new ButtonGroup();
@@ -134,6 +147,7 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 			btn_EmailAuth.setFocusable(false);
 			checkBox_woman.setFocusable(false);
 			checkBox_man.setFocusable(false);
+			btn_AuthCancel.setFocusable(false);
 
 			// 폰트
 			label_signup_info.setFont(new Font("MD개성체", Font.BOLD, 20));
@@ -148,6 +162,7 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 			label_timer.setFont(new Font("MD개성체", Font.BOLD, 13));
 			label_pwdChkLabel.setFont(new Font("MD개성체", Font.BOLD, 13));
 			label_NicknameChkLabel.setFont(new Font("MD개성체", Font.BOLD, 13));
+			btn_AuthCancel.setFont(new Font("MD개성체", Font.BOLD, 11));
 			
 			// 글자 색
 			tf_pwd.setForeground(Color.BLACK);
@@ -166,7 +181,7 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 			int x = 40, y = 60; //기준 좌표
 			
 			/* 마리오 회원가입 배너 */
-			label_signup_info.setBounds				(x + 30, 	y, 		 	200, 20);
+			label_signup_info.setBounds				(x + 310, 	y, 		 	200, 20);
 			
 			/* 이메일 */
 			label_emailAccount.setBounds			(x,		 	y + 100, 	120, 20);
@@ -178,6 +193,7 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 			btn_EmailAuth.setBounds					(x + 345,	y + 95,		90, 28);
 			tf_emailAuth.setBounds					(x + 345,	y + 95,		100, 28);
 			label_timer.setBounds					(x + 330,	y + 125,	160, 20);
+			btn_AuthCancel.setBounds				(x + 359,	y + 65 ,	85, 25);
 			
 			/* 비밀번호 */
 			label_pwd.setBounds						(x, 		y + 140,	120, 20);
@@ -226,10 +242,14 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 //		};
 
 		/* JPanel 생성 */
-		JPanel background = new JPanel(null);
+		JPanel background = new JPanel(null) {
+			public void paintComponent(Graphics g) {
+				g.drawImage(im_bg_signup, 0, 0, null);
+			}
+		};
 
 		
-		/* JPanel 추가 */
+		/* JPanel에 항목 추가 */
 		background.add(label_signup_info);
 		background.add(label_emailAccount);
 		background.add(label_pwd);
@@ -242,7 +262,7 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 		background.add(label_emailAccount);
 		
 		background.add(label_NicknameChkLabel);
-		label_NicknameChkLabel.setVisible(false);
+		label_NicknameChkLabel.setVisible(false); // 보이지 않는 채로 생성
 		
 		background.add(label_timer);
 		label_timer.setVisible(false);
@@ -254,6 +274,9 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 		
 		background.add(tf_emailAuth);
 		tf_emailAuth.setVisible(false);
+		
+		background.add(btn_AuthCancel);
+		btn_AuthCancel.setVisible(false);
 		
 		background.add(tf_pwd);
 		background.add(tf_pwd_check);
@@ -278,7 +301,7 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 		
 		/* ******************************************************************* */
 
-		//스레드
+		//스레드 생성 및 시작
 		
 		timerThread = new Thread(this);
 		timerThread.start();
@@ -292,6 +315,8 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 		btn_cancel.addActionListener(this);
 		btn_EmailAuth.addActionListener(this);
 		btn_nickname_check.addActionListener(this);
+		tf_emailAuth.addActionListener(this);
+		btn_AuthCancel.addActionListener(this);
 		
 		/* 클릭하면 텍스트필드가 공백이 되는 이벤트 */
 		tf_emailAuth.addFocusListener( new FocusListener() {
@@ -305,6 +330,7 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 			@Override
 			public void focusGained(FocusEvent e) {
 				tf_emailAuth.setText("");
+				tf_emailAuth.setForeground(Color.BLACK);
 				
 			}
 		});
@@ -334,44 +360,33 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 		
 	}// MarioSignup ()
 	
-	
-	
-	/*************************************************************************************************************/
 
-
-	
-	
-	
-	/*************************************************************************************************************/
-
-	
-	
 	
 	/*************************************************************************************************************/
 	
-	// 입력값 검사 메소드
+	// 입력값 검사 및 DB에 저장 메소드 
 	
 	public void CheckArticle() {
 
 		String error = "";
 		
+		/* 입력값이 없거나, 조건에 맞지 않으면 에러 */
 		if(tf_emailAccount.getText().length() == 0 || tf_emailAccount.getText() == null) 								{ error += "이메일"; }
 		else if(new String(tf_pwd.getPassword()).length() == 0 || new String(tf_pwd.getPassword()) == null) 			{ error += "비밀번호"; }
 		else if(new String(tf_pwd_check.getPassword()).length() == 0 || new String(tf_pwd_check.getPassword()) == null) { error += "비밀번호 확인"; }
-		else if(tf_nickname.getText().length() == 0 || tf_nickname.getText() == null) 									{ error += "닉네임"; }
+		else if(tf_nickname.getText().length() == 0 || tf_nickname.getText() == null || !nicknameCheck) 				{ error += "닉네임"; }
 		else if(tf_name.getText().length() == 0 || tf_name.getText() == null)											{ error += "이름"; }
 		else if(tf_age.getText().length() == 0 || tf_age.getText() == null && !tf_age.getText().matches("\\d*") ) 		{ error += "나이"; }
+		else if(!AuthSuccess ) 		{ error += "인증키"; }
 		
 		if(error.length() != 0) {
 			JOptionPane.showMessageDialog(this, error + " 입력란을 확인해주세요.");
-		}else if(!tf_emailAuth.getText().equals("1234")) {
-			JOptionPane.showMessageDialog(this, "이메일 인증번호를 확인해주세요.");
-		}
-		else {
 			
 			
+		/* 입력된 값으로 회원가입 진행  */
+		}else {
 
-			// MarioDTO
+			/* DTO 객체 생성 및 입력 */
 			MarioDTO signupdto = new MarioDTO();
 			
 			signupdto.setClientAccount(tf_emailAccount.getText() + "@" + (String)comboBox_email.getSelectedItem());
@@ -385,17 +400,22 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 			signupdto.setGoalTime(null);
 			signupdto.setPlayerRank(0);
 			
-			System.out.println("dto객체를 DB로 전송");
-
+			
+			
+			/* DB로 접속 */
+			System.out.println("dto 객체를 DB로 전송 시도...");
 			MarioDAO dao = MarioDAO.getInstance();
 			
-			int seq = dao.getSeq();// 시퀀스번호를 그냥받았는데 지금은 다시 DB에서 객체로 넣어주었다.
+			int seq = dao.getSeq(); // DB로부터 시퀀스 번호를 받는다.
 			signupdto.setSeq(seq);
 			dao.insertArticle(signupdto);
 			
-			System.out.println("dto객체를 DB로 전송 성공");
 			
+			
+			/* 접속 성공 후 메세지 출력, 스레드 종료, 창 끄기  */
+			System.out.println("dto 객체를 DB로 전송 성공!");
 			JOptionPane.showMessageDialog(this, signupdto.getNickname() + "님 환영합니다!");
+			threadStop = true;
 			dispose();
 			
 		}
@@ -404,8 +424,6 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 	
 	/*************************************************************************************************************/
 	
-	
-	/*************************************************************************************************************/
 	
 	// 버튼 이벤트
 	
@@ -449,6 +467,14 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 		
 		else if (e.getSource() == btn_EmailAuth) {
 			
+			/* 이메일 입력란이 빈칸일경우 */
+			if(tf_emailAccount.getText().length() == 0) {
+				JOptionPane.showMessageDialog(this, "이메일 입력란을 확인해주세요.");
+				return;
+			}
+			
+			
+			/* 입력된 이메일에 나머지 주소를 입력시킨다. ( + @gmail.com) */
 			String emailAccount = new String(tf_emailAccount.getText() + "@" + (String)comboBox_email.getSelectedItem());
 
 			
@@ -464,21 +490,31 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 				}
 			}
 			
-			/* 계정 중복에 안걸렸을 경우 */
+			/* 중복되는 계정이 없을 경우, */
 		
-			tf_emailAccount.setEnabled(false); // 창 비활성화
+			
+			/* 이메일 입력란 비활성화, 이메일 인증버튼 사라짐  */
+			tf_emailAccount.setEnabled(false); // 이메일 입력란 비활성화
 			btn_EmailAuth.setVisible(false);	// 버튼 사라짐
 			
+			
+			/* 인증키 입력란 보이기, 인증 취소버튼 보이기  */
 			tf_emailAuth.setVisible(true);
+			btn_AuthCancel.setVisible(true);
+			
+			
+			/* 6자리 난수 생성 후 입력된 이메일 계정으로 보냄 */
+			authCode = (int)(Math.random() * 900000) + 100000;
+			System.out.println(authCode);
+			new EmailAutho(emailAccount, authCode);
+			
+			
+			/* 타이머 초기화 후 보이기 */
 			label_timer.setVisible(true);
 			timerStart = true;
+			min = 3;
+			sec = 0;
 			
-			code = (int)(Math.random() * 90000) + 100000;
-			System.out.println(code);
-			new EmailAutho(emailAccount, code).gmailSend();
-			
-			AuthScuccess = true;
-
 			}
 		
 
@@ -488,10 +524,13 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 			
 		 else if (e.getSource() == btn_nickname_check) {
 			 
-			 if(!AuthScuccess) {
+			 /* 이메일 인증이 완료되기 전에는 닉네임 중복검사는 동작하지 않는다. */
+			 if(!AuthSuccess) {
 				 label_NicknameChkLabel.setForeground(new Color(200, 50, 50));
 				 label_NicknameChkLabel.setVisible(true);
 				 return;
+				 
+				 /* 이메일 인증시에 받은 dtoList로 닉네임 비교 */
 			 }else {
 				 
 				 for (MarioDTO dto : dtoList) {
@@ -499,13 +538,15 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 						 label_NicknameChkLabel.setForeground(new Color(100, 50, 50));
 						 label_NicknameChkLabel.setText("해당 닉네임이 이미 존재합니다.");
 						 label_NicknameChkLabel.setVisible(true);
+						 nicknameCheck = true;
 						 
-							return;
+						return;
+						
 					}else {
 						label_NicknameChkLabel.setForeground(new Color(100, 200, 150));
 						label_NicknameChkLabel.setText("해당 닉네임을 사용할 수 있습니다.");
 						label_NicknameChkLabel.setVisible(true);
-						
+						nicknameCheck = false;
 					}
 				}
 			}
@@ -514,8 +555,61 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 		
 		/* ******************************************************************* */
 		
+		// 이메일 인증 버튼 이벤트
+		
+		if (e.getSource() == tf_emailAuth) {
+			
+			
+			/* 이메일 인증키 입력란이 빈칸이 아니고, 코드가 일치하면  */
+			if(tf_emailAuth.getText().length() != 0 && tf_emailAuth.getText().equals(authCode + "")){
+				
+				
+				/* 인증키 입력란 비활성화, 타이머 정지&사라짐, 인증 성공 true */
+				tf_emailAuth.setEnabled(false);
+				tf_emailAuth.setFont(new Font("MD개성체", Font.BOLD, 13));
+				tf_emailAuth.setText("인증 성공!");
+				AuthSuccess = true;
+				timerStart = false;
+				label_timer.setVisible(false);
+				
+				/* 인증 실패  */
+			}else {
+				tf_emailAuth.setForeground(new Color(250, 100, 100));
+				tf_emailAuth.setFont(new Font("MD개성체", Font.BOLD, 13));
+				tf_emailAuth.setText("   error!");
+			}
+		
+		} 
+		
+		
+		/* ******************************************************************* */
+		
+		// 인증 취소 버튼 이벤트
+		
+		if (e.getSource() == btn_AuthCancel) {
+			
+			AuthSuccess = false;
+			
+			/* 인증 입력창 초기화 */
+			tf_emailAuth.setForeground(new Color(170, 170, 170));
+			tf_emailAuth.setText("입력 후 엔터");
+			tf_emailAuth.setEnabled(true);
+			
+			/* 타이머 작동 중지, 인증취소, 인증 입력창, 타이머 숨기기  */
+			timerStart = false;
+			btn_AuthCancel.setVisible(false);
+			tf_emailAuth.setVisible(false);
+			tf_emailAuth.setVisible(false);
+			label_timer.setVisible(false);
+			
+			/* 이메일 입력란 활성화,  인증 버튼 보이기  */
+			tf_emailAccount.setEnabled(true); 
+			btn_EmailAuth.setVisible(true);	  
+			
+		}
+			
+		
 	} // actionPerformed();
-	
 	
 	
 	
@@ -526,7 +620,7 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 	public void run() {
 		try {
 			
-			while(true) {
+			while(!threadStop) {
 				
 				/* ******************************************************************* */
 				
@@ -535,9 +629,11 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 				if(sec > 0 && timerStart) {
 					
 				sec--;
+				
+				/* 초가 0이되면 분 -1하고 59초로 만듬, 시간초과시의 동작은 구현하지 않았음 */
 				}else if(sec == 0) {
 					
-					if(min > 1) {
+					if(min >= 1) {
 						min--;
 						sec = 59;
 					}else if (min == 0){
@@ -555,9 +651,12 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 				String pwd = new String(tf_pwd.getPassword());
 				String pwd_check = new String(tf_pwd_check.getPassword());
 				
+				/* 비밀번호와 비번확인이 모두 입력되었을 때, */
 				if(pwd.length() != 0 && pwd_check.length() != 0) {
 					
+					/* 일치여부 라벨 출력 */
 					label_pwdChkLabel.setVisible(true);
+					
 					if(pwd.equals(pwd_check)) {
 						label_pwdChkLabel.setForeground(new Color(50, 200, 50));
 						label_pwdChkLabel.setText("비밀번호가 일치합니다.");
@@ -571,7 +670,7 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 				
 				/* ******************************************************************* */
 				
-				
+				/* 스레드는 매 1초마다 반복된다.*/
 				Thread.sleep(1000);
 			}
 		} catch (InterruptedException e) {
