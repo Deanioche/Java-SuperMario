@@ -9,7 +9,7 @@ public class PlayGame {
 	public static void main(String[] args) {
 		new ImageBox();
 //		new MarioClient_old();
-//		new MarioLogin();
-		new MarioClient();
+//		new MarioClient();
+		new MarioLogin();
 	}
 }
