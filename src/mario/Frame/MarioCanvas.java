@@ -47,7 +47,7 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 	Rectangle marioR;
 	Rectangle blockR;
 	
-	List<Block> list_Block;
+	public static List<Block> list_Block;
 	
 	/************************************************************************************************/
 	
@@ -62,8 +62,8 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 		setVisible(true);
 		setBounds(0, 0, marioClient.getWidth(), marioClient.getHeight());
 		
-		//블록 생성
-		createBlock();
+		//전체 맵 생성
+		createStage();
 		
 		System.out.println("캔버스 실행");
 		
@@ -264,9 +264,37 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 	
 	/*********************************************************************/
 	
-	//블록 생성]
+	// 블록 생성하는 메소드
 	
-	private void createBlock() {
+	/* 첫번째 블록의 x좌표, y좌표, 블록이 뻗어나갈 방향, 생성할 블록 갯수, 블록 종류  */
+	private void createBlocks(int x, int y, int toWhere, int length, int type) {
+		
+		for(int i = x; i < length * 50; i += 50) { 
+				
+			/* # toWhere 블록 생성 방향 */
+			
+			/* 1: 동  */
+			if(toWhere == 1) { list_Block.add(new Block(type, i, y)); }
+			/* 2: 서  */
+			if(toWhere == 2) { list_Block.add(new Block(type, -i, y)); }
+			/* 3: 남  */
+			if(toWhere == 3) { list_Block.add(new Block(type, x, i)); }
+			/* 4: 북  */
+			if(toWhere == 4) { list_Block.add(new Block(type, x, -i)); }
+			
+		}
+		
+	}
+	
+	
+	
+	//블록 생성
+	
+	private void createStage() {
+		
+		
+		/* 첫번째 블록의 x좌표, y좌표, 블록이 뻗어나갈 방향(동1,서2,남3,북4), 생성할 블록 갯수, 블록 종류(0 ~ 4)  */
+		createBlocks(0, 950, 1)
 		
 		for(int i = 0; i <= 900; i += 50) { 
 			
