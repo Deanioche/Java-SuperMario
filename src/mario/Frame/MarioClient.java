@@ -26,6 +26,8 @@ import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.table.DefaultTableModel;
 
+import mario.ImageBox;
+
 public class MarioClient extends JFrame implements ActionListener ,Runnable{
 	
 	private MarioCanvas marioCanvas;
@@ -42,6 +44,7 @@ public class MarioClient extends JFrame implements ActionListener ,Runnable{
 	
 	public MarioClient() {
 		super("Mario");
+		new ImageBox();
 		
 		JScrollPane scroll_chat = new JScrollPane(textArea);
 		marioCanvas = new MarioCanvas(MarioClient.this);
@@ -155,7 +158,7 @@ public class MarioClient extends JFrame implements ActionListener ,Runnable{
 		setSize(res.width,res.height);
 		setLocationRelativeTo(null);
 		setVisible(true);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		setLayout(null);
 		
 		

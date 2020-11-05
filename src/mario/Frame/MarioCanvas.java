@@ -38,18 +38,23 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 	boolean runMotion = false; // true = run1, false = run2
 	boolean isJumping = false;  // 상승중
 	boolean isInAir = false;	// 공중
-	boolean isFalling = false;  // 낙하중 : gravity 
+	boolean isFalling = false;  // 낙하중  :  marioY += gravity
 	
-	public int marioX = 200, marioY = 300;
+	public int marioX = 0, marioY = 450;
 	public int gravity = 0;
 	
 	// 개체 영역
 	Rectangle marioR;
 	Rectangle blockR;
 	
-	public static List<Block> list_Block;
+	
+	List<Block> list_Block;
+	
+	
+	
 	
 	/************************************************************************************************/
+
 	
 	// 생성자
 	public MarioCanvas(MarioClient marioClient) {
@@ -78,7 +83,11 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 	} // MarioCanvas();
 	
 	
-	/************************************************************************************************/
+	
+	
+	/*********************************************************************/
+	
+	
 	
 	
 	private void characterControl() {
@@ -91,7 +100,7 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 				movePower = 0;	
 			}
 			
-			if(movePower > -30 && !isInAir) {
+			if(movePower > -25 && !isInAir) {
 				movePower --;
 			}
 			/*
@@ -109,7 +118,7 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 				movePower = 0;	
 			}
 			
-			if(movePower < 30 && !isInAir) {
+			if(movePower < 25 && !isInAir) {
 				movePower ++;
 			}
 			/*
@@ -143,7 +152,7 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 		if(pushing_Up) {		
 			
 			if(jumpPower == 0 && !isInAir) {
-				jumpPower = 35;	// 점프파워가 있다는건 점프중이라는 뜻
+				jumpPower = 25;	// 점프파워가 있다는건 점프중이라는 뜻
 			}
 			/*
 			 * 위 버튼을 눌렀을때,
@@ -151,6 +160,10 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 			 * 점프파워 = 20
 			 */
 		
+		/* 위 버튼 떼짐 - 동작 없음 */
+		}else if (!pushing_Up) {
+			
+		}
 		
 		if(jumpPower > 0) {
 			
@@ -177,7 +190,7 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 		if (isFalling && isInAir) {
 			
 			marioY += gravity;
-			if(gravity < 35) {
+			if(gravity < 25) {
 			gravity++;
 			}
 		}
@@ -190,7 +203,7 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 		
 		if(marioX < -25) {
 			marioX = 1750;
-		}else if(marioX > 1750) {
+		}else if(marioX > 1650) {
 			marioX = -20;
 		}
 		
@@ -198,7 +211,6 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 			marioY = -50;
 			gravity = 0;
 		}
-	}
 		
 		
 	} // characterControl();
@@ -217,89 +229,153 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 			int blockX = list_Block.get(i).getX();
 			int blockY = list_Block.get(i).getY();
 			
-			marioR = new Rectangle(marioX -1, marioY -1, 52, 52);
+
+//			marioR = new Rectangle(marioX, marioY, 50, 50);
 			blockR = new Rectangle(blockX, blockY, 50 ,50);
 			
-			if(marioR.intersects(blockR)) {
+			/* 블록 위 */
+			if(new Rectangle(marioX + 10, marioY + 51, 30, 5).intersects(blockR) && !isJumping) {
 				
-				if(isFalling && marioY + gravity < blockY) {
+				if(marioY + gravity < blockY) {
 					marioY = blockY - 50;
 				}
 				
-				jumpPower = 0;
+//				jumpPower = 0;
 				gravity = 0;
 				isFalling = false;
 				isInAir = false;
 				return;
 				
 			}
-//			else if(marioR.intersects(blockR)) {
-//				
-//				if(marioR.getMinY() ) {
-//					marioY = blockY + 1;
-//					}
-//				
-//				jumpPower = 0;
-//				gravity = 0;
+			else if(new Rectangle(marioX + 10, marioY - 1, 30, 5).intersects(blockR)) {
+				
+				if(marioY < blockY + 50) {
+					marioY = blockY + 51;
+				}
+				
+				jumpPower = 0;
+				gravity = 0;
 //				isFalling = true;
 //				isInAir = true;
-//				return;
-//				
-//			}
-			else if(Math.sqrt(
-					Math.pow((marioX - blockX), 2) + Math.pow((marioY - blockY), 2)) > 50 &&
-					Math.abs(marioX - blockX) > 25){
-//				System.out.println("낙하");
+				pushing_Up = false;
+				return;
 				
+			}else {
 				isFalling = true;
 				isInAir = true;
 			}
+			
+			/* 왼쪽 충돌 */
+			if(new Rectangle(marioX - 1, marioY + 5, 1, 40).intersects(blockR) && movePower < 0) {
+				
+				movePower = 0;
+//				isFalling = true;
+//				isInAir = true;
+				pushing_Left = false;
+				return;
+				
+			}
+			
+			/* 우측 충돌 */
+			if(new Rectangle(marioX + 51 , marioY + 5, 1, 40).intersects(blockR) && movePower > 0) {
+				
+				movePower = 0;
+//				isFalling = true;
+//				isInAir = true;
+				pushing_Right = false;
+				return;
+			}
+				
+				
+				
+//				if(isFalling || isJumping) {
+//				
+//					/* 낙하시 블록 충돌 */
+//					if(isFalling && marioY + gravity < blockY) {
+//						marioY = blockY - 50;
+//						jumpPower = 0;
+//						gravity = 0;
+//						isFalling = false;
+//						isInAir = false;
+//					}
+//					/* 점프중 블록 충돌 */
+//					else if(isJumping && marioY + jumpPower >= blockY + 50) {
+//						marioY = blockY + 51;
+//						jumpPower = 0;
+//						gravity = 0;
+//						isFalling = true;
+//						isInAir = true;
+//						pushing_Up = false;
+//					}
+//					/* 낙하 또는 점프 중 블록 왼쪽면 충돌 */
+//					else if(marioX + movePower > blockX) {
+//						marioX = blockX - 1;
+//						movePower = 0;
+//						isFalling = true;
+//						isInAir = true;
+//						pushing_Right = false;
+//					}
+//					/* 낙하 또는 점프 중 블록 오른쪽면 충돌 */
+//					else if(marioX + movePower < blockX + 50) {
+//						marioX = blockX + 51;
+//						movePower = 0;
+//						isFalling = true;
+//						isInAir = true;
+//						pushing_Right = true;
+//					}
+//					return;
+//
+//			else if(Math.sqrt(
+//					Math.pow((marioX - blockX), 2) + Math.pow((marioY - blockY), 2)) > 50 &&
+//					Math.abs(marioX - blockX) > 25){
+			
 		}
 	}
 			
-
-	
-	
 	
 	
 	/*********************************************************************/
 	
 	// 블록 생성하는 메소드
 	
-	/* 첫번째 블록의 x좌표, y좌표, 블록이 뻗어나갈 방향, 생성할 블록 갯수, 블록 종류  */
-	private void createBlocks(int x, int y, int toWhere, int length, int type) {
-		
-		for(int i = x; i < length * 50; i += 50) { 
-				
-			/* # toWhere 블록 생성 방향 */
-			
-			/* 1: 동  */
-			if(toWhere == 1) { list_Block.add(new Block(type, i, y)); }
-			/* 2: 서  */
-			if(toWhere == 2) { list_Block.add(new Block(type, -i, y)); }
-			/* 3: 남  */
-			if(toWhere == 3) { list_Block.add(new Block(type, x, i)); }
-			/* 4: 북  */
-			if(toWhere == 4) { list_Block.add(new Block(type, x, -i)); }
-			
-		}
-		
-	}
+	/*  첫번째 블록의 x좌표, y좌표, 블록이 뻗어나갈 방향(동1,서2,남3,북4), 생성할 블록 갯수, 블록 종류(0 ~ 4)  */
+//	private void createBlocks(int x, int y, String toWhere, int length, int type) {
+//		
+//		for(int i = x; i < length * 50; i += 50) { 
+//				
+//			/* # toWhere 블록 생성 방향 */
+//			
+//			/* 1: 동  */
+//			if(toWhere.equals("East")) { list_Block.add(new Block(type, i, y)); }
+//			/* 2: 서  */
+//			if(toWhere.equals("West")) { list_Block.add(new Block(type, x -i, y)); }
+//			/* 3: 남  */
+//			if(toWhere.equals("South")) { list_Block.add(new Block(type, x, i)); }
+//			/* 4: 북  */
+//			if(toWhere.equals("North")) { list_Block.add(new Block(type, x, -i)); }
+//	
+//		}
+//	}
 	
+	
+	
+	/*********************************************************************/
 	
 	
 	//블록 생성
 	
 	private void createStage() {
 		
-		
-		/* 첫번째 블록의 x좌표, y좌표, 블록이 뻗어나갈 방향(동1,서2,남3,북4), 생성할 블록 갯수, 블록 종류(0 ~ 4)  */
-		createBlocks(0, 950, 1, 18, 0);
-	
-		
-		for(int i = 1200; i <= 1900; i += 50) { 
+		/* 좌측 바닥 */
+		for(int i = 0; i <= 500; i += 50) { 	
 			
-			list_Block.add(new Block(0, i, 950));
+			list_Block.add(new Block(0, i, 950));	
+		}
+		
+		/* 우측 바닥 */
+		for(int i = 1200; i <= 1900; i += 50) { 	
+			
+			list_Block.add(new Block(0, i, 950));	
 		}
 		
 		for(int i = 500; i <= 650; i += 50) { 
@@ -326,9 +402,15 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 			list_Block.add(new Block(2, i, 100));
 		}
 		
-		for(int i = 1200; i <= 1300; i += 50) {
+		// 수직 기둥
+		for(int i = 500; i <= 800; i += 50) {
 			
-			list_Block.add(new Block(2, i, 50));
+			list_Block.add(new Block(2, 0, i));
+		}
+		
+		for(int i = 500; i <= 500; i += 50) {
+			
+			list_Block.add(new Block(4, i, 900));
 		}
 		
 		
@@ -341,11 +423,17 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 	@Override
 	public void update(Graphics g) {
 
+		//컨트롤
+		
+		checkGround();
+		characterControl();
 
 		bufferImage = createImage(this.getWidth(), this.getHeight());
 		bufferGraphic = bufferImage.getGraphics();
 		
 		bufferGraphic.drawImage(img, 0, 0, getWidth(), getHeight(), this);
+		
+		
 		
 		// 패널
 		
@@ -361,6 +449,12 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 		bufferGraphic.drawString("gravity : " + gravity, 1300, 300);
 		bufferGraphic.drawString("marioR : " + marioR, 1300, 320);
 
+		
+		bufferGraphic.drawRect(marioX + 51 , marioY + 5, 1, 40);
+		bufferGraphic.drawRect(marioX + 10, marioY + 51, 30, 5);
+		bufferGraphic.drawRect(marioX + 10, marioY - 1, 30, 5);
+		bufferGraphic.drawRect(marioX - 1, marioY + 5, 1, 40);
+		
 		/* ******************************************************************* */
 
 		// 배경화면 그리기
@@ -449,8 +543,7 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 		// 캐릭터가 공중이면 중력의 힘을 받는다.
 		// 캐릭터다 공중이다?
 	
-		checkGround();
-		characterControl();
+		
 				
 		/* ******************************************************************* */
 		paint(g);
@@ -503,6 +596,14 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 			pushing_Up = true;
 //			System.out.println("pushing_Up : " + pushing_Up);
 
+		}
+		/* 내려오기 */
+		if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+			
+//			pushing_Up = true;
+			marioY += 50;
+//			System.out.println("pushing_Up : " + pushing_Up);
+			
 		}
 	}
 	
@@ -582,7 +683,7 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 				/* ******************************************************************* */
 				
 				repaint();
-				Thread.sleep(20);
+				Thread.sleep(33);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

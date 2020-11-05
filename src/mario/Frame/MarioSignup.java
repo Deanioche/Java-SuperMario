@@ -392,7 +392,7 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 			signupdto.setClientAccount(tf_emailAccount.getText() + "@" + (String)comboBox_email.getSelectedItem());
 			signupdto.setPassword(new String(tf_pwd.getPassword()));
 			signupdto.setNickname(tf_nickname.getText());
-			signupdto.setRealName(tf_age.getText());
+			signupdto.setRealName(tf_name.getText());
 			signupdto.setAge(Integer.parseInt(tf_age.getText()));
 			signupdto.setGender(checkBox_man.isSelected() ? 0 : 1); 	// 여자 : 1
 			signupdto.setInfoAgree(cb_person_info.isSelected() ? 1 : 0);
@@ -533,22 +533,23 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 				 /* 이메일 인증시에 받은 dtoList로 닉네임 비교 */
 			 }else {
 				 
-				 for (MarioDTO dto : dtoList) {
-					if (tf_nickname.getText().equals(dto.getNickname())) {
-						 label_NicknameChkLabel.setForeground(new Color(100, 50, 50));
-						 label_NicknameChkLabel.setText("해당 닉네임이 이미 존재합니다.");
-						 label_NicknameChkLabel.setVisible(true);
-						 nicknameCheck = true;
-						 
-						return;
-						
-					}else {
-						label_NicknameChkLabel.setForeground(new Color(100, 200, 150));
-						label_NicknameChkLabel.setText("해당 닉네임을 사용할 수 있습니다.");
-						label_NicknameChkLabel.setVisible(true);
-						nicknameCheck = false;
-					}
+				if(dtoList != null) {
+					for (MarioDTO dto : dtoList) {
+						if (tf_nickname.getText().equals(dto.getNickname())) {
+							 label_NicknameChkLabel.setForeground(new Color(100, 50, 50));
+							 label_NicknameChkLabel.setText("해당 닉네임이 이미 존재합니다.");
+							 label_NicknameChkLabel.setVisible(true);
+							 nicknameCheck = false;
+							 
+							return;
+						}
+					} 
 				}
+				
+			label_NicknameChkLabel.setForeground(new Color(100, 200, 150));
+			label_NicknameChkLabel.setText("해당 닉네임을 사용할 수 있습니다.");
+			label_NicknameChkLabel.setVisible(true);
+			nicknameCheck = true;
 			}
 		}
 		
@@ -580,6 +581,7 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 			}
 		
 		} 
+		
 		
 		
 		/* ******************************************************************* */
@@ -615,7 +617,8 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 	
 	/*************************************************************************************************************/
 
-
+	
+	
 	@Override
 	public void run() {
 		try {

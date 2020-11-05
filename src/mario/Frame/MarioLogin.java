@@ -195,8 +195,8 @@ public class MarioLogin extends JFrame implements ActionListener {
 
 //				System.out.println("dto.getClientAccount() : " + dto.getClientAccount());
 //				System.out.println("dto.getPassword() : " + dto.getPassword());
-
-				if ((id.equals(dto.getClientAccount()) && pwd.equals(dto.getPassword()))
+				String[] checkId = dto.getClientAccount().split("@"); 
+				if ((id.equals(checkId[0]) && pwd.equals(dto.getPassword()))
 						|| (id.equals("admin") && pwd.equals("1234"))) {
 					new MarioClient();
 					dispose();
@@ -220,7 +220,7 @@ public class MarioLogin extends JFrame implements ActionListener {
 		} else if (e.getSource() == btn_sign_up) {
 			new MarioSignup();
 		}else if (e.getSource() == btn_dataManage) {
-	        new MarioDBTLogIn();
+	        new MarioDBTLogIn().event();
 		}
 
 	}
