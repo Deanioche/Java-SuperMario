@@ -30,6 +30,10 @@ import mario.ImageBox;
 
 public class MarioClient extends JFrame implements ActionListener ,Runnable{
 	
+	public static final int WIDTH = 1600;
+	public static final int HEIGHT = 900;
+	
+	
 	private MarioCanvas marioCanvas;
 	private String nickName;
 	private JTextArea textArea;
@@ -149,13 +153,8 @@ public class MarioClient extends JFrame implements ActionListener ,Runnable{
 		textArea = new JTextArea();
 		textArea.setEditable(false); //사용자가 텍스트를 입력할 수 있는지 없는지를 설정하고 반환한다.
 		
-		
-
-	
-		Dimension res = Toolkit.getDefaultToolkit().getScreenSize();
-		  System.out.println("해상도 : " + res.width + " x " + res.height);
 		  
-		setSize(res.width,res.height);
+		setSize(WIDTH, HEIGHT);
 		setLocationRelativeTo(null);
 		setVisible(true);
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
