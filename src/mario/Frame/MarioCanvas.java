@@ -294,12 +294,8 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 		
 		
 		/* 첫번째 블록의 x좌표, y좌표, 블록이 뻗어나갈 방향(동1,서2,남3,북4), 생성할 블록 갯수, 블록 종류(0 ~ 4)  */
-		createBlocks(0, 950, 1)
-		
-		for(int i = 0; i <= 900; i += 50) { 
-			
-			list_Block.add(new Block(0, i, 950));
-		}
+		createBlocks(0, 950, 1, 18, 0);
+	
 		
 		for(int i = 1200; i <= 1900; i += 50) { 
 			
