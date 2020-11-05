@@ -11,6 +11,8 @@ import java.util.List;
 import mario.dto.MarioDTO;
 
 public class MarioDAO {
+   
+   //역할 : 프레임에서 전달받은 정보를 담은 객체(dto)를 DB로 전송(SQL문)
 
    private Connection conn;
    private PreparedStatement pstmt;
@@ -154,8 +156,8 @@ public class MarioDAO {
          pstmt.setInt(6, dto.getGender());
          pstmt.setInt(7, dto.getInfoAgree());
          pstmt.setInt(8,dto.getScore());
-         pstmt.setString(10, dto.getGoalTime());
-         pstmt.setInt(9, dto.getPlayerRank());
+         pstmt.setString(9, dto.getGoalTime());
+         pstmt.setInt(10, dto.getPlayerRank());
          pstmt.setInt(11, dto.getSeq()); //★★★★중요!!객체에서 선택한 seq(새로 생성한 시퀀스X)로 넘겨주고 있는지 확인
                                  //->MarioDBTable에서 받고있음
                                          //★★★★seq 현재 로그인하고 있는 유저로 구분?(게시판 작성 참조) 
@@ -190,7 +192,8 @@ public class MarioDAO {
       try {
          pstmt = conn.prepareStatement(sql);
          pstmt.setInt(1, seq); //★★★★중요!!객체에서 선택한 seq(새로 생성한 시퀀스X)로 넘겨주고 있는지 확인
-                         //★★★★seq 현재 로그인하고 있는 유저로 구분?(게시판 작성 참조)
+                               //★★★★seq 현재 로그인하고 있는 유저로 구분?(게시판 작성 참조)
+         pstmt.executeUpdate();
       } catch (SQLException e) {
          e.printStackTrace();
       } finally {
@@ -204,11 +207,13 @@ public class MarioDAO {
       
    }
    
+  
+   
    /* ******************************************************************* */
    //★DB테이블에 저장되어있는 정보 가져오는 메소드 
    //테이블 정보 어디에 출력할지 레이아웃 확인
    public List<MarioDTO> getMarioList(){
-	   
+      
       List<MarioDTO> dtoList = new ArrayList<MarioDTO>();
       String sql = "select * from mario order by seq";
       getConnection();

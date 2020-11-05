@@ -28,20 +28,25 @@ import mario.dto.MarioDTO;
 
 public class MarioDBTable extends JFrame implements ActionListener { 
  
-   //★★★★★중요!!! sql 자료 입력후 반드시 commit이 필요
-   
+   //★★★★★중요!!! sql 자료 입력후 반드시 commit이 필요 - 2020/11/05 commit하지 않고도 실행됨(나중에 테스트해서 정말 괜찮으면 본 주석 지울예정)
+   //역할 : DB에 저장된 객체별 정보를 JTable에 표기
+   //     MarioDBTLogin에서 입력된 id/pw에 따라 표기되는 테이블 내용이 달라짐
+   //     계정삭제(탈퇴), 회원정보 수정이 가능
+    
    //1.필드선언
    private JButton updateBtn, deleteBtn, exitBtn;
    private JLabel titleL;
    private JLabel noticeL;
    private Vector<String> vector; //테이블 필드용 및 내용 생성용
-   private DefaultTableModel model; //테이블 생성용
+   private static DefaultTableModel model; //테이블 생성용
    private JTable table;
-   public static int SUBJECT_COUNT = 11; //테이블에 저장된 항목 수
-   public String editorID, editorPW;
+   public final static int SUBJECT_COUNT = 11; //테이블에 저장된 항목 수
+   public String editorID;
+   public String editorPW;
    
    
    public MarioDBTable(MarioDTO attempt) {
+      
       
       this.editorID = attempt.getClientAccount();
       this.editorPW = attempt.getPassword();
@@ -61,12 +66,7 @@ public class MarioDBTable extends JFrame implements ActionListener {
       vector.add("순위");
       
       
-//      if(editorID.equals("admin") && editorPW.equals("123")) {
-//         
-//      }else {
-//         display();
-//      }
-//      
+
       //5.테이블 생성
       model = new DefaultTableModel(vector,0) {
          public boolean isCellEditable(int row, int column) {
@@ -77,38 +77,44 @@ public class MarioDBTable extends JFrame implements ActionListener {
       JScrollPane scroll = new JScrollPane(table);
       scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
       
-      
-      
-      //6.DB정보를 List에 담기
       MarioDAO dao = MarioDAO.getInstance(); //DAO객체 생성
       List<MarioDTO> dtoList = dao.getMarioList(); 
-      //DB에 있는 쿼리를 객체로 받아 List(dtolist)에 추가, 그 내용을 여기서 dtoList변수에 다시 받음
+      
+     
+      //6.DB정보를 List에 담기(테이블에 표기)
+       //일반 사용자 정보 표시(본인 것만 표시)
+      //DBTLogin에서 입력받은 id/pw(객체 attempt)와 DB에 저장된 id/pw를 조회하여 일치하는 객체를 표시
       for(MarioDTO dto : dtoList) {
-         Vector<String> v = new Vector<String>();
-         v.add(dto.getSeq()+"");
-         v.add(dto.getClientAccount());
-         v.add(dto.getPassword());
-         v.add(dto.getRealName());
-         v.add(dto.getAge() + "");
-         v.add(dto.getNickname());
-         if(dto.getGender() == 0) {
-            v.add("남성");
-            
-         }else if(dto.getGender() == 1) {
-            v.add("여성");
-         }
-         if(dto.getInfoAgree() == 0) {
-            v.add("비동의");
-         }else if(dto.getInfoAgree() == 1) {
-            v.add("동의");
-         }
-         v.add(dto.getScore() + "");
-         v.add(dto.getGoalTime());
-         v.add(dto.getPlayerRank() + "");
-         
-         model.addRow(v);   
-      }
+         String[] checkID = dto.getClientAccount().split("@");
+         if(editorID.equals(checkID[0]) && editorPW.equals(dto.getPassword())) {
+            Vector<String> v = new Vector<String>();
+            v.add(dto.getSeq()+"");
+            v.add(dto.getClientAccount());
+            v.add(dto.getPassword());
+            v.add(dto.getRealName());
+            v.add(dto.getAge() + "");
+            v.add(dto.getNickname());
+            if(dto.getGender() == 0) {
+               v.add("남성");
+               
+            }else if(dto.getGender() == 1) {
+               v.add("여성");
+            }
+            if(dto.getInfoAgree() == 0) {
+               v.add("비동의");
+            }else if(dto.getInfoAgree() == 1) {
+               v.add("동의");
+            }
+            v.add(dto.getScore() + "");
+            v.add(dto.getGoalTime());
+            v.add(dto.getPlayerRank() + "");
+               
+               model.addRow(v);   
+            }
    
+         } 
+      
+      
       //3.컴포넌트 생성
       updateBtn = new JButton("정보수정");
       deleteBtn = new JButton("계정삭제");
@@ -135,10 +141,11 @@ public class MarioDBTable extends JFrame implements ActionListener {
       container.add("Center",scroll);
       
       
-      //테이블 내용 가운데 정렬
+      //테이블 내용 가운데 정렬 및 컬럼 크기 조절
       DefaultTableCellRenderer dtcr = new DefaultTableCellRenderer();
       dtcr.setHorizontalAlignment(SwingConstants.CENTER);
       TableColumnModel tcm = table.getColumnModel(); //테이블에서 컬럼가져오기
+      table.getColumnModel().getColumn(1).setPreferredWidth(150); //clientAccount만 가로조정
       
       for(int i = 0; i < tcm.getColumnCount(); i++) { //컬럼 수만큼 가운데 정렬
          tcm.getColumn(i).setCellRenderer(dtcr);
@@ -151,6 +158,9 @@ public class MarioDBTable extends JFrame implements ActionListener {
       setDefaultCloseOperation(EXIT_ON_CLOSE);
    }
    
+ 
+
+   //7.이벤트메소드
    public void event() {
       updateBtn.addActionListener(this);
       deleteBtn.addActionListener(this);
@@ -158,6 +168,7 @@ public class MarioDBTable extends JFrame implements ActionListener {
      
    }
    
+   //8.버튼 작동
    @Override
    public void actionPerformed(ActionEvent e) {
       if(e.getSource() == updateBtn) {
@@ -165,15 +176,15 @@ public class MarioDBTable extends JFrame implements ActionListener {
       }else if(e.getSource() == deleteBtn) {
          deleteArticle();
       }else if(e.getSource() == exitBtn) {
-         dispose(); //해당 창만 종료
+       dispose(); //해당 창만 종료
       }
    }
    
    
-   
+   //9.정보수정버튼 클릭시 호출되는 메소드
    private void updateArticle() {
       
-      //회원정보관리 리스트에서 선택한 목록의 일련번호(시퀀스)값을 가져오기
+      //회원정보관리 리스트에서 선택한 목록의 일련번호(시퀀스)값을 가져오기 - MarioDAO테이블의 동일명메소드로 객체를 넘겨줌
       //프레임 테이블에 있는 값을 지역변수(DTO작성용)에 저장
       String seq = (String)table.getValueAt(table.getSelectedRow(), 0); //int 형변환 필요
       String clientAccount = (String)table.getValueAt(table.getSelectedRow(), 1);
@@ -219,9 +230,10 @@ public class MarioDBTable extends JFrame implements ActionListener {
       //수정완료 메시지 출력
       JOptionPane.showMessageDialog(null, "회원 정보가 수정되었습니다", "회원정보 수정", JOptionPane.INFORMATION_MESSAGE);
 
-   }
+   }//updateArticle()
    
    
+   //10.계정삭제 버튼 클릭시 호출되는 메소드 - MarioDAO테이블의 동일명메소드로 시퀀스값을 넘겨줌
    private void deleteArticle() {
       
       //회원정보관리 리스트에서 선택한 목록의 일련번호(시퀀스)값을 가져오기
@@ -243,13 +255,48 @@ public class MarioDBTable extends JFrame implements ActionListener {
       }
       
       
-   }
+   }//deleteArticle()
 
-   
-   
 
-   public static void main(String[] args) {
-      new MarioDBTable(null).event();
+
+   public static void selectArticle() {
       
+      MarioDAO dao = MarioDAO.getInstance();
+      List<MarioDTO> dtoList = dao.getMarioList();
+      
+      for(MarioDTO dto : dtoList) {
+            String[] checkID = dto.getClientAccount().split("@");
+            
+               Vector<String> v = new Vector<String>();
+               v.add(dto.getSeq()+"");
+               v.add(dto.getClientAccount());
+               v.add(dto.getPassword());
+               v.add(dto.getRealName());
+               v.add(dto.getAge() + "");
+               v.add(dto.getNickname());
+               if(dto.getGender() == 0) {
+                  v.add("남성");
+                  
+               }else if(dto.getGender() == 1) {
+                  v.add("여성");
+               }
+               if(dto.getInfoAgree() == 0) {
+                  v.add("비동의");
+               }else if(dto.getInfoAgree() == 1) {
+                  v.add("동의");
+               }
+               v.add(dto.getScore() + "");
+               v.add(dto.getGoalTime());
+               v.add(dto.getPlayerRank() + "");
+               
+               model.addRow(v);   
+            
+ 
+      }
    }
+
+
+  
+   
+   
 }

@@ -119,6 +119,7 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 	
 	private void createStage() {
 		
+		/* 맵 끝 테두리 */
 		for(int i = -100; i <= 5100; i += 50) { 	
 			
 			list_Block.add(new Block(0, i, 5050));	
@@ -133,6 +134,9 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 			
 			list_Block.add(new Block(0, 5000, i));	
 		}
+		/* 맵 끝 테두리 */
+		
+		
 		
 		for(int i = 1000; i <= 2000; i += 50) { 	
 			
@@ -211,7 +215,7 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 			
 			if(direction) {
 				direction = false;
-				movePower = 0;	
+//				movePower = 0;	
 			}
 			
 			if(movePower > -20 && !isInAir && !touchLeft) {
@@ -231,7 +235,7 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 			
 			if(!direction) {
 				direction = true;
-				movePower = 0;	
+//				movePower = 0;	
 			}
 			
 			if(movePower < 20 && !isInAir && !touchRight) {
@@ -458,7 +462,7 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 		bufferGraphic.drawRect(marioX + 15, marioY + 46, 20, 5);     
 		bufferGraphic.drawRect(marioX + 15, marioY, 20, 5);          
 		bufferGraphic.drawRect(marioX, marioY + 30, 5, 10);          
-		bufferGraphic.drawRect(marioX + 45 , marioY + 30, 5, 10);    
+		bufferGraphic.drawRect(marioX + 45 , marioY + 30, 5, 10);  
 		
 		/* ******************************************************************* */
 
@@ -548,6 +552,14 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 		// 캐릭터가 공중이면 중력의 힘을 받는다.
 		// 캐릭터다 공중이다?
 	
+		
+		
+		bufferGraphic.setColor(new Color(255, 255, 255));
+		bufferGraphic.fillRoundRect(marioX - 5, marioY + 55, 60, 16, 10, 10);
+		bufferGraphic.setColor(new Color(0, 0, 0));
+		bufferGraphic.drawRoundRect(marioX - 5, marioY + 55, 60, 16, 10, 10);
+		bufferGraphic.setColor(new Color(0, 0, 0));
+		bufferGraphic.drawString("고길동", marioX+ 7, marioY + 68);
 		
 				
 		/* ******************************************************************* */

@@ -10,6 +10,8 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Vector;
@@ -28,7 +30,7 @@ import javax.swing.table.DefaultTableModel;
 
 import mario.ImageBox;
 
-public class MarioClient extends JFrame implements ActionListener ,Runnable{
+public class MarioClient extends JFrame implements ActionListener ,Runnable {
 	
 	public static final int WIDTH = 1600;
 	public static final int HEIGHT = 900;
@@ -165,7 +167,6 @@ public class MarioClient extends JFrame implements ActionListener ,Runnable{
 		//이벤트
 		 btn_start.addActionListener(this);
 		 btn_send.addActionListener(this);
-		 
 	
 			addWindowListener(new WindowAdapter() {
 				@Override
@@ -227,4 +228,8 @@ public class MarioClient extends JFrame implements ActionListener ,Runnable{
 	public static void main(String[] args) {
 		new MarioClient();
 	}
+
+
+
+
 }
