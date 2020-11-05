@@ -195,49 +195,27 @@ public class MarioLogin extends JFrame implements ActionListener {
 		// 로그인 버튼 이벤트
 		
 		if (e.getSource() == btn_login) {
-
-			String id = tf_emailAccount.getText();
-			// 암호화값 string에 담기
-			String pwd = "";
-			// tf_pw 필드에서 패스워드를 얻어옴,
-			char[] secret_pw = tf_pwd.getPassword(); // secret_pw 배열에 저장된 암호의 자릿수 만큼 for문 돌리면서 cha 에 한 글자씩 저장
-			for (char cha : secret_pw) {
-				Character.toString(cha); // cha 에 저장된 값 string으로 변환
-				// pw 에 저장하기, pw 에 값이 비어있으면 저장, 값이 있으면 이어서 저장하는 삼항연산자
-				pwd += (pwd.equals("")) ? "" + cha + "" : "" + cha + "";
-			}
-
-			if ((id.equals("") || (pwd.equals(""))))
-				JOptionPane.showMessageDialog(this, "아이디와 비밀번호를 입력해주십시요", "경고", JOptionPane.WARNING_MESSAGE);
-			tf_pwd.setText("");
-			tf_emailAccount.setText("");
-
-			if (id.equals("admin") && pwd.equals("1234")) {
-				new MarioClient();
-				dispose();
-				System.out.println("로그인 성공!");
-				return;
-
-			}
 			
 			/* 빈칸이 없을때 작동 */
 			if(tf_emailAccount.getText().length() != 0 && new String(tf_pwd.getPassword()).length() != 0) {
 				
 				/* 어드민 계정 */
-				if (id.equals("admin") && pwd.equals("1234")) {
+				if (tf_emailAccount.getText().equals("admin") && new String(tf_pwd.getPassword()).equals("1234")) {
 					dispose();
 					new MarioClient();
 					System.out.println("로그인 성공!");
+					loginSuccess = true;
 					return;
 				}
 				
+				/* dao 불러와서 비교 */
 				dao = MarioDAO.getInstance();
 
 				for (MarioDTO dto : dao.getMarioList()) { 
 
 					String[] checkId = dto.getClientAccount().split("@"); 
-					if ((id.equals(checkId[0]) && pwd.equals(dto.getPassword()))
-							|| (id.equals("admin") && pwd.equals("1234"))) {
+					if ((tf_emailAccount.getText().equals(checkId[0]) 
+							&& new String(tf_pwd.getPassword()).equals(dto.getPassword()))) {
 						new MarioClient();
 						dispose();
 						System.out.println("로그인 성공!");
@@ -248,87 +226,38 @@ public class MarioLogin extends JFrame implements ActionListener {
 
 				}
 				
-				
+				/* 빈칸 로그인  */
 			}else {
 				
 				JOptionPane.showMessageDialog(this, "입력란을 확인해주세요.");
-				
 			}
-			
-			
-			
-			
-			
-
-			dao = MarioDAO.getInstance();
-
-			for (MarioDTO dto : dao.getMarioList()) { 
-
-				String[] checkId = dto.getClientAccount().split("@"); 
-				if ((id.equals(checkId[0]) && pwd.equals(dto.getPassword()))
-						|| (id.equals("admin") && pwd.equals("1234"))) {
-					new MarioClient();
-					dispose();
-					System.out.println("로그인 성공!");
-					loginSuccess = true;
-					break;
-
-				}
-
-			}
-
+			/* 로그인  실패  */
 			if (!loginSuccess) {
-				JOptionPane.showMessageDialog(MarioLogin.this, "없는아이디나 비밀번호와 아이디가 맞지않습니다 ", "경고",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(this, "이메일 계정 또는 비밀번호를 확인해주세요");
 			}
 
 			tf_emailAccount.setText("");
 
-			insertArticle();
+			MarioDTO logindto = new MarioDTO();
+			logindto.setClientAccount(tf_emailAccount.getText());
+			logindto.setPassword(new String(tf_pwd.getPassword()));
 			
 			
 			
 			/* ******************************************************************* */
 			
-
+			/* 회원가입  */
 		} else if (e.getSource() == btn_sign_up) {
 			new MarioSignup();
+			
+			/* 데이터 관리창  */
 		}else if (e.getSource() == btn_dataManage) {
 	        new MarioDBTLogIn().event();
 		}
 
 	}
 	
-	
-	
-	/*************************************************************************************************************/
-	
-	
 
-	private void insertArticle() {
-		String id = tf_emailAccount.getText();
-		// 암호화값 string에 담기
-		String pwd = "";
-		// tf_pw 필드에서 패스워드를 얻어옴,
-		char[] secret_pw = tf_pwd.getPassword(); // secret_pw 배열에 저장된 암호의 자릿수 만큼 for문 돌리면서 cha 에 한 글자씩 저장
-		for (char cha : secret_pw) {
-			Character.toString(cha); // cha 에 저장된 값 string으로 변환
-			// pw 에 저장하기, pw 에 값이 비어있으면 저장, 값이 있으면 이어서 저장하는 삼항연산자
-			pwd += (pwd.equals("")) ? "" + cha + "" : "" + cha + "";
-		}
-		System.out.println(pwd);
-		// 데이터받기
-
-		// 데이터넣기
-		MarioDTO logindto = new MarioDTO();
-		logindto.setClientAccount(id);
-		logindto.setPassword(pwd);
-
-		// 중복된아이디입니다 다이얼로그뜨게하기
-
-	}
-	
-	
 	
 	/*************************************************************************************************************/
 
