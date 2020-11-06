@@ -37,7 +37,7 @@ import mario.ImageBox;
 import mario.Server.Protocols;
 import mario.dto.MarioDTO;
 
-public class MarioClient extends JFrame implements ActionListener, Runnable {
+public class MarioClient extends JFrame implements ActionListener{
 
 	public static final int WIDTH = 1600;
 	public static final int HEIGHT = 900;
@@ -47,8 +47,8 @@ public class MarioClient extends JFrame implements ActionListener, Runnable {
 	
 	/* 서버 객체  */
 	private Socket socket;
-	private ObjectOutputStream oos;
-	private ObjectInputStream ois;
+	ObjectOutputStream oos;
+	ObjectInputStream ois;
 
 	/* 서버로부터 받아올 객체  */
 	List<MarioDTO> list_PlayerInfo;
@@ -270,17 +270,15 @@ public class MarioClient extends JFrame implements ActionListener, Runnable {
 		
 		
 		/* 타이머 스레드 */
-		timerThread = new Thread(this) {
+		timerThread = new Thread( new Runnable() {
+			
 			@Override
 			public void run() {
-				
-				while(true) {
+			while(true) {
 					
 					/* ******************************************************************* */
 					
 					runTimer();
-					
-					sendDataToServer();
 					
 //					System.out.println("보내는 좌표 : " + marioCanvas.marioX +  ", " +  marioCanvas.marioY + ", " + marioCanvas.motionNum);
 					
@@ -295,8 +293,9 @@ public class MarioClient extends JFrame implements ActionListener, Runnable {
 					}
 				}
 				
-			}
-		};
+			} // run();
+		}); // timerThread;
+		
 
 	} // MarioClient();
 	
@@ -328,7 +327,6 @@ public class MarioClient extends JFrame implements ActionListener, Runnable {
 			MarioDTO dto = new MarioDTO();
 			
 			dto.setProtocol(Protocols.JOIN);
-//			dto.setNickname(MarioSignup.signupdto.getNickname());
 			dto.setNickname(clientData.getNickname());
 			
 			oos.writeObject(dto);
@@ -340,7 +338,21 @@ public class MarioClient extends JFrame implements ActionListener, Runnable {
 		
 		// 스레드 생성 & 시작
 		
-		Thread clientThread = new Thread(this);
+		Thread clientThread = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				
+				MarioDTO dto = null;
+				
+				while(!serverConnectFail) {
+				
+					dataFromServer(dto);
+				}
+			}
+				
+		});
+		
 		clientThread.start();
 		
 		/* ******************************************************************* */
@@ -357,8 +369,6 @@ public class MarioClient extends JFrame implements ActionListener, Runnable {
 		
 	}
 
-	
-	
 	
 	
 	/********************************************************************************************/
@@ -436,37 +446,6 @@ public class MarioClient extends JFrame implements ActionListener, Runnable {
 	
 
 	/********************************************************************************************/
-
-	
-	// 스레드 동작
-
-	@Override
-	public void run() {
-		
-		MarioDTO dto = null;
-		
-		
-		while(true) {
-		
-			/* ******************************************************************* */
-			
-			dataFromServer(dto);
-			
-			/* ******************************************************************* */
-				
-			try {
-				Thread.sleep(33);
-			} catch (InterruptedException e) {
-	
-				e.printStackTrace();
-			}
-		}
-
-		/* ******************************************************************* */
-
-	} // run();
-
-	
 	
 	
 	/********************************************************************************************/
@@ -505,7 +484,6 @@ public class MarioClient extends JFrame implements ActionListener, Runnable {
 	private void dataFromServer(MarioDTO dto) {
 		
 		try {
-
 		 
 		 /* ******************************************************************* */
 			
@@ -518,8 +496,16 @@ public class MarioClient extends JFrame implements ActionListener, Runnable {
 			 /* ******************************************************************* */
 			 if(dto.getProtocol() == Protocols.MOVE) {			
 				 
+				 
 				 list_PlayerInfo = dto.getList_PlayerInfo();
-			 
+				 
+				 System.out.println("dto.getList_PlayerInfo().size() : " + dto.getList_PlayerInfo().size());
+				
+				 for(MarioDTO data : dto.getList_PlayerInfo()) {
+					 
+				 System.out.println("Protocols.MOVEE : " +  list_PlayerInfo.get(0).getNickname() + " : " + 
+						 list_PlayerInfo.get(0).getPlayerCoordinateX() + ", " + data.getPlayerCoordinateY() + ", " + data.getPlayerMotionNum());
+				 }
 			 
 			 /* ******************************************************************* */
 			 
@@ -586,24 +572,6 @@ public class MarioClient extends JFrame implements ActionListener, Runnable {
 	
 	/* 0.033초마다 보낼 정보들 (좌표, 모션)  */
 	private void sendDataToServer() {
-
-		if(!serverConnectFail) {
-		
-			MarioDTO sendDTO = new MarioDTO();
-			 
-			 sendDTO.setProtocol(Protocols.MOVE);
-			 sendDTO.setNickname(clientData.getNickname());
-			 sendDTO.setPlayerCoordinateX(marioCanvas.marioX);
-			 sendDTO.setPlayerCoordinateY(marioCanvas.marioY);
-			 sendDTO.setPlayerMotionNum(marioCanvas.motionNum);
-			 
-			 try {
-				oos.writeObject(sendDTO);
-				oos.flush();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
 		
 		
 	} // sendDataToServer()
@@ -632,6 +600,9 @@ public class MarioClient extends JFrame implements ActionListener, Runnable {
 		}
 	}
 	
+	public static void main(String[] args) {
+		new MarioLogin();
+	}
 	
 	
 }

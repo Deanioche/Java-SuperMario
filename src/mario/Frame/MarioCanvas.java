@@ -9,11 +9,13 @@ import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import mario.Entity.Block;
 import mario.Entity.Mario;
+import mario.Server.Protocols;
 import mario.dto.MarioDTO;
 
 public class MarioCanvas extends Canvas implements KeyListener, Runnable {
@@ -568,14 +570,14 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 		/* 모든 플레이어 캐릭터 그리기 */
 		list_PlayerInfo = marioClient.list_PlayerInfo;
 		
-		if(list_PlayerInfo.size() != 0) {
-			
-			for(MarioDTO data : list_PlayerInfo) {
-			
-			System.out.println("list_PlayerInfo.size() : " + list_PlayerInfo.size());
-			System.out.println(data.getNickname() + " : "+data.getPlayerCoordinateX() +  ", " + data.getPlayerCoordinateY());
-			}
-		}
+//		if(list_PlayerInfo.size() != 0) {
+//			System.out.println("list_PlayerInfo.size() : " + list_PlayerInfo.size());
+//			
+//			for(MarioDTO data : list_PlayerInfo) {
+//			
+//			System.out.println(data.getNickname() + " : "+data.getPlayerCoordinateX() +  ", " + data.getPlayerCoordinateY());
+//			}
+//		}
 		
 		drawAllCharacters(bufferGraphic);
 		
@@ -714,6 +716,25 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 				// 카메라
 				
 				
+				if(!MarioClient.serverConnectFail && (pushing_Left || pushing_Right || pushing_Up)) {
+					
+					MarioDTO sendDTO = new MarioDTO();
+					 
+					 sendDTO.setProtocol(Protocols.MOVE);
+					 sendDTO.setNickname(clientData.getNickname());
+					 sendDTO.setPlayerCoordinateX(marioX);
+					 sendDTO.setPlayerCoordinateY(marioY);
+					 sendDTO.setPlayerMotionNum(motionNum);
+					 
+					 try {
+						 marioClient.oos.writeObject(sendDTO);
+						 marioClient.oos.flush();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+				
+				
 				/* ******************************************************************* */
 				
 				//달리기 모션
@@ -734,7 +755,7 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 				/* ******************************************************************* */
 				
 				repaint();
-				Thread.sleep(33);
+				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -770,5 +791,8 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 	
 	/*********************************************************************/
 	
+	public static void main(String[] args) {
+		new MarioLogin();
+	}
 
 }

@@ -110,10 +110,14 @@ public class MarioHandler extends Thread {
 							data.setPlayerCoordinateX(dto.getPlayerCoordinateX());
 							data.setPlayerCoordinateY(dto.getPlayerCoordinateY());
 							data.setPlayerMotionNum(dto.getPlayerMotionNum());
-//							System.out.println("서버에서 보내는 좌표 : " + data.getPlayerCoordinateX() +  ", " +  data.getPlayerCoordinateY() + ", " + data.getPlayerMotionNum());
 							
 							break;
 						}
+					}
+					for(int i = 0; i < list_PlayerInfo.size(); i++) {
+						System.out.println("From 서버 좌표 : " + list_PlayerInfo.get(i).getNickname() + ", " + 
+								list_PlayerInfo.get(i).getPlayerCoordinateX() +  ", " +  list_PlayerInfo.get(i).getPlayerCoordinateY() + 
+								", " + list_PlayerInfo.get(i).getPlayerMotionNum());
 					}
 
 					MarioDTO sendDTO = new MarioDTO();
@@ -247,7 +251,7 @@ public class MarioHandler extends Thread {
 				
 
 				try {
-					Thread.sleep(33);
+					Thread.sleep(100);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -275,6 +279,7 @@ public class MarioHandler extends Thread {
 	private void broadcast(MarioDTO sendDTO) {
 
 		for (MarioHandler handler : list_Handler) {
+			
 			if(sendDTO.getProtocol() != Protocols.MOVE) {
 			System.out.println("broadcast 동작 : " + sendDTO.getProtocol());
 			}
@@ -290,5 +295,7 @@ public class MarioHandler extends Thread {
 
 	} // broadcast();
 	
-	
+	public static void main(String[] args) {
+		new MarioServer();
+	}
 }
