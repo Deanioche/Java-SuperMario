@@ -73,6 +73,8 @@ public class MarioDBTable extends JFrame implements ActionListener {
             return (column != 0 && column != 1) ? true : false;
          }   
       };
+
+      
       table = new JTable(model);
       JScrollPane scroll = new JScrollPane(table);
       scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);

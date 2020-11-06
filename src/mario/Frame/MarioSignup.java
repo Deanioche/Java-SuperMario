@@ -69,9 +69,6 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 	// 닉네임 인증
 	private boolean nicknameCheck = false;
 	
-	// 회원가입 정보
-	public static MarioDTO signupdto;
-	
 	MarioLogin marioLogin;
 	
 	
@@ -393,7 +390,7 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 		}else {
 
 			/* DTO 객체 생성 및 입력 */
-			signupdto = new MarioDTO();
+			MarioDTO signupdto = new MarioDTO();
 			
 			signupdto.setClientAccount(tf_emailAccount.getText() + "@" + (String)comboBox_email.getSelectedItem());
 			signupdto.setPassword(new String(tf_pwd.getPassword()));

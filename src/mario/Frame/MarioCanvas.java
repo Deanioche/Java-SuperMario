@@ -14,6 +14,7 @@ import java.util.List;
 
 import mario.Entity.Block;
 import mario.Entity.Mario;
+import mario.dto.MarioDTO;
 
 public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 
@@ -40,7 +41,7 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 	boolean isInAir = false;	// 공중
 	boolean isFalling = false;  // 낙하중  :  marioY += gravity
 	
-	public int marioX = 1000, marioY = 5000;
+	public int marioX = 1000, marioY = 5000, motionNum = 0;
 	public int gravity = 0;
 	
 	// 개체 영역
@@ -50,8 +51,24 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 	private boolean touchRight = false;
 	
 	List<Block> list_Block;
+	private List<MarioDTO> list_PlayerInfo;
 	
+	/************************************************************************************************/
 	
+	//getter
+	
+	public int getMarioX() {
+		
+		return marioX;
+	}
+	public int getMarioY() {
+		
+		return marioY;
+	}
+	public int getMarioMotion() {
+		
+		return motionNum;
+	}
 	
 	
 	/************************************************************************************************/
@@ -73,7 +90,6 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 		
 		System.out.println("캔버스 실행");
 				
-		
 		addKeyListener(this);
 		
 		// 스레드 생성
@@ -515,39 +531,40 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 		
 		
 		
-		/* 캐릭터 */
+		/* 내 캐릭터 */
 		if(pushing_Left || pushing_Right) {
 			if(direction) { // 오른쪽
 				if(runMotion) {
-					new Mario(3, marioX, marioY).render(bufferGraphic);
+					new Mario(3, marioX, marioY).render(bufferGraphic); motionNum = 3;
 				}else {
-					new Mario(5, marioX, marioY).render(bufferGraphic);
+					new Mario(5, marioX, marioY).render(bufferGraphic); motionNum = 5;
 				}
 			}else {			// 왼쪽
 				if(runMotion) {
-					new Mario(2, marioX, marioY).render(bufferGraphic);
+					new Mario(2, marioX, marioY).render(bufferGraphic); motionNum = 2;
 				}else {
-					new Mario(4, marioX, marioY).render(bufferGraphic);
+					new Mario(4, marioX, marioY).render(bufferGraphic); motionNum = 4;
 				}
 			}
 			
 		}else if(pushing_Up) {
 			if(direction) { // 오른쪽
-				new Mario(7, marioX, marioY).render(bufferGraphic);
+				new Mario(7, marioX, marioY).render(bufferGraphic); motionNum = 7;
 			}else {			// 왼쪽
-				new Mario(6, marioX, marioY).render(bufferGraphic);
+				new Mario(6, marioX, marioY).render(bufferGraphic); motionNum = 6;
 			}
 			
 		}else {
 			if(direction) { // 오른쪽
-				new Mario(1, marioX, marioY).render(bufferGraphic);
+				new Mario(1, marioX, marioY).render(bufferGraphic); motionNum = 1;
 			}else {			// 왼쪽
-				new Mario(0, marioX, marioY).render(bufferGraphic);
+				new Mario(0, marioX, marioY).render(bufferGraphic); motionNum = 0;
 			}
 		}
 
+		/* 모든 플레이어 캐릭터 그리기 */
 		
-
+		drawAllCharacters(bufferGraphic);
 		
 		// 캐릭터가 공중이면 중력의 힘을 받는다.
 		// 캐릭터다 공중이다?
@@ -713,5 +730,20 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 	}
 
 	/*********************************************************************/
+	
+	
+	private void drawAllCharacters(Graphics g) {
+		
+		if( list_PlayerInfo != null && list_PlayerInfo.size() != 0 && !MarioClient.serverConnectFail) {
+			for(MarioDTO data : list_PlayerInfo) {
+			
+				new Mario(data.getPlayerMotionNum(), data.getPlayerCoordinateX(), data.getPlayerCoordinateY()).render(g); 
+			
+			}
+		}
+	}
+	
+	/*********************************************************************/
+	
 
 }

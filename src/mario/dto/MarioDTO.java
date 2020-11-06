@@ -41,6 +41,7 @@ public class MarioDTO implements Serializable {
 	private Color playerColor;
 	private int playerCoordinateX;
 	private int playerCoordinateY;
+	private int playerMotionNum;
 
 	private String chatMessage;
 	
@@ -193,4 +194,13 @@ public class MarioDTO implements Serializable {
 	public void setInfoAgree(int infoAgree) {
 		this.infoAgree = infoAgree;
 	}
+
+	public int getPlayerMotionNum() {
+		return playerMotionNum;
+	}
+
+	public void setPlayerMotionNum(int playerMotionNum) {
+		this.playerMotionNum = playerMotionNum;
+	}
+	
 }

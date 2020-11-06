@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 
-import ETC.MarioDTO_old;
 import mario.dto.MarioDTO;
 
 
@@ -19,9 +19,15 @@ public class MarioHandler extends Thread {
 	private ObjectInputStream ois;
 	private ObjectOutputStream oos;
 
+	
+	/* 해당 핸들러의 클라이언트 정보 */
 	private String nickname;
+//	private int seq;
+//	private int marioX;
+//	private int marioY;
+//	private int marioMotionNum;
 
-	private static List<MarioDTO_old> list_PlayerInfo;
+	private static List<MarioDTO> list_PlayerInfo;
 
 	/*
 	 *	  # 필드 
@@ -52,11 +58,19 @@ public class MarioHandler extends Thread {
 			e.printStackTrace();
 			System.out.println("MarioHandler : oos, ois 생성 실패");
 		}
+		
+		if(list_PlayerInfo == null) {
+			list_PlayerInfo = new ArrayList<MarioDTO>();
+			System.out.println("< list_PlayerInfo 생성완료 >");
+		}
 
 		/* ******************************************************************* */
 
 	} // MarioHandler()
 
+	
+	
+	
 	/********************************************************************************/
 
 	@Override
@@ -66,18 +80,48 @@ public class MarioHandler extends Thread {
 
 			MarioDTO dto = null;
 
-			/* ******************************************************************* */
-
 			while (true) {
+				
+				
 				dto = (MarioDTO) ois.readObject();
-				nickname = dto.getNickname(); // DB와 비교하기 위해 닉네임을 저장
-
-				nickname = dto.getNickname();
+				
+				nickname = dto.getNickname(); 
 				/* 아래 코드 작성하기 편하게 닉네임 정보를 미리 저장 */
 
+				
+				
+			/* ******************************************************************* */
+				
+				// 플레이어 좌표, 모션
+				
 				if (dto.getProtocol() == Protocols.MOVE) {
-					/* 모든 클라이언트 좌표수신 후 저장 */
+					/* 모든 클라이언트 좌표수신 후 리스트에 업데이트 */
 					/* 클라이언트 캐릭터의 모션정보 broadcast */
+					
+					/* 리스트 중에서 해당 클라이언트의 정보에 좌표와 모션정보 업데이트 */
+					for(MarioDTO data : list_PlayerInfo) {
+						if(dto.getSeq() == data.getSeq() 
+								&& dto.getNickname().equals(data.getNickname())) {
+							
+							data.setPlayerCoordinateX(dto.getPlayerCoordinateX());
+							data.setPlayerCoordinateY(dto.getPlayerCoordinateY());
+							data.setPlayerMotionNum(dto.getPlayerMotionNum());
+							
+							break;
+						}
+					}
+					MarioDTO sendDTO = new MarioDTO();
+					sendDTO.setProtocol(Protocols.MOVE);
+					sendDTO.setList_PlayerInfo(list_PlayerInfo);
+					
+					/* 모든 클라이언트에 보내기  */
+					broadcast(sendDTO);
+					
+					
+					
+			/* ******************************************************************* */		
+					
+				// 메세지 전송	
 
 				} else if (dto.getProtocol() == Protocols.SEND) {
 					/* 메세지 송수신 */
@@ -92,12 +136,23 @@ public class MarioHandler extends Thread {
 					
 					/* 모든 클라이언트에게 전송 */
 					broadcast(sendDTO);
+					
+					
+					
+					
+			/* ******************************************************************* */		
 
+				// 입장	
+					
 				} else if (dto.getProtocol() == Protocols.JOIN) {
 					
 					/* 클라이언트 입장  */
 					/* 닉네임, 좌표정보 수신 */
 					/* 입장 메세지 broadcast */
+					
+					/* 접속한 클라이언트를 리스트에 저장 */
+					list_PlayerInfo.add(dto);
+					System.out.println("list_PlayerInfo 리스트 수 : " + list_PlayerInfo.size());
 					
 					MarioDTO sendDTO = new MarioDTO();
 					sendDTO.setProtocol(Protocols.JOIN);
@@ -106,15 +161,57 @@ public class MarioHandler extends Thread {
 					
 					broadcast(sendDTO);
 
+					
+					
+					
+			/* ******************************************************************* */
+					
+				// 퇴장	
+					
 				} else if (dto.getProtocol() == Protocols.EXIT) {
-					
-					
 					
 					/* 클라이언트 퇴장  */
 					/* EXIT 프로토콜 보내기 */
 					/* 퇴장 메세지 broadcast */
-
+					
+					MarioDTO sendDTO = new MarioDTO();
+					sendDTO.setProtocol(Protocols.EXIT);
+					oos.writeObject(sendDTO);
+					
+					/* oos, ois 종료  */
+					oos.close();
+					ois.close();
+					
+					/* 플레이어 정보 리스트에서 해당 리스트 제거 */
+					for(int i = 0; i < list_PlayerInfo.size(); i++) {
+						if(dto.getSeq() == list_PlayerInfo.get(i).getSeq() 
+								&& dto.getNickname().equals(list_PlayerInfo.get(i).getNickname())) {
+							
+						list_PlayerInfo.remove(i);
+							
+							break;
+						}
+					}
+					
+					
+					/* 접속자 리스트에서 해당 핸들러 제거  */
+					list_Handler.remove(this); 
+					
+					sendDTO.setProtocol(Protocols.SEND);
+					sendDTO.setChatMessage("[" + nickname + "] 님이 퇴장했습니다. " );
+					System.out.println("[" + nickname + "] 님이 퇴장했습니다. " );
+					broadcast(sendDTO);
+					
+					/* 소켓 종료  */
+					socket.close();
+					break;
 				}
+				
+				
+				
+				
+			/* ******************************************************************* */		
+				
 				
 				/*
 				 * 	# 사용 빈도수가 높은 순서대로
@@ -132,15 +229,21 @@ public class MarioHandler extends Thread {
 				
 			} // while (true)
 
+			
+			
+			
 			/* ******************************************************************* */
 
 		} catch (ClassNotFoundException | IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 	} // run()
 
+	
+	
+	
+	
 	/********************************************************************************/
 	
 	private void broadcast(MarioDTO sendDTO) {
@@ -157,7 +260,7 @@ public class MarioHandler extends Thread {
 			}
 		}
 
-	}
+	} // broadcast();
 	
 	
 }

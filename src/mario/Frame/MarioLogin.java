@@ -43,6 +43,24 @@ public class MarioLogin extends JFrame implements ActionListener {
 
 	private List<MarioDTO> dtoList = new ArrayList<MarioDTO>();
 	
+	private MarioDTO clientData;
+	
+	/*************************************************************************************************************/
+	
+	//getter
+	
+	public MarioDTO getClientData() {
+		
+		return this.clientData;
+	}
+	
+	/* 회원가입이 완료될시 로그인계정과 콤보박스가 자동 세팅되고 비밀번호로 커서가 들어감. */
+	public void fill_login_emailAccount(String email, int comboIndex) {
+		
+		tf_emailAccount.setText(email);
+		tf_pwd.requestFocus();
+		comboBox_Email.setSelectedIndex(comboIndex);
+	}
 	
 	
 	/*************************************************************************************************************/
@@ -208,7 +226,10 @@ public class MarioLogin extends JFrame implements ActionListener {
 				/* 어드민 계정 */
 				if (tf_emailAccount.getText().equals("admin") && new String(tf_pwd.getPassword()).equals("1234")) {
 					dispose();
-					new MarioClient();
+					
+					dao = MarioDAO.getInstance();
+					
+					new MarioClient(dao.getMarioList().get(0)).connectServer(); // 서버 접속 버튼
 					System.out.println("로그인 성공!");
 					loginSuccess = true;
 					return;
@@ -222,7 +243,11 @@ public class MarioLogin extends JFrame implements ActionListener {
 					String[] checkId = dto.getClientAccount().split("@"); 
 					if ((tf_emailAccount.getText().equals(checkId[0]) 
 							&& new String(tf_pwd.getPassword()).equals(dto.getPassword()))) {
-						new MarioClient();
+						
+						/* 로그인한 클라이언트 정보 저장  */
+						clientData = dto;
+						
+						new MarioClient(clientData).connectServer();
 						dispose();
 						System.out.println("로그인 성공!");
 						loginSuccess = true;
@@ -243,34 +268,18 @@ public class MarioLogin extends JFrame implements ActionListener {
 				JOptionPane.showMessageDialog(this, "이메일 계정 또는 비밀번호를 확인해주세요");
 			}
 
-			tf_emailAccount.setText("");
-
-			MarioDTO logindto = new MarioDTO();
-			logindto.setClientAccount(tf_emailAccount.getText());
-			logindto.setPassword(new String(tf_pwd.getPassword()));
-			
-			
+			tf_pwd.setText("");
+						
 			
 			/* ******************************************************************* */
 			
 			/* 회원가입  */
 		} else if (e.getSource() == btn_sign_up) {
+			
 			new MarioSignup(MarioLogin.this);
 			
 			/* 데이터 관리창  */
 		}else if (e.getSource() == btn_dataManage) {
-			
-			if(MarioSignup.signupdto != null) {
-				System.out.println(MarioSignup.signupdto.getSeq());
-				System.out.println(MarioSignup.signupdto.getNickname());
-				System.out.println(MarioSignup.signupdto.getPassword());
-				System.out.println(MarioSignup.signupdto.getPasswordCheck());
-				System.out.println(MarioSignup.signupdto.getRealName());
-				System.out.println(MarioSignup.signupdto.getInfoAgree());
-				System.out.println(MarioSignup.signupdto.getAge());
-				}else {
-					System.out.println(MarioSignup.signupdto);
-				}
 			
 	        new MarioDBTLogIn().event();
 		}
@@ -282,12 +291,7 @@ public class MarioLogin extends JFrame implements ActionListener {
 	/*************************************************************************************************************/
 
 	
-	public void fill_login_emailAccount(String email, int comboIndex) {
-		
-		tf_emailAccount.setText(email);
-		tf_pwd.requestFocus();
-		comboBox_Email.setSelectedIndex(comboIndex);
-	}
+
 	
 	
 	
