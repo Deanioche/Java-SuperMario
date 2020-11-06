@@ -52,23 +52,24 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 	
 	List<Block> list_Block;
 	private List<MarioDTO> list_PlayerInfo;
+	private MarioDTO clientData;
 	
 	/************************************************************************************************/
 	
 	//getter
-	
-	public int getMarioX() {
-		
-		return marioX;
-	}
-	public int getMarioY() {
-		
-		return marioY;
-	}
-	public int getMarioMotion() {
-		
-		return motionNum;
-	}
+//	
+//	public int getMarioX() {
+//		
+//		return marioX;
+//	}
+//	public int getMarioY() {
+//		
+//		return marioY;
+//	}
+//	public int getMarioMotion() {
+//		
+//		return motionNum;
+//	}
 	
 	
 	/************************************************************************************************/
@@ -78,6 +79,8 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 	public MarioCanvas(MarioClient marioClient) {
 		
 		this.marioClient = marioClient;
+		clientData = marioClient.clientData;
+		
 		mCanvas = MarioCanvas.this;
 		list_Block = new ArrayList<Block>();
 		
@@ -563,6 +566,16 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 		}
 
 		/* 모든 플레이어 캐릭터 그리기 */
+		list_PlayerInfo = marioClient.list_PlayerInfo;
+		
+		if(list_PlayerInfo.size() != 0) {
+			
+			for(MarioDTO data : list_PlayerInfo) {
+			
+			System.out.println("list_PlayerInfo.size() : " + list_PlayerInfo.size());
+			System.out.println(data.getNickname() + " : "+data.getPlayerCoordinateX() +  ", " + data.getPlayerCoordinateY());
+			}
+		}
 		
 		drawAllCharacters(bufferGraphic);
 		
@@ -576,7 +589,7 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 		bufferGraphic.setColor(new Color(0, 0, 0));
 		bufferGraphic.drawRoundRect(marioX - 5, marioY + 55, 60, 16, 10, 10);
 		bufferGraphic.setColor(new Color(0, 0, 0));
-		bufferGraphic.drawString("고길동", marioX+ 7, marioY + 68);
+		bufferGraphic.drawString(clientData.getNickname(), marioX+ 7, marioY + 68);
 		
 				
 		/* ******************************************************************* */
@@ -656,7 +669,7 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 		if (e.getKeyCode() == KeyEvent.VK_LEFT) {
 			
 			pushing_Left = false;
-			System.out.println("pushing_Left : " + pushing_Left);
+//			System.out.println("pushing_Left : " + pushing_Left);
 			
 			
 
@@ -665,7 +678,7 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 		else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
 			
 			pushing_Right = false;
-			System.out.println("pushing_Right : " + pushing_Right);
+//			System.out.println("pushing_Right : " + pushing_Right);
 			
 			
 
@@ -674,7 +687,7 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 		else if (e.getKeyCode() == KeyEvent.VK_UP) {
 			
 			pushing_Up = false;
-			System.out.println("pushing_Up : " + pushing_Up);
+//			System.out.println("pushing_Up : " + pushing_Up);
 
 		}
 
@@ -736,8 +749,20 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 		
 		if( list_PlayerInfo != null && list_PlayerInfo.size() != 0 && !MarioClient.serverConnectFail) {
 			for(MarioDTO data : list_PlayerInfo) {
-			
-				new Mario(data.getPlayerMotionNum(), data.getPlayerCoordinateX(), data.getPlayerCoordinateY()).render(g); 
+				
+				if(!data.getNickname().equals(clientData.getNickname())) {
+					int marioX = data.getPlayerCoordinateX();
+					int marioY = data.getPlayerCoordinateY();
+					
+					new Mario(data.getPlayerMotionNum(), marioX, marioY).render(g);
+					
+					bufferGraphic.setColor(new Color(255, 255, 255));
+					bufferGraphic.fillRoundRect(marioX - 5, marioY + 55, 60, 16, 10, 10);
+					bufferGraphic.setColor(new Color(0, 0, 0));
+					bufferGraphic.drawRoundRect(marioX - 5, marioY + 55, 60, 16, 10, 10);
+					bufferGraphic.setColor(new Color(0, 0, 0));
+					bufferGraphic.drawString(data.getNickname(), marioX+ 7, marioY + 68);
+				}
 			
 			}
 		}

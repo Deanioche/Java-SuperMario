@@ -51,7 +51,7 @@ public class MarioClient extends JFrame implements ActionListener, Runnable {
 	private ObjectInputStream ois;
 
 	/* 서버로부터 받아올 객체  */
-	private List<MarioDTO> list_PlayerInfo;
+	List<MarioDTO> list_PlayerInfo;
 	
 	
 	/* 필드 객체  */
@@ -83,11 +83,10 @@ public class MarioClient extends JFrame implements ActionListener, Runnable {
 
 	//getter
 	
-	public List<MarioDTO> getList_PlayerInfo(){
-		
-			return list_PlayerInfo;
-	}
-	
+//	public List<MarioDTO> getList_PlayerInfo(){
+//		
+//			return list_PlayerInfo;
+//	}
 	
 	
 	/**********************************************************************************************/
@@ -283,6 +282,9 @@ public class MarioClient extends JFrame implements ActionListener, Runnable {
 					
 					sendDataToServer();
 					
+//					System.out.println("보내는 좌표 : " + marioCanvas.marioX +  ", " +  marioCanvas.marioY + ", " + marioCanvas.motionNum);
+					
+					
 					/* ******************************************************************* */
 						
 					try {
@@ -327,7 +329,7 @@ public class MarioClient extends JFrame implements ActionListener, Runnable {
 			
 			dto.setProtocol(Protocols.JOIN);
 //			dto.setNickname(MarioSignup.signupdto.getNickname());
-			dto.setNickname(nickname);
+			dto.setNickname(clientData.getNickname());
 			
 			oos.writeObject(dto);
 			oos.flush();
@@ -350,8 +352,6 @@ public class MarioClient extends JFrame implements ActionListener, Runnable {
 		System.out.println("서버 접속 실패!");
 		serverConnectFail = true;
 		
-		/* 접속여부 체크 후 서버로 정보를 송신하는 스레드 시작  */
-		timerThread.start();
 	}
 	
 		
@@ -384,6 +384,10 @@ public class MarioClient extends JFrame implements ActionListener, Runnable {
 			timer_Second = 0;
 			timer_Minute = 0;
 			
+			/* 접속여부 체크 후 서버로 정보를 송신하는 스레드 시작  */
+			if(!timerThread.isAlive()) {
+			timerThread.start();
+			}
 			
 		}// if;
 		
@@ -405,7 +409,7 @@ public class MarioClient extends JFrame implements ActionListener, Runnable {
 			}else {
 			
 			MarioDTO dto = new MarioDTO();
-			dto.setNickname(nickname);
+			dto.setNickname(clientData.getNickname());
 			dto.setProtocol(Protocols.SEND);
 			dto.setChatMessage(textField_Chat.getText());
 			textField_Chat.setText("");
@@ -490,6 +494,8 @@ public class MarioClient extends JFrame implements ActionListener, Runnable {
 		label_Timer_Second.setText(new DecimalFormat("00").format(timer_Second) + " : ");
 		label_Timer_Minute.setText(new DecimalFormat("00").format(timer_Minute) + " : ");
 		
+		
+		
 	}
 	
 	/********************************************************************************************/
@@ -506,7 +512,7 @@ public class MarioClient extends JFrame implements ActionListener, Runnable {
 			
 			dto = (MarioDTO) ois.readObject();
 			
-			 System.out.println("getDTO = (MarioDTO) ois.readObject() : 성공 ");
+//			 System.out.println("dataFromServer : getDTO = (MarioDTO) ois.readObject() : 성공 ");
 			 
 			 
 			 /* ******************************************************************* */
@@ -542,6 +548,7 @@ public class MarioClient extends JFrame implements ActionListener, Runnable {
 				 
 			 }else if(dto.getProtocol() == Protocols.EXIT) {	
 				 
+				serverConnectFail = true;
 				ois.close();
 				oos.close();
 				socket.close();
@@ -586,10 +593,9 @@ public class MarioClient extends JFrame implements ActionListener, Runnable {
 			 
 			 sendDTO.setProtocol(Protocols.MOVE);
 			 sendDTO.setNickname(clientData.getNickname());
-			 sendDTO.setSeq(clientData.getSeq());
-			 sendDTO.setPlayerCoordinateX(marioCanvas.getMarioX());
-			 sendDTO.setPlayerCoordinateY(marioCanvas.getMarioY());
-			 sendDTO.setPlayerMotionNum(marioCanvas.getMarioMotion());
+			 sendDTO.setPlayerCoordinateX(marioCanvas.marioX);
+			 sendDTO.setPlayerCoordinateY(marioCanvas.marioY);
+			 sendDTO.setPlayerMotionNum(marioCanvas.motionNum);
 			 
 			 try {
 				oos.writeObject(sendDTO);
