@@ -324,10 +324,9 @@ public class MarioClient extends JFrame implements ActionListener{
 		
 		// 서버로 JOIN 보내기
 		
-			MarioDTO dto = new MarioDTO();
+			MarioDTO dto = clientData;
 			
 			dto.setProtocol(Protocols.JOIN);
-			dto.setNickname(clientData.getNickname());
 			
 			oos.writeObject(dto);
 			oos.flush();
@@ -503,8 +502,8 @@ public class MarioClient extends JFrame implements ActionListener{
 				
 				 for(MarioDTO data : dto.getList_PlayerInfo()) {
 					 
-				 System.out.println("Protocols.MOVEE : " +  list_PlayerInfo.get(0).getNickname() + " : " + 
-						 list_PlayerInfo.get(0).getPlayerCoordinateX() + ", " + data.getPlayerCoordinateY() + ", " + data.getPlayerMotionNum());
+				 System.out.println("Protocols.MOVEE : " +  data.getNickname() + " : " + 
+						 data.getPlayerCoordinateX() + ", " + data.getPlayerCoordinateY() + ", " + data.getPlayerMotionNum());
 				 }
 			 
 			 /* ******************************************************************* */

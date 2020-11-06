@@ -10,6 +10,7 @@ import java.util.List;
 import mario.dto.MarioDTO;
 
 
+
 public class MarioHandler extends Thread {
 
 	// 필드
@@ -114,15 +115,17 @@ public class MarioHandler extends Thread {
 							break;
 						}
 					}
-					for(int i = 0; i < list_PlayerInfo.size(); i++) {
-						System.out.println("From 서버 좌표 : " + list_PlayerInfo.get(i).getNickname() + ", " + 
-								list_PlayerInfo.get(i).getPlayerCoordinateX() +  ", " +  list_PlayerInfo.get(i).getPlayerCoordinateY() + 
-								", " + list_PlayerInfo.get(i).getPlayerMotionNum());
-					}
 
 					MarioDTO sendDTO = new MarioDTO();
 					sendDTO.setProtocol(Protocols.MOVE);
 					sendDTO.setList_PlayerInfo(list_PlayerInfo);
+					
+					
+					for(int i = 0; i < sendDTO.getList_PlayerInfo().size(); i++) {
+						System.out.println("sendDTO 서버 좌표 : " + sendDTO.getList_PlayerInfo().get(i).getNickname() + ", " + 
+								sendDTO.getList_PlayerInfo().get(i).getPlayerCoordinateX() +  ", " +  sendDTO.getList_PlayerInfo().get(i).getPlayerCoordinateY() + 
+								", " + sendDTO.getList_PlayerInfo().get(i).getPlayerMotionNum());
+					}
 					
 					/* 모든 클라이언트에 보내기  */
 					broadcast(sendDTO);
@@ -162,13 +165,13 @@ public class MarioHandler extends Thread {
 					
 					/* 접속한 클라이언트를 리스트에 저장 */
 					
-					for(int i = 0; i < list_PlayerInfo.size(); i++) {
-						if(dto.getNickname().equals(list_PlayerInfo.get(i).getNickname())) {
-								System.out.println("Protocols.JOIN : 플레이어의 데이터가 이미 리스트에 있습니다.");
-								list_PlayerInfo.remove(i);
-							break;
-						}
-					}
+//					for(int i = 0; i < list_PlayerInfo.size(); i++) {
+//						if(dto.getNickname().equals(list_PlayerInfo.get(i).getNickname())) {
+//								System.out.println("Protocols.JOIN : 플레이어의 데이터가 이미 리스트에 있습니다.");
+//								list_PlayerInfo.remove(i);
+//							break;
+//						}
+//					}
 //					
 //					if(list_PlayerInfo.size() == 0) {
 						list_PlayerInfo.add(dto);
@@ -249,13 +252,6 @@ public class MarioHandler extends Thread {
 				 *  
 				 */
 				
-
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				
 				
 			} // while (true)
 
@@ -280,9 +276,7 @@ public class MarioHandler extends Thread {
 
 		for (MarioHandler handler : list_Handler) {
 			
-			if(sendDTO.getProtocol() != Protocols.MOVE) {
 			System.out.println("broadcast 동작 : " + sendDTO.getProtocol());
-			}
 			
 			try {
 				handler.oos.writeObject(sendDTO);

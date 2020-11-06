@@ -43,7 +43,7 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 	boolean isInAir = false;	// 공중
 	boolean isFalling = false;  // 낙하중  :  marioY += gravity
 	
-	public int marioX = 1000, marioY = 5000, motionNum = 0;
+	public int marioX = 800, marioY = 5000, motionNum = 0;
 	public int gravity = 0;
 	
 	// 개체 영역

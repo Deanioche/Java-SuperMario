@@ -1,18 +1,23 @@
 package mario.dao;
 
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.Font;
-import java.awt.Panel;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
@@ -33,6 +38,9 @@ public class MarioDBTLogIn extends JFrame implements ActionListener {
    private JTextField tf_emailAccount;
    private JPasswordField tf_pwd;
    private JButton okBtn, cancleBtn;
+   private boolean inputCheck;
+
+   
 
    
    public MarioDBTLogIn() {
@@ -40,6 +48,7 @@ public class MarioDBTLogIn extends JFrame implements ActionListener {
       super("회원확인");
       
       //3.컴포넌트 생성
+      
       label_securenotice = new JLabel("<html><body>  [안내]보안을 위해 다시 한번 <br><br>아이디와 비밀번호를 입력해주세요</body></html>");
       label_securenotice.setFont(new Font("MD개성체", Font.BOLD, 11));
       label_id = new JLabel("Email 계정 ");
@@ -49,34 +58,45 @@ public class MarioDBTLogIn extends JFrame implements ActionListener {
       label_pwd.setFont(new Font("MD개성체", Font.BOLD, 15));
       
       
-      label_pwdCheck = new JLabel();  
+      label_pwdCheck = new JLabel("아이디와 비밀번호가 일치하지 않습니다");  
       label_pwdCheck.setFont(new Font("MD개성체", Font.BOLD, 9));  
       label_pwdCheck.setVisible(false); 
       tf_emailAccount = new JTextField(4);
       tf_pwd = new JPasswordField(8);
       okBtn = new JButton("확인");
+      okBtn.setContentAreaFilled(false);
+      okBtn.setOpaque(false);
+      okBtn.setBorderPainted(false);
       cancleBtn = new JButton("취소");
+      cancleBtn.setContentAreaFilled(false);
+      cancleBtn.setOpaque(false);
+      cancleBtn.setBorderPainted(false);
 
       
-      label_securenotice.setBounds(50, 10, 250, 40);
+     
+      label_securenotice.setBounds(50, 30, 250, 40);
       
-      Panel p1 = new Panel();
+      JPanel p1 = new JPanel();
       p1.add(label_id);
       p1.add(tf_emailAccount);
       p1.add(comboBox_email);
       p1.setBounds(12, 100, 260, 30);
+      p1.setBackground(new Color(210,230,255));
       
-      Panel p2 = new Panel();
+      JPanel p2 = new JPanel();
       p2.add(label_pwd);
       p2.add(tf_pwd);
       p2.setBounds(16, 150, 200, 30);
+      p2.setBackground(new Color(210,230,255));
       
-      label_pwdCheck.setBounds(30, 180, 200, 40); 
+      label_pwdCheck.setBounds(30, 180, 200, 40);
+      label_pwdCheck.setBackground(new Color(210,230,255));
       
-      Panel p3 = new Panel();
+      JPanel p3 = new JPanel();
       p3.add(okBtn);
       p3.add(cancleBtn);
       p3.setBounds(40, 250, 200, 40);
+      p3.setBackground(new Color(210,230,255));
       
       
       Container container = this.getContentPane();
@@ -85,11 +105,19 @@ public class MarioDBTLogIn extends JFrame implements ActionListener {
       container.add(p1);
       container.add(p2);
       container.add(p3);
+      container.setBackground(new Color(210,230,255));
+      
+      tf_emailAccount.setFocusable(true);
+      tf_pwd.setFocusable(true);
+      okBtn.setFocusable(false);
+      cancleBtn.setFocusable(false);
+      comboBox_email.setFocusable(false);
       
       //2.프레임 생성
+      setBackground(new Color(255,255,255));
       setUndecorated(true);
       setLayout(null);
-      setBounds(700,300, 300, 300);
+      setBounds(850, 400, 300, 300);
       setVisible(true);
       setResizable(false);
       
@@ -101,22 +129,20 @@ public class MarioDBTLogIn extends JFrame implements ActionListener {
    public void event() {
       okBtn.addActionListener(this);
       cancleBtn.addActionListener(this);
-      
-      
-      //★★★★★★★★수정, 아이디비번 불일치 경고 없애기
-      label_pwdCheck.addFocusListener( new FocusListener() {
+     
+      tf_emailAccount.addFocusListener( new FocusListener() {
          
          @Override
          public void focusLost(FocusEvent e) {
-                   
+           
          }
          
          @Override
          public void focusGained(FocusEvent e) {
-            
-            label_pwdCheck.setText("");     
+            label_pwdCheck.setVisible(false);
          }
       });
+      
    }
    
    
@@ -163,7 +189,6 @@ public class MarioDBTLogIn extends JFrame implements ActionListener {
       attempt.setClientAccount(id);
       attempt.setPassword(pw);
       
-      new MarioDBTable(attempt).event();
       if(id.equals("admin") && pw.equals("1234")) {
          MarioDBTable.selectArticle();
       }else {
@@ -171,6 +196,7 @@ public class MarioDBTLogIn extends JFrame implements ActionListener {
       }
    }//enterTable
    
+     
    
    //7.메인메소드
    public static void main(String[] args) {
@@ -178,6 +204,5 @@ public class MarioDBTLogIn extends JFrame implements ActionListener {
       
    }
 
-
+   
 }
-
