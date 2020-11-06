@@ -1,4 +1,4 @@
-package mario.Main;
+package mario.Server;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -7,7 +7,7 @@ import java.net.Socket;
 import java.util.List;
 
 import ETC.MarioDTO_old;
-import mario.Protocols;
+import mario.dto.MarioDTO;
 
 
 public class MarioHandler extends Thread {
@@ -64,12 +64,13 @@ public class MarioHandler extends Thread {
 
 		try {
 
-			MarioDTO_old dto = null;
+			MarioDTO dto = null;
 
 			/* ******************************************************************* */
 
 			while (true) {
-				dto = (MarioDTO_old) ois.readObject();
+				dto = (MarioDTO) ois.readObject();
+				nickname = dto.getNickname(); // DB와 비교하기 위해 닉네임을 저장
 
 				nickname = dto.getNickname();
 				/* 아래 코드 작성하기 편하게 닉네임 정보를 미리 저장 */
@@ -80,14 +81,30 @@ public class MarioHandler extends Thread {
 
 				} else if (dto.getProtocol() == Protocols.SEND) {
 					/* 메세지 송수신 */
+					
+					/* 보낼 객체 생성  */
+					MarioDTO sendDTO = new MarioDTO();
+					sendDTO.setProtocol(Protocols.SEND);
+					sendDTO.setChatMessage("[" + nickname + "] " + dto.getChatMessage());
+					
+					/* 서버 콘솔에도 메세지 남기기 */
+					System.out.println("[" + nickname + "] " + dto.getChatMessage());
+					
+					/* 모든 클라이언트에게 전송 */
+					broadcast(sendDTO);
 
 				} else if (dto.getProtocol() == Protocols.JOIN) {
-					
-					
 					
 					/* 클라이언트 입장  */
 					/* 닉네임, 좌표정보 수신 */
 					/* 입장 메세지 broadcast */
+					
+					MarioDTO sendDTO = new MarioDTO();
+					sendDTO.setProtocol(Protocols.JOIN);
+					sendDTO.setChatMessage("[" + nickname + "] 님이 입장했습니다. " );
+					System.out.println("[" + nickname + "] 님이 입장했습니다. " );
+					
+					broadcast(sendDTO);
 
 				} else if (dto.getProtocol() == Protocols.EXIT) {
 					
@@ -126,7 +143,7 @@ public class MarioHandler extends Thread {
 
 	/********************************************************************************/
 	
-	private void broadcast(MarioDTO_old sendDTO) {
+	private void broadcast(MarioDTO sendDTO) {
 
 		for (MarioHandler handler : list_Handler) {
 			System.out.println("broadcast 동작 : " + sendDTO.getProtocol());

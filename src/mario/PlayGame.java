@@ -1,8 +1,8 @@
 package mario;
 
+import ETC.MarioClient_old;
 import mario.Frame.MarioClient;
 import mario.Frame.MarioLogin;
-import mario.Main.MarioClient_old;
 
 public class PlayGame {
 

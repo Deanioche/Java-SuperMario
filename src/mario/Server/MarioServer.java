@@ -1,4 +1,4 @@
-package mario.Main;
+package mario.Server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -13,6 +13,7 @@ public class MarioServer {
 	
 	public MarioServer() {
 		try {
+			
 			svSocket = new ServerSocket(9500);
 			System.out.println("소켓 서버 준비 완료");
 			

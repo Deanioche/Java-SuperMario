@@ -69,18 +69,24 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 	// 닉네임 인증
 	private boolean nicknameCheck = false;
 	
+	// 회원가입 정보
+	public static MarioDTO signupdto;
+	
+	MarioLogin marioLogin;
+	
 	
 	/***************************************************************************************************************************/
 
 	
 	// 생성자
 	
-	public MarioSignup() {
-
+	public MarioSignup(MarioLogin marioLogin) {
+		super("입소신청서");
+		
+		this.marioLogin = marioLogin;
 		
 		// 윈도우 창 설정
 		
-		super("입소신청서");
 		setBounds(0, 0, 550, 600);
 		setLocationRelativeTo(null);
 		setResizable(false);
@@ -387,7 +393,7 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 		}else {
 
 			/* DTO 객체 생성 및 입력 */
-			MarioDTO signupdto = new MarioDTO();
+			signupdto = new MarioDTO();
 			
 			signupdto.setClientAccount(tf_emailAccount.getText() + "@" + (String)comboBox_email.getSelectedItem());
 			signupdto.setPassword(new String(tf_pwd.getPassword()));
@@ -399,6 +405,8 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 			signupdto.setScore(0);
 			signupdto.setGoalTime(null);
 			signupdto.setPlayerRank(0);
+			
+			
 			
 			
 			
@@ -417,6 +425,8 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 			JOptionPane.showMessageDialog(this, signupdto.getNickname() + "님 환영합니다!");
 			threadStop = true;
 			dispose();
+			
+			marioLogin.fill_login_emailAccount(tf_emailAccount.getText(), comboBox_email.getSelectedIndex());
 			
 		}
 		
@@ -495,6 +505,7 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 			
 			/* 이메일 입력란 비활성화, 이메일 인증버튼 사라짐  */
 			tf_emailAccount.setEnabled(false); // 이메일 입력란 비활성화
+			comboBox_email.setEnabled(false); // 콤보박스 비활성화
 			btn_EmailAuth.setVisible(false);	// 버튼 사라짐
 			
 			
@@ -606,6 +617,7 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 			
 			/* 이메일 입력란 활성화,  인증 버튼 보이기  */
 			tf_emailAccount.setEnabled(true); 
+			comboBox_email.setEnabled(true); 
 			btn_EmailAuth.setVisible(true);	  
 			
 		}
@@ -687,10 +699,6 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 	
 	/*************************************************************************************************************/
 
-
-	public static void main(String[] args) {
-		new MarioSignup();
-	}
 
 
 }

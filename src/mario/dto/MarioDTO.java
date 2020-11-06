@@ -1,11 +1,12 @@
 package mario.dto;
 
 import java.awt.Color;
+import java.io.Serializable;
 import java.util.List;
 
-import mario.Protocols;
+import mario.Server.Protocols;
 
-public class MarioDTO {
+public class MarioDTO implements Serializable {
 
 	// 필드
 	// 프로토콜
@@ -14,13 +15,6 @@ public class MarioDTO {
 	// 회원가입시 입력 정보
 	private int seq;
 	private String clientAccount; // 이메일
-	public Protocols getProtocol() {
-		return protocol;
-	}
-
-	public void setProtocol(Protocols protocol) {
-		this.protocol = protocol;
-	}
 
 	private String password;
 	private String passwordCheck;
@@ -36,13 +30,6 @@ public class MarioDTO {
 	 * 실명, 나이, 계정명, 비밀번호, 비밀번호재확인
 	 */
 
-	public int getInfoAgree() {
-		return infoAgree;
-	}
-
-	public void setInfoAgree(int infoAgree) {
-		this.infoAgree = infoAgree;
-	}
 
 	// 게임 종료 후 받을 정보
 	private int score;
@@ -191,5 +178,19 @@ public class MarioDTO {
 
 	public void setPlayerRank(int playerRank) {
 		this.playerRank = playerRank;
+	}
+	public Protocols getProtocol() {
+		return protocol;
+	}
+
+	public void setProtocol(Protocols protocol) {
+		this.protocol = protocol;
+	}
+	public int getInfoAgree() {
+		return infoAgree;
+	}
+
+	public void setInfoAgree(int infoAgree) {
+		this.infoAgree = infoAgree;
 	}
 }

@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.util.List;
 
 import mario.Coordinate;
-import mario.Protocols;
+import mario.Server.Protocols;
 
 public class MarioDTO_old {
 

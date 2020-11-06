@@ -67,7 +67,7 @@ public class MarioLogin extends JFrame implements ActionListener {
 		tf_pwd = new JPasswordField(25);
 		btn_login = new JButton("LOGIN");
 		btn_sign_up = new JButton("Sign up");
-		btn_dataManage = new JButton("회원 데이터 관리");
+		btn_dataManage = new JButton("Data Storage");
 		
 		// 콤보박스 생성
 		comboBox_Email = new JComboBox<String>( new String[] {" @ naver.com", " @ gmail.com"} );
@@ -88,25 +88,25 @@ public class MarioLogin extends JFrame implements ActionListener {
 
 		
 		// 좌표
-		label_id.setBounds(50, 820, 200, 200);
-		label_pwd.setBounds(430, 820, 200, 200);
+		label_id.setBounds(500, 300, 200, 25);
+		label_pwd.setBounds(500, 400, 200, 25);
 
-		tf_pwd.setBounds(550, 900, 140, 40);
-		tf_emailAccount.setBounds(100, 900, 140, 40);
-		comboBox_Email.setBounds(250, 900, 160, 40);
+		tf_emailAccount.setBounds(500, 330, 160, 25);
+		comboBox_Email.setBounds(500, 360, 160, 30);
+		tf_pwd.setBounds(500, 430, 160, 25);
 
-		btn_login.setBounds(750, 890, 100, 40);
-		btn_sign_up.setBounds(850, 890, 120, 40);
-		btn_dataManage.setBounds(750, 930, 220, 30);
+		btn_login.setBounds(500, 460, 160, 30);
+		btn_sign_up.setBounds(500, 495, 160, 30);
+		btn_dataManage.setBounds(545, 15, 120, 25);
 
 		// 폰트
 		label_id.setFont(new Font("Hobo BT", Font.BOLD, 20));
 		label_pwd.setFont(new Font("Hobo BT", Font.BOLD, 20));
 		tf_emailAccount.setFont(new Font("Hobo BT", Font.BOLD, 20));
-		btn_login.setFont(new Font("Hobo BT", Font.BOLD, 15));
-		btn_sign_up.setFont(new Font("Hobo BT", Font.BOLD, 15));
-		comboBox_Email.setFont(new Font("Hobo BT", Font.BOLD, 17));
-		btn_dataManage.setFont(new Font("고딕체", Font.BOLD, 13));
+		btn_login.setFont(new Font("Hobo BT", Font.BOLD, 20));
+		btn_sign_up.setFont(new Font("Hobo BT", Font.BOLD, 20));
+		comboBox_Email.setFont(new Font("맑은 고딕", Font.BOLD, 17));
+		btn_dataManage.setFont(new Font("맑은 고딕", Font.BOLD, 12));
 
 		tf_pwd.setForeground(new Color(250, 100, 100));
 		tf_emailAccount.setForeground(new Color(250, 100, 100));
@@ -140,9 +140,15 @@ public class MarioLogin extends JFrame implements ActionListener {
 		background.add(btn_login);
 		background.add(btn_sign_up);
 		background.add(btn_dataManage);
+		add(background);
 
 
-		setBounds(0, 0, 1000, 1000);
+		/* ******************************************************************* */
+		
+		
+		// 윈도우 창 설정 
+		
+		setBounds(0, 0, 680, 580);
 		setLocationRelativeTo(null);
 		setVisible(true);
 		setResizable(false);
@@ -231,8 +237,9 @@ public class MarioLogin extends JFrame implements ActionListener {
 				
 				JOptionPane.showMessageDialog(this, "입력란을 확인해주세요.");
 			}
+			
 			/* 로그인  실패  */
-			if (!loginSuccess) {
+			if (!loginSuccess && new String(tf_pwd.getPassword()).length() != 0) {
 				JOptionPane.showMessageDialog(this, "이메일 계정 또는 비밀번호를 확인해주세요");
 			}
 
@@ -248,10 +255,23 @@ public class MarioLogin extends JFrame implements ActionListener {
 			
 			/* 회원가입  */
 		} else if (e.getSource() == btn_sign_up) {
-			new MarioSignup();
+			new MarioSignup(MarioLogin.this);
 			
 			/* 데이터 관리창  */
 		}else if (e.getSource() == btn_dataManage) {
+			
+			if(MarioSignup.signupdto != null) {
+				System.out.println(MarioSignup.signupdto.getSeq());
+				System.out.println(MarioSignup.signupdto.getNickname());
+				System.out.println(MarioSignup.signupdto.getPassword());
+				System.out.println(MarioSignup.signupdto.getPasswordCheck());
+				System.out.println(MarioSignup.signupdto.getRealName());
+				System.out.println(MarioSignup.signupdto.getInfoAgree());
+				System.out.println(MarioSignup.signupdto.getAge());
+				}else {
+					System.out.println(MarioSignup.signupdto);
+				}
+			
 	        new MarioDBTLogIn().event();
 		}
 
@@ -261,6 +281,17 @@ public class MarioLogin extends JFrame implements ActionListener {
 	
 	/*************************************************************************************************************/
 
+	
+	public void fill_login_emailAccount(String email, int comboIndex) {
+		
+		tf_emailAccount.setText(email);
+		tf_pwd.requestFocus();
+		comboBox_Email.setSelectedIndex(comboIndex);
+	}
+	
+	
+	
+	/*************************************************************************************************************/
 	public static void main(String[] args) {
 		new MarioLogin();
 	}

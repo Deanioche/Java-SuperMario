@@ -1,8 +1,8 @@
-package mario;
+package mario.Server;
 
 public enum Protocols {
 
-	JOIN, EXIT, MOVE, SEND, STANDING, RUNNING, JUMPING
+	JOIN, EXIT, MOVE, SEND
 
 	/*
 	 * # 프로토콜 

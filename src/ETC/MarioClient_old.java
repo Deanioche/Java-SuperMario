@@ -1,4 +1,4 @@
-package mario.Main;
+package ETC;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -30,8 +30,8 @@ import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.table.DefaultTableModel;
 
-import mario.Protocols;
 import mario.Frame.MarioCanvas;
+import mario.Server.Protocols;
 import mario.dao.MarioDAO;
 import mario.dto.MarioDTO;
 

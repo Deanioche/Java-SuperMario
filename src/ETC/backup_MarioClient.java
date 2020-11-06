@@ -21,8 +21,8 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-import mario.Protocols;
 import mario.Frame.MarioCanvas;
+import mario.Server.Protocols;
 import mario.dao.MarioDAO;
 import mario.dto.MarioDTO;
 
