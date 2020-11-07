@@ -9,13 +9,13 @@ import javax.swing.JPanel;
 
 
 
-public class MarioSignupPaint extends JPanel{ 
+public class MarioSignupPaint_notUsed extends JPanel{ 
 	private ImageIcon ic_bg_MarioImage = new ImageIcon("image/MARIO.jpg");  //배경아이콘
 	private Image im_mario_bg = ic_bg_MarioImage.getImage();                         //이미지에넣기
 	
 
 
-	public  MarioSignupPaint() {
+	public  MarioSignupPaint_notUsed() {
 		
 		
 	

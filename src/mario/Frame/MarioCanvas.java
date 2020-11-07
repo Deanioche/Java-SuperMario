@@ -755,7 +755,7 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 				/* ******************************************************************* */
 				
 				repaint();
-				Thread.sleep(100);
+				Thread.sleep(33);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

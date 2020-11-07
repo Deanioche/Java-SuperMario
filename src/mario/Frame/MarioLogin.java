@@ -29,12 +29,13 @@ import mario.dao.MarioDBTLogIn;
 import mario.dto.MarioDTO;
 
 public class MarioLogin extends JFrame implements ActionListener {
-	private JLabel label_id, label_pwd;
+	
+	private JLabel label_id, label_pwd, label_ip;
 	private JTextField tf_emailAccount;
 	private JPasswordField tf_pwd;
 	private JButton btn_login, btn_sign_up, btn_dataManage;
 	private MarioDAO dao;
-	private JComboBox<String> comboBox_Email;
+	private JComboBox<String> comboBox_Email, comboBox_IP_Address;
 
 	private boolean loginSuccess = false;
 
@@ -79,6 +80,7 @@ public class MarioLogin extends JFrame implements ActionListener {
 		// 라벨생성
 		label_id = new JLabel("ID"); // 이메일주소입력하라고 표시남기기
 		label_pwd = new JLabel("Password");
+		label_ip = new JLabel("IP Address");
 
 		// 텍스트필드생성
 		tf_emailAccount = new JTextField(25);
@@ -89,6 +91,9 @@ public class MarioLogin extends JFrame implements ActionListener {
 		
 		// 콤보박스 생성
 		comboBox_Email = new JComboBox<String>( new String[] {" @ naver.com", " @ gmail.com"} );
+		comboBox_IP_Address = new JComboBox<String>( new String[] {"192.168.0.28", "192.168.0.98", "직접 입력 가능"});
+		comboBox_IP_Address.setEditable(true);
+		comboBox_IP_Address.setSelectedIndex(0);
 
 		// 페인트패널생성
 		JPanel background = new JPanel(null) {
@@ -108,6 +113,9 @@ public class MarioLogin extends JFrame implements ActionListener {
 		// 좌표
 		label_id.setBounds(500, 300, 200, 25);
 		label_pwd.setBounds(500, 400, 200, 25);
+		
+		label_ip.setBounds(27, 473, 200, 25);
+		comboBox_IP_Address.setBounds(25, 500, 160, 25);
 
 		tf_emailAccount.setBounds(500, 330, 160, 25);
 		comboBox_Email.setBounds(500, 360, 160, 30);
@@ -116,15 +124,18 @@ public class MarioLogin extends JFrame implements ActionListener {
 		btn_login.setBounds(500, 460, 160, 30);
 		btn_sign_up.setBounds(500, 495, 160, 30);
 		btn_dataManage.setBounds(545, 15, 120, 25);
+		
 
 		// 폰트
 		label_id.setFont(new Font("Hobo BT", Font.BOLD, 20));
 		label_pwd.setFont(new Font("Hobo BT", Font.BOLD, 20));
+		label_ip.setFont(new Font("Hobo BT", Font.BOLD, 20));
 		tf_emailAccount.setFont(new Font("Hobo BT", Font.BOLD, 20));
 		btn_login.setFont(new Font("Hobo BT", Font.BOLD, 20));
 		btn_sign_up.setFont(new Font("Hobo BT", Font.BOLD, 20));
 		comboBox_Email.setFont(new Font("맑은 고딕", Font.BOLD, 17));
 		btn_dataManage.setFont(new Font("맑은 고딕", Font.BOLD, 12));
+		comboBox_IP_Address.setFont(new Font("맑은 고딕", Font.BOLD, 12));
 
 		tf_pwd.setForeground(new Color(250, 100, 100));
 		tf_emailAccount.setForeground(new Color(250, 100, 100));
@@ -150,6 +161,7 @@ public class MarioLogin extends JFrame implements ActionListener {
 		// 패널잡기
 		background.add(label_id);
 		background.add(label_pwd);
+		background.add(label_ip);
 
 		background.add(tf_emailAccount);
 		background.add(tf_pwd);
@@ -158,6 +170,7 @@ public class MarioLogin extends JFrame implements ActionListener {
 		background.add(btn_login);
 		background.add(btn_sign_up);
 		background.add(btn_dataManage);
+		background.add(comboBox_IP_Address);
 		add(background);
 
 

@@ -1,20 +1,16 @@
 package mario;
 
-import ETC.MarioClient_old;
-import mario.Frame.MarioClient;
 import mario.Frame.MarioLogin;
 
 public class PlayGame {
 
 	public static void main(String[] args) {
 		new ImageBox();
-//		new MarioClient_old();
-//		new MarioClient();
 		new MarioLogin();
 	}
 }
 
-/*
+/* SQL 코드
 
 
 create table mario(
