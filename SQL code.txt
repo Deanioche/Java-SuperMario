@@ -20,3 +20,14 @@ select * from mario;
 drop table mario;
 
 drop sequence seq_mario;
+
+select * from tab;
+
+-- 행 추가, 삭제, 변경 명령어
+delete mario where seq = 6;
+
+update mario set clientaccount = ?;
+
+insert into mario values(?,?,?,?,?,?,?,?,?,?,?);
+
+commit;

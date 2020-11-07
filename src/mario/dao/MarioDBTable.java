@@ -157,7 +157,7 @@ public class MarioDBTable extends JFrame implements ActionListener {
       //2.프레임 생성
       setBounds(700, 300, 1000, 300);
       setVisible(true);
-      setDefaultCloseOperation(EXIT_ON_CLOSE);
+      setDefaultCloseOperation(DISPOSE_ON_CLOSE);
    }
    
  

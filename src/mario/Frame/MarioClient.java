@@ -76,11 +76,6 @@ public class MarioClient extends JFrame implements ActionListener{
 
 	//getter
 	
-//	public List<MarioDTO> getList_PlayerInfo(){
-//		
-//			return list_PlayerInfo;
-//	}
-	
 	
 	/**********************************************************************************************/
 	
@@ -101,11 +96,10 @@ public class MarioClient extends JFrame implements ActionListener{
 		new ImageBox();
 		marioCanvas = new MarioCanvas(MarioClient.this, marioLogin);
 
-		/* ******************************************************************* */
-
-		// 표시될 객체 생성
-
 		
+		
+		/* ******************************************************************* */
+		// 표시될 객체 생성
 
 		/* 라벨 */
 		label_Timer_Second = new JLabel("00 : ");
@@ -200,11 +194,10 @@ public class MarioClient extends JFrame implements ActionListener{
 		setLayout(null);
 
 		
-		
 		/* ******************************************************************* */
-
 		// 이벤트
-
+		
+		
 		btn_start.addActionListener(this);
 		btn_send.addActionListener(this);
 
@@ -224,7 +217,9 @@ public class MarioClient extends JFrame implements ActionListener{
 		});
 		
 		
-		/* 윈도우 닫기 이벤트 */
+		/* ******************************************************************* */
+		// 윈도우 창 닫기 이벤트
+		
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
@@ -259,9 +254,27 @@ public class MarioClient extends JFrame implements ActionListener{
 			}
 		});
 		
+		/* ******************************************************************* */
+		// JOIN 프로토콜
+		
+		MarioDTO sendDTO = new MarioDTO();
+		
+		sendDTO.setProtocol(Protocols.JOIN);
+		sendDTO.setNickname(clientData.getNickname());
+		System.out.println("clientData.getNickname()" + clientData.getNickname());
+		
+		try {
+			marioLogin.oos.writeObject(sendDTO);
+			marioLogin.oos.flush();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 		
 		
-		/* 타이머 스레드 */
+		/* ******************************************************************* */
+		// 타이머 스레드
+		
+		
 		timerThread = new Thread( new Runnable() {
 			
 			@Override
@@ -272,13 +285,10 @@ public class MarioClient extends JFrame implements ActionListener{
 					
 					runTimer();
 					
-//					System.out.println("보내는 좌표 : " + marioCanvas.marioX +  ", " +  marioCanvas.marioY + ", " + marioCanvas.motionNum);
-					
-					
 					/* ******************************************************************* */
 						
 					try {
-						Thread.sleep(33);
+						Thread.sleep(33); // 1초에 30번 반복
 					} catch (InterruptedException e) {
 			
 						e.printStackTrace();
@@ -288,6 +298,8 @@ public class MarioClient extends JFrame implements ActionListener{
 			} // run();
 		}); // timerThread;
 		
+		
+		/* ******************************************************************* */
 
 	} // MarioClient();
 	
@@ -296,9 +308,6 @@ public class MarioClient extends JFrame implements ActionListener{
 
 	
 	/********************************************************************************************/
-
-	
-	
 	// 버튼 이벤트
 
 	@Override
@@ -307,7 +316,6 @@ public class MarioClient extends JFrame implements ActionListener{
 		
 		
 		/* ******************************************************************* */
-		
 		// 시작 버튼
 		
 		if (e.getSource() == btn_start) {
@@ -321,19 +329,19 @@ public class MarioClient extends JFrame implements ActionListener{
 			/* 접속여부 체크 후 서버로 정보를 송신하는 스레드 시작  */
 			if(!timerThread.isAlive()) {
 			timerThread.start();
+			
 			}
 			
 		}// if;
 		
 		
 		/* ******************************************************************* */
-		
 		// 채팅 보내기
 		
 		else if( e.getSource() == btn_send) {
 			
 			/* 입력값이 없으면 보내지 않는다. */
-			if(textField_Chat.getText().length() == 0 || MarioLogin.serverConnected) {
+			if(textField_Chat.getText().length() == 0 || !MarioLogin.serverConnected) {
 				textArea_Chat.append("서버에 접속중이 아니므로 메세지를 보낼 수 없습니다.\n");
 				textArea_Chat.setCaretPosition(textArea_Chat.getText().length());
 				textField_Chat.setText("");
@@ -343,8 +351,8 @@ public class MarioClient extends JFrame implements ActionListener{
 			}else {
 			
 			MarioDTO dto = new MarioDTO();
-			dto.setNickname(clientData.getNickname());
 			dto.setProtocol(Protocols.SEND);
+			dto.setNickname(clientData.getNickname());
 			dto.setChatMessage(textField_Chat.getText());
 			textField_Chat.setText("");
 			
@@ -361,15 +369,12 @@ public class MarioClient extends JFrame implements ActionListener{
 			
 		} // else if;
 
-		/* ******************************************************************* */
-
-	}
+	} // actionPerformed;
+	
 	
 	
 	/********************************************************************************************/
-	
-	// 타이머
-
+	// 타이머 메소드
 	
 	private void runTimer() {
 		

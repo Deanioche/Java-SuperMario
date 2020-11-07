@@ -3,7 +3,6 @@ package mario.Frame;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -713,13 +712,13 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 				
 				
 				/* ******************************************************************* */
-				// 카메라
+				// 좌표 전송
 				
 				
-				if(MarioLogin.serverConnected && (pushing_Left || pushing_Right || pushing_Up)) {
-					
+				if(MarioLogin.serverConnected && (movePower != 0 || jumpPower != 0 || gravity != 0)) {
+							
 					MarioDTO sendDTO = new MarioDTO();
-					 
+							 
 					 sendDTO.setProtocol(Protocols.MOVE);
 					 sendDTO.setNickname(clientData.getNickname());
 					 sendDTO.setPlayerCoordinateX(marioX);
@@ -732,12 +731,12 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
+					
 				}
 				
-				
 				/* ******************************************************************* */
-				
 				//달리기 모션
+				
 				runTimer--;
 				if(runTimer <= 0 && runMotion) {
 					

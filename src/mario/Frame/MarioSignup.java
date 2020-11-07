@@ -12,6 +12,7 @@ import java.awt.event.TextEvent;
 import java.awt.event.TextListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,7 @@ import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 import mario.EmailAutho;
+import mario.Server.Protocols;
 import mario.dao.MarioDAO;
 import mario.dto.MarioDTO;
 
@@ -367,7 +369,7 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 	
 	/*************************************************************************************************************/
 	
-	// 입력값 검사 및 DB에 저장 메소드 
+	// 입력값 검사 및 DB에 저장 
 	
 	public void CheckArticle() {
 
@@ -392,6 +394,7 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 			/* DTO 객체 생성 및 입력 */
 			MarioDTO signupdto = new MarioDTO();
 			
+			signupdto.setProtocol(Protocols.SIGNUP);
 			signupdto.setClientAccount(tf_emailAccount.getText() + "@" + (String)comboBox_email.getSelectedItem());
 			signupdto.setPassword(new String(tf_pwd.getPassword()));
 			signupdto.setNickname(tf_nickname.getText());
@@ -403,22 +406,14 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 			signupdto.setGoalTime(null);
 			signupdto.setPlayerRank(0);
 			
-			
-			
-			
-			
-			/* DB로 접속 */
-			System.out.println("dto 객체를 DB로 전송 시도...");
-			MarioDAO dao = MarioDAO.getInstance();
-			
-			int seq = dao.getSeq(); // DB로부터 시퀀스 번호를 받는다.
-			signupdto.setSeq(seq);
-			dao.insertArticle(signupdto);
-			
-			
+			try {
+				marioLogin.oos.writeObject(signupdto);
+				marioLogin.oos.flush();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			
 			/* 접속 성공 후 메세지 출력, 스레드 종료, 창 끄기  */
-			System.out.println("dto 객체를 DB로 전송 성공!");
 			JOptionPane.showMessageDialog(this, signupdto.getNickname() + "님 환영합니다!");
 			threadStop = true;
 			dispose();
@@ -486,10 +481,10 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 
 			
 			/* DB에서 전체 playerList를 받아 입력한 이메일과 비교  */
-			MarioDAO dao = MarioDAO.getInstance();
-			dtoList = dao.getMarioList();
+//			MarioDAO dao = MarioDAO.getInstance();
+//			dtoList = dao.getMarioList();
 			
-			for (MarioDTO dto : dtoList) { 
+			for (MarioDTO dto : MarioLogin.dtoList) { 
 				
 				if (emailAccount.equals(dto.getClientAccount())) {
 					JOptionPane.showMessageDialog(this, "[ " + emailAccount + " ] \n 해당 계정은 이미 존재합니다.");
@@ -542,7 +537,7 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 			 }else {
 				 
 				if(dtoList != null) {
-					for (MarioDTO dto : dtoList) {
+					for (MarioDTO dto : MarioLogin.dtoList) {
 						if (tf_nickname.getText().equals(dto.getNickname())) {
 							 label_NicknameChkLabel.setForeground(new Color(100, 50, 50));
 							 label_NicknameChkLabel.setText("해당 닉네임이 이미 존재합니다.");
@@ -651,6 +646,7 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 					}else if (min == 0){
 						timerStart = false;
 						label_timer.setText("시간초과");
+						threadStop = true;
 					}
 				}
 				label_timer.setText("남은 시간 " + min + " : " + new DecimalFormat("00").format(sec));

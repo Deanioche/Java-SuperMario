@@ -7,6 +7,8 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+import mario.Frame.ListDTO;
+import mario.dao.MarioDAO;
 import mario.dto.MarioDTO;
 
 
@@ -24,7 +26,7 @@ public class MarioHandler extends Thread {
 	/* 해당 핸들러의 클라이언트 정보 */
 	private String nickname;
 
-	private static List<MarioDTO> list_PlayerInfo;
+	static List<MarioDTO> list_PlayerInfo;
 
 	/*
 	 *	  # 필드 
@@ -80,10 +82,12 @@ public class MarioHandler extends Thread {
 
 			while (true) {
 				
-				
 				dto = (MarioDTO) ois.readObject();
 				
-				nickname = dto.getNickname(); 
+				if(dto.getNickname() != null) {
+					nickname = dto.getNickname(); 
+					this.setName(nickname);
+				}
 				/* 아래 코드 작성하기 편하게 닉네임 정보를 미리 저장 */
 
 				
@@ -119,13 +123,21 @@ public class MarioHandler extends Thread {
 					
 					
 					for(int i = 0; i < sendDTO.getList_PlayerInfo().size(); i++) {
-						System.out.println("sendDTO 서버 좌표 : " + sendDTO.getList_PlayerInfo().get(i).getNickname() + ", " + 
-								sendDTO.getList_PlayerInfo().get(i).getPlayerCoordinateX() +  ", " +  sendDTO.getList_PlayerInfo().get(i).getPlayerCoordinateY() + 
-								", " + sendDTO.getList_PlayerInfo().get(i).getPlayerMotionNum());
+						
+						String nick = sendDTO.getList_PlayerInfo().get(i).getNickname();
+						int x = sendDTO.getList_PlayerInfo().get(i).getPlayerCoordinateX();
+						int y = sendDTO.getList_PlayerInfo().get(i).getPlayerCoordinateY();
+						int n = sendDTO.getList_PlayerInfo().get(i).getPlayerMotionNum();
+						
+						System.out.println("sendDTO 서버 좌표 : " + nick + ", " + x +  ", " + y + ", " + n);
 					}
 					
 					/* 모든 클라이언트에 보내기  */
-					broadcast(sendDTO);
+					
+					
+					ListDTO listDTO = new ListDTO((ArrayList<MarioDTO>)list_PlayerInfo, Protocols.MOVE);
+					
+						broadcast(listDTO);
 					
 					
 					
@@ -161,21 +173,30 @@ public class MarioHandler extends Thread {
 					/* 입장 메세지 broadcast */
 					
 					/* 접속한 클라이언트를 리스트에 저장 */
+					boolean newPlayer = true;
 					
-//					for(int i = 0; i < list_PlayerInfo.size(); i++) {
-//						if(dto.getNickname().equals(list_PlayerInfo.get(i).getNickname())) {
-//								System.out.println("Protocols.JOIN : 플레이어의 데이터가 이미 리스트에 있습니다.");
-//								list_PlayerInfo.remove(i);
-//							break;
-//						}
-//					}
-//					
-//					if(list_PlayerInfo.size() == 0) {
+					if(list_PlayerInfo.size() != 0) {
+						
+						for(int i = 0; i < list_PlayerInfo.size(); i++) {
+							
+							if(dto.getNickname().equals(list_PlayerInfo.get(i).getNickname())) {
+								
+									System.out.println("Protocols.JOIN : 플레이어의 데이터가 이미 리스트에 있습니다.");
+									System.out.println("이메일 : " + list_PlayerInfo.get(i).getClientAccount());
+									System.out.println("닉네임 : " + list_PlayerInfo.get(i).getNickname());
+									System.out.println("seq : " + list_PlayerInfo.get(i).getSeq());
+									System.out.println();
+									
+									newPlayer = false;
+								break;
+							}
+						}
+					}
+					
+					if(newPlayer) {
 						list_PlayerInfo.add(dto);
-						System.out.println("Protocols.JOIN : 새로운 플레이어 리스트에 추가 완료");
-					
-					
-					System.out.println("list_PlayerInfo 리스트 수 : " + list_PlayerInfo.size());
+						System.out.println("Protocols.JOIN : 새로운 플레이어 리스트에 추가 완료 (" + list_PlayerInfo.size() + ")");
+					}
 					
 					MarioDTO sendDTO = new MarioDTO();
 					sendDTO.setProtocol(Protocols.JOIN);
@@ -184,8 +205,6 @@ public class MarioHandler extends Thread {
 					
 					broadcast(sendDTO);
 
-					
-					
 					
 			/* ******************************************************************* */
 					
@@ -237,14 +256,42 @@ public class MarioHandler extends Thread {
 					
 				} else if (dto.getProtocol() == Protocols.CONNECT) {
 					
+					/* 클라이언트와 DB 소통  */
+					// TODO 임시로 만들어 둔 dao
 					
+					MarioDAO dao = MarioDAO.getInstance();
 					
+					System.out.println("handler.CONNECT dao.getMarioList() : " + dao.getMarioList());
 					
 					MarioDTO sendDTO = new MarioDTO();
+					sendDTO.setProtocol(Protocols.CONNECT);
+					sendDTO.setList_PlayerInfo(dao.getMarioList());
 					
+					oos.writeObject(sendDTO);
+					oos.flush();
 					
-					/* 클라이언트와 DB 소통  */
+				/* ******************************************************************* */		
+
 					
+				}else if (dto.getProtocol() == Protocols.SIGNUP) {
+					
+					/* 받은 DTO를 DB에 입력  */
+					// TODO 
+					
+					MarioDAO dao = MarioDAO.getInstance();
+					
+					int seq = dao.getSeq(); // DB로부터 시퀀스 번호를 받는다.
+					dto.setSeq(seq);
+					dao.insertArticle(dto);
+					System.out.println("Protocols.SIGNUP : DB로 전송 성공!");
+					
+					/* 클라이언트에  DB 리스트 다시 보내기 */
+					MarioDTO sendDTO = new MarioDTO();
+					sendDTO.setProtocol(Protocols.CONNECT);
+					sendDTO.setList_PlayerInfo(dao.getMarioList());
+					
+					oos.writeObject(sendDTO);
+					oos.flush();
 				}
 				
 				
@@ -288,17 +335,34 @@ public class MarioHandler extends Thread {
 
 		for (MarioHandler handler : list_Handler) {
 			
-			System.out.println("broadcast 동작 : " + sendDTO.getProtocol());
-			
 			try {
+				System.out.println(sendDTO.getProtocol() + " | 스레드 이름 : " + handler.getName());
 				handler.oos.writeObject(sendDTO);
+
 				handler.oos.flush();
 
 			} catch (IOException e) {
 				e.printStackTrace();
+				System.out.println(sendDTO.getProtocol() + " | 스레드 이름 : " + handler.getName());
 			}
 		}
 
+	} // broadcast();
+	
+	private void broadcast(ListDTO sendDTO) {
+		
+		for (MarioHandler handler : list_Handler) {
+			
+			try {
+				handler.oos.writeObject(sendDTO);
+				
+				handler.oos.flush();
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
 	} // broadcast();
 	
 	public static void main(String[] args) {
