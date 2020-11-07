@@ -767,21 +767,27 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 	
 	private void drawAllCharacters(Graphics g) {
 		
-		if( MarioLogin.list_PlayerInfo != null && MarioLogin.list_PlayerInfo.size() != 0 && MarioLogin.serverConnected) {
-			for(MarioDTO data : MarioLogin.list_PlayerInfo) {
+		
+		if( marioLogin.arraydto != null && marioLogin.arraydto.getCoordinate().length != 0 && MarioLogin.serverConnected) {
+			
+			String[] nickname = marioLogin.arraydto.getNickname();
+			int[][] coordinate = marioLogin.arraydto.getCoordinate();
+			
+			for(int i = 0; i < coordinate.length; i++) {
 				
-				if(!data.getNickname().equals(clientData.getNickname())) {
-					int marioX = data.getPlayerCoordinateX();
-					int marioY = data.getPlayerCoordinateY();
+				if(!(nickname[i].equals(clientData.getNickname()))) {
+					int marioX = coordinate[i][0];
+					int marioY = coordinate[i][1];
+					int motion = coordinate[i][2];
 					
-					new Mario(data.getPlayerMotionNum(), marioX, marioY).render(g);
+					new Mario(motion, marioX, marioY).render(g);
 					
 					bufferGraphic.setColor(new Color(255, 255, 255));
 					bufferGraphic.fillRoundRect(marioX - 5, marioY + 55, 60, 16, 10, 10);
 					bufferGraphic.setColor(new Color(0, 0, 0));
 					bufferGraphic.drawRoundRect(marioX - 5, marioY + 55, 60, 16, 10, 10);
 					bufferGraphic.setColor(new Color(0, 0, 0));
-					bufferGraphic.drawString(data.getNickname(), marioX+ 7, marioY + 68);
+					bufferGraphic.drawString(nickname[i], marioX+ 7, marioY + 68);
 				}
 			
 			}

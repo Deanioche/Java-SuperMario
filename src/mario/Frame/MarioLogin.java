@@ -72,7 +72,7 @@ public class MarioLogin extends JFrame implements ActionListener {
 	private String ipAddress;
 	private int port = 0;
 	
-	
+	ArrayDTO arraydto;
 	
 	
 	/*************************************************************************************************************/
@@ -577,25 +577,22 @@ public class MarioLogin extends JFrame implements ActionListener {
 				 
 				 /* ******************************************************************* */
 				 // 좌표 수신
-				if(objectDTO instanceof ListDTO) {
-//					 if(((ListDTO)dto).getProtocol() == Protocols.MOVE) {			
+				if(objectDTO instanceof ArrayDTO) {
 						 
-						 list_PlayerInfo = ((ListDTO)objectDTO).getList_PlayerInfo();
+					arraydto = (ArrayDTO)objectDTO;
 						 
-						 System.out.println("list_PlayerInfo.size() : " + list_PlayerInfo.size());
-						if(list_PlayerInfo.size() != 0) {
-							for(MarioDTO data : list_PlayerInfo) {
+						if(arraydto.getCoordinate().length != 0) {
+							for(int i = 0; i < arraydto.getCoordinate().length; i++) {
 								 
-								 String nick = data.getNickname();
-								 int x = data.getPlayerCoordinateX();
-								 int y = data.getPlayerCoordinateY();
-								 int n = data.getPlayerMotionNum();
+								String nick = arraydto.getNickname()[i];
+								 int x = arraydto.getCoordinate()[i][0];
+								 int y = arraydto.getCoordinate()[i][1];
+								 int n = arraydto.getCoordinate()[i][2];
 								 
-							System.out.println("Protocols.MOVE : " + nick + " : " + x + ", " + y + ", " + n);
-							
-							} // for;
+							System.out.println("array x, y, n : " + nick + ":" + x + " , " + y + ", " + n);
+						}
+					}// for;
 						
-					 }	 
 				}else {
 				 /* ******************************************************************* */
 				// 메세지 받기

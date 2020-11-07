@@ -7,10 +7,9 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-import mario.Frame.ListDTO;
+import mario.Frame.ArrayDTO;
 import mario.dao.MarioDAO;
 import mario.dto.MarioDTO;
-
 
 
 public class MarioHandler extends Thread {
@@ -116,28 +115,33 @@ public class MarioHandler extends Thread {
 							break;
 						}
 					}
+					
 
-					MarioDTO sendDTO = new MarioDTO();
-					sendDTO.setProtocol(Protocols.MOVE);
-					sendDTO.setList_PlayerInfo(list_PlayerInfo);
+					int[][] array_Coordinate = new int[list_PlayerInfo.size()][3];
+					String[] array_nickname = new String[list_PlayerInfo.size()];
 					
-					
-					for(int i = 0; i < sendDTO.getList_PlayerInfo().size(); i++) {
+					for(int i = 0; i < list_PlayerInfo.size(); i++) {
 						
-						String nick = sendDTO.getList_PlayerInfo().get(i).getNickname();
-						int x = sendDTO.getList_PlayerInfo().get(i).getPlayerCoordinateX();
-						int y = sendDTO.getList_PlayerInfo().get(i).getPlayerCoordinateY();
-						int n = sendDTO.getList_PlayerInfo().get(i).getPlayerMotionNum();
+						String nick = list_PlayerInfo.get(i).getNickname();
+						int x = list_PlayerInfo.get(i).getPlayerCoordinateX();
+						int y = list_PlayerInfo.get(i).getPlayerCoordinateY();
+						int n = list_PlayerInfo.get(i).getPlayerMotionNum();
+						
+						array_nickname[i] = nick;
+						array_Coordinate[i][0] = x;
+						array_Coordinate[i][1] = y;
+						array_Coordinate[i][2] = n;
 						
 						System.out.println("sendDTO 서버 좌표 : " + nick + ", " + x +  ", " + y + ", " + n);
 					}
 					
 					/* 모든 클라이언트에 보내기  */
 					
+					ArrayDTO arraydto = new ArrayDTO();
+					arraydto.setNickname(array_nickname);
+					arraydto.setCoordinate(array_Coordinate);
 					
-					ListDTO listDTO = new ListDTO((ArrayList<MarioDTO>)list_PlayerInfo, Protocols.MOVE);
-					
-						broadcast(listDTO);
+					broadcast(arraydto);
 					
 					
 					
@@ -349,17 +353,16 @@ public class MarioHandler extends Thread {
 
 	} // broadcast();
 	
-	private void broadcast(ListDTO sendDTO) {
+	private void broadcast(ArrayDTO arraydto) {
 		
 		for (MarioHandler handler : list_Handler) {
 			
 			try {
-				handler.oos.writeObject(sendDTO);
+				handler.oos.writeObject(arraydto);
 				
 				handler.oos.flush();
 				
 			} catch (IOException e) {
-				e.printStackTrace();
 			}
 		}
 		
