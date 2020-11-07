@@ -23,10 +23,6 @@ public class MarioHandler extends Thread {
 	
 	/* 해당 핸들러의 클라이언트 정보 */
 	private String nickname;
-//	private int seq;
-//	private int marioX;
-//	private int marioY;
-//	private int marioMotionNum;
 
 	private static List<MarioDTO> list_PlayerInfo;
 
@@ -46,25 +42,26 @@ public class MarioHandler extends Thread {
 		// 필드에 값 입력
 		this.list_Handler = list_Handler;
 		this.socket = socket;
-
+		
 		/* ******************************************************************* */
 
 		// 클라이언트로부터 정보 송수신
 		try {
 			ois = new ObjectInputStream(socket.getInputStream());
 			oos = new ObjectOutputStream(socket.getOutputStream());
-			System.out.println("MarioHandler : oos, ois 생성 완료");
+			System.out.println(" # MarioHandler : oos, ois 생성 완료");
+			
+			if(list_PlayerInfo == null) {
+				list_PlayerInfo = new ArrayList<MarioDTO>();
+				System.out.println(" # 첫 접속! list_PlayerInfo 생성완료 ");
+			}
 
 		} catch (IOException e) {
 			e.printStackTrace();
-			System.out.println("MarioHandler : oos, ois 생성 실패");
+			System.out.println(" # MarioHandler : oos, ois 생성 실패");
 		}
 		
-		if(list_PlayerInfo == null) {
-			list_PlayerInfo = new ArrayList<MarioDTO>();
-			System.out.println("< list_PlayerInfo 생성완료 >");
-		}
-
+		
 		/* ******************************************************************* */
 
 	} // MarioHandler()
@@ -232,8 +229,23 @@ public class MarioHandler extends Thread {
 					/* 소켓 종료  */
 					socket.close();
 					break;
-				}
 				
+				
+				/* ******************************************************************* */		
+
+				// 입장	
+					
+				} else if (dto.getProtocol() == Protocols.CONNECT) {
+					
+					
+					
+					
+					MarioDTO sendDTO = new MarioDTO();
+					
+					
+					/* 클라이언트와 DB 소통  */
+					
+				}
 				
 				
 				

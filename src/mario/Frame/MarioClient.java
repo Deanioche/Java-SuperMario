@@ -44,21 +44,18 @@ public class MarioClient extends JFrame implements ActionListener{
 	
 	/* MarioLogin 클래스에서 접속시 들어오는 플레이어 정보 dto  */
 	MarioDTO clientData;
-	
-	/* 서버 객체  */
-	private Socket socket;
-	ObjectOutputStream oos;
-	ObjectInputStream ois;
 
-	/* 서버로부터 받아올 객체  */
-	List<MarioDTO> list_PlayerInfo;
+//	/* 서버로부터 받아올 객체  */
+//	static List<MarioDTO> list_PlayerInfo;
 	
 	
 	/* 필드 객체  */
+	
 	private MarioCanvas marioCanvas;
+	private MarioLogin marioLogin;
 	private String nickname = "guest";
-	private JTextArea textArea_Chat;
-	private JTextField textField_Chat;
+	public static JTextArea textArea_Chat;
+	public static JTextField textField_Chat;
 	private JLabel label_Timer_Minute, label_Timer_Second, label_Timer_MiliSec, label_Elapsed_Time;
 
 	private JTable scoreTable;
@@ -72,10 +69,6 @@ public class MarioClient extends JFrame implements ActionListener{
 	private int timer_Minute = 0;
 	private int timer_Second = 0;
 	private int timer_MiliSec = 0;
-	
-	
-	/* */
-	public static boolean serverConnectFail = false;
 	
 	
 
@@ -95,10 +88,10 @@ public class MarioClient extends JFrame implements ActionListener{
 	
 	// 생성자
 	
-	public MarioClient(MarioDTO clientData) {
+	public MarioClient(MarioLogin marioLogin) {
 		super("Mario");
-		
-		this.clientData = clientData;
+		this.marioLogin = marioLogin;
+		this.clientData = marioLogin.clientData;
 		
 		showDTOdata();
 		
@@ -106,8 +99,7 @@ public class MarioClient extends JFrame implements ActionListener{
 
 		/* 다른 클래스 생성 */
 		new ImageBox();
-		marioCanvas = new MarioCanvas(MarioClient.this);
-		list_PlayerInfo = new ArrayList<MarioDTO>();
+		marioCanvas = new MarioCanvas(MarioClient.this, marioLogin);
 
 		/* ******************************************************************* */
 
@@ -240,7 +232,7 @@ public class MarioClient extends JFrame implements ActionListener{
 				int result = JOptionPane.showConfirmDialog(MarioClient.this, "정말 갈꺼에요? (•́︿•̀｡) ", "가지마",
 						JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 
-				if (result == JOptionPane.YES_OPTION && !serverConnectFail) {
+				if (result == JOptionPane.YES_OPTION && MarioLogin.serverConnected) {
 
 					MarioDTO dto = new MarioDTO();
 					dto.setProtocol(Protocols.EXIT);
@@ -249,14 +241,14 @@ public class MarioClient extends JFrame implements ActionListener{
 					
 					try {
 						
-						oos.writeObject(dto);
-						oos.flush();
+						marioLogin.oos.writeObject(dto);
+						marioLogin.oos.flush();
 						
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
 
-				} else if (result == JOptionPane.YES_OPTION && serverConnectFail) {
+				} else if (result == JOptionPane.YES_OPTION && MarioLogin.serverConnected) {
 
 					System.exit(0);
 					
@@ -301,74 +293,7 @@ public class MarioClient extends JFrame implements ActionListener{
 	
 	
 	
-	/********************************************************************************************/
-	
-	
-	// 서버 접속 메소드
-	
-	public void connectServer() {
-		
-		try {
-		
-		/* ******************************************************************* */
-		
-		// 서버와 연결
-		
-			socket = new Socket("192.168.0.28", 9500);
-			oos = new ObjectOutputStream(socket.getOutputStream());
-			ois = new ObjectInputStream(socket.getInputStream());
-			System.out.println("MarioClient().init() : socket, oos, ois : 생성 완료");
-		
-		
-		/* ******************************************************************* */
-		
-		// 서버로 JOIN 보내기
-		
-			MarioDTO dto = clientData;
-			
-			dto.setProtocol(Protocols.JOIN);
-			
-			oos.writeObject(dto);
-			oos.flush();
-			
-		
-		
-		/* ******************************************************************* */
-		
-		// 스레드 생성 & 시작
-		
-		Thread clientThread = new Thread(new Runnable() {
-			
-			@Override
-			public void run() {
-				
-				MarioDTO dto = null;
-				
-				while(!serverConnectFail) {
-				
-					dataFromServer(dto);
-				}
-			}
-				
-		});
-		
-		clientThread.start();
-		
-		/* ******************************************************************* */
-		
-	} catch (IOException e) {
-//		e.printStackTrace();
-		JOptionPane.showMessageDialog(this, "서버 접속 실패!");
-		
-		System.out.println("서버 접속 실패!");
-		serverConnectFail = true;
-		
-	}
-	
-		
-	}
 
-	
 	
 	/********************************************************************************************/
 
@@ -408,7 +333,7 @@ public class MarioClient extends JFrame implements ActionListener{
 		else if( e.getSource() == btn_send) {
 			
 			/* 입력값이 없으면 보내지 않는다. */
-			if(textField_Chat.getText().length() == 0 || serverConnectFail) {
+			if(textField_Chat.getText().length() == 0 || MarioLogin.serverConnected) {
 				textArea_Chat.append("서버에 접속중이 아니므로 메세지를 보낼 수 없습니다.\n");
 				textArea_Chat.setCaretPosition(textArea_Chat.getText().length());
 				textField_Chat.setText("");
@@ -424,8 +349,8 @@ public class MarioClient extends JFrame implements ActionListener{
 			textField_Chat.setText("");
 			
 				try {
-					oos.writeObject(dto);
-					oos.flush();
+					marioLogin.oos.writeObject(dto);
+					marioLogin.oos.flush();
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
@@ -439,12 +364,6 @@ public class MarioClient extends JFrame implements ActionListener{
 		/* ******************************************************************* */
 
 	}
-	
-	
-	
-	
-
-	/********************************************************************************************/
 	
 	
 	/********************************************************************************************/
@@ -476,94 +395,6 @@ public class MarioClient extends JFrame implements ActionListener{
 		
 	}
 	
-	/********************************************************************************************/
-	
-	// 서버로부터 데이터 수신
-	
-	private void dataFromServer(MarioDTO dto) {
-		
-		try {
-		 
-		 /* ******************************************************************* */
-			
-			
-			dto = (MarioDTO) ois.readObject();
-			
-//			 System.out.println("dataFromServer : getDTO = (MarioDTO) ois.readObject() : 성공 ");
-			 
-			 
-			 /* ******************************************************************* */
-			 if(dto.getProtocol() == Protocols.MOVE) {			
-				 
-				 
-				 list_PlayerInfo = dto.getList_PlayerInfo();
-				 
-				 System.out.println("dto.getList_PlayerInfo().size() : " + dto.getList_PlayerInfo().size());
-				
-				 for(MarioDTO data : dto.getList_PlayerInfo()) {
-					 
-				 System.out.println("Protocols.MOVEE : " +  data.getNickname() + " : " + 
-						 data.getPlayerCoordinateX() + ", " + data.getPlayerCoordinateY() + ", " + data.getPlayerMotionNum());
-				 }
-			 
-			 /* ******************************************************************* */
-			 
-			// 메세지 받기
-			 
-			}else if(dto.getProtocol() == Protocols.SEND) {			
-				 
-				 System.out.println("dto.getChatMessage() : " + dto.getChatMessage());
-				 textArea_Chat.append(dto.getChatMessage() + "\n");
-				 textArea_Chat.setCaretPosition(textArea_Chat.getText().length());
-				 
-				 
-			 /* ******************************************************************* */
-				 
-			// 입장
-				 
-			 }else if(dto.getProtocol() == Protocols.JOIN) {	
-				 
-				 textArea_Chat.append(dto.getChatMessage() + "\n");
-				 textArea_Chat.setCaretPosition(textArea_Chat.getText().length());
-				 
-				 
-			 /* ******************************************************************* */
-				 
-			 // 퇴장
-				 
-			 }else if(dto.getProtocol() == Protocols.EXIT) {	
-				 
-				serverConnectFail = true;
-				ois.close();
-				oos.close();
-				socket.close();
-
-				System.exit(0);
-				 
-			 }
-			 
-			 
-			 /* ******************************************************************* */
-			 
-			/*
-			 * 	# 사용 빈도수가 높은 순서대로
-			 *  	SEND > JOIN > EXIT
-			 *  
-			 *  # 프로토콜  
-			 *  	SEND : 메세지 송수신
-			 *  	JOIN : 입장
-			 *  	EXIT : 퇴장
-			 *  
-			 */
-		
-		 
-		} catch (ClassNotFoundException | IOException e) {
-			e.printStackTrace();
-		} 
-		
-	} // dataFromServer();
-	
-	
 	
 	/********************************************************************************************/
 	
@@ -576,9 +407,10 @@ public class MarioClient extends JFrame implements ActionListener{
 	} // sendDataToServer()
 	
 	
-	
 	/********************************************************************************************/
 
+	// 로그인할때 회원 정보 출력
+	
 	private void showDTOdata() {
 		
 		if(clientData != null) {
@@ -591,13 +423,16 @@ public class MarioClient extends JFrame implements ActionListener{
 			System.out.println("ClientAccount : " + clientData.getClientAccount());
 			System.out.println("Gender : " + clientData.getGender());
 			System.out.println("Password : " + clientData.getPassword());
-			System.out.println("PasswordCheck : " + clientData.getPasswordCheck());
+			System.out.println("PasswordCheck : " + clientData.getPassword());
 			System.out.println("**********************************");
 			System.out.println();
 		}else {
 			System.out.println(clientData);
 		}
 	}
+	
+	/********************************************************************************************/
+
 	
 	public static void main(String[] args) {
 		new MarioLogin();

@@ -27,7 +27,7 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 	Graphics bufferGraphic;
 	
 	MarioClient marioClient;
-	
+	MarioLogin marioLogin;
 	
 	// 캐릭터 동작
 	boolean pushing_Left = false;
@@ -53,8 +53,7 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 	private boolean touchRight = false;
 	
 	List<Block> list_Block;
-	private List<MarioDTO> list_PlayerInfo;
-	private MarioDTO clientData;
+	public MarioDTO clientData;
 	
 	/************************************************************************************************/
 	
@@ -78,8 +77,9 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 
 	
 	// 생성자
-	public MarioCanvas(MarioClient marioClient) {
+	public MarioCanvas(MarioClient marioClient, MarioLogin marioLogin) {
 		
+		this.marioLogin = marioLogin;
 		this.marioClient = marioClient;
 		clientData = marioClient.clientData;
 		
@@ -568,7 +568,7 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 		}
 
 		/* 모든 플레이어 캐릭터 그리기 */
-		list_PlayerInfo = marioClient.list_PlayerInfo;
+//		MarioLogin.list_PlayerInfo;
 		
 //		if(list_PlayerInfo.size() != 0) {
 //			System.out.println("list_PlayerInfo.size() : " + list_PlayerInfo.size());
@@ -716,7 +716,7 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 				// 카메라
 				
 				
-				if(!MarioClient.serverConnectFail && (pushing_Left || pushing_Right || pushing_Up)) {
+				if(MarioLogin.serverConnected && (pushing_Left || pushing_Right || pushing_Up)) {
 					
 					MarioDTO sendDTO = new MarioDTO();
 					 
@@ -727,8 +727,8 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 					 sendDTO.setPlayerMotionNum(motionNum);
 					 
 					 try {
-						 marioClient.oos.writeObject(sendDTO);
-						 marioClient.oos.flush();
+						 marioLogin.oos.writeObject(sendDTO);
+						 marioLogin.oos.flush();
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -768,8 +768,8 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 	
 	private void drawAllCharacters(Graphics g) {
 		
-		if( list_PlayerInfo != null && list_PlayerInfo.size() != 0 && !MarioClient.serverConnectFail) {
-			for(MarioDTO data : list_PlayerInfo) {
+		if( MarioLogin.list_PlayerInfo != null && MarioLogin.list_PlayerInfo.size() != 0 && MarioLogin.serverConnected) {
+			for(MarioDTO data : MarioLogin.list_PlayerInfo) {
 				
 				if(!data.getNickname().equals(clientData.getNickname())) {
 					int marioX = data.getPlayerCoordinateX();

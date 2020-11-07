@@ -379,7 +379,7 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 		else if(new String(tf_pwd_check.getPassword()).length() == 0 || new String(tf_pwd_check.getPassword()) == null) { error += "비밀번호 확인"; }
 		else if(tf_nickname.getText().length() == 0 || tf_nickname.getText() == null || !nicknameCheck) 				{ error += "닉네임"; }
 		else if(tf_name.getText().length() == 0 || tf_name.getText() == null)											{ error += "이름"; }
-		else if(tf_age.getText().length() == 0 || tf_age.getText() == null && !tf_age.getText().matches("\\d*") ) 		{ error += "나이"; }
+		else if(tf_age.getText().length() == 0 || tf_age.getText() == null || !tf_age.getText().matches("\\d*") ) 		{ error += "나이"; }
 		else if(!AuthSuccess ) 		{ error += "인증키"; }
 		
 		if(error.length() != 0) {
