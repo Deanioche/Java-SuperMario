@@ -589,11 +589,12 @@ public class MarioLogin extends JFrame implements ActionListener {
 								 int y = arraydto.getCoordinate()[i][1];
 								 int n = arraydto.getCoordinate()[i][2];
 								 
-							System.out.println("array x, y, n : " + nick + ":" + x + " , " + y + ", " + n);
+//							System.out.println("array x, y, n : " + nick + ":" + x + " , " + y + ", " + n);
 						}
 					}// for;
 						
 				}else {
+					
 				 /* ******************************************************************* */
 				// 메세지 받기
 				MarioDTO dto = (MarioDTO)objectDTO;
@@ -604,6 +605,7 @@ public class MarioLogin extends JFrame implements ActionListener {
 					 MarioClient.textArea_Chat.append(dto.getChatMessage() + "\n");
 					 MarioClient.textArea_Chat.setCaretPosition(MarioClient.textArea_Chat.getText().length());
 					 
+					 MarioCanvas.mCanvas.list_Balloon.add(new BalloonDTO(270, dto.getNickname(), dto.getChatMessage()));
 					 
 					 
 				 /* ******************************************************************* */
@@ -613,7 +615,6 @@ public class MarioLogin extends JFrame implements ActionListener {
 					 
 					 MarioClient.textArea_Chat.append(dto.getChatMessage() + "\n");
 					 MarioClient.textArea_Chat.setCaretPosition(MarioClient.textArea_Chat.getText().length());
-					 
 					 
 					 
 				 /* ******************************************************************* */

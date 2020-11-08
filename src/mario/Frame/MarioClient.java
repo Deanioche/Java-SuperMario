@@ -354,6 +354,7 @@ public class MarioClient extends JFrame implements ActionListener{
 			dto.setProtocol(Protocols.SEND);
 			dto.setNickname(clientData.getNickname());
 			dto.setChatMessage(textField_Chat.getText());
+			
 			textField_Chat.setText("");
 			
 				try {

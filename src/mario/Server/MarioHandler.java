@@ -132,7 +132,7 @@ public class MarioHandler extends Thread {
 						array_Coordinate[i][1] = y;
 						array_Coordinate[i][2] = n;
 						
-						System.out.println("sendDTO 서버 좌표 : " + nick + ", " + x +  ", " + y + ", " + n);
+//						System.out.println("sendDTO 서버 좌표 : " + nick + ", " + x +  ", " + y + ", " + n);
 					}
 					
 					/* 모든 클라이언트에 보내기  */
@@ -156,6 +156,7 @@ public class MarioHandler extends Thread {
 					MarioDTO sendDTO = new MarioDTO();
 					sendDTO.setProtocol(Protocols.SEND);
 					sendDTO.setChatMessage("[" + nickname + "] " + dto.getChatMessage());
+					sendDTO.setNickname(nickname);
 					
 					/* 서버 콘솔에도 메세지 남기기 */
 					System.out.println("[" + nickname + "] " + dto.getChatMessage());
