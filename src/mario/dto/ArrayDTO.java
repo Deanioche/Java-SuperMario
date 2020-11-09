@@ -1,12 +1,12 @@
-package mario.Frame;
+package mario.dto;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
 import mario.Server.Protocols;
-import mario.dto.MarioDTO;
 
 public class ArrayDTO implements Serializable{
+	
 	
 	private String[] nickname;
 	private int[][] coordinate;

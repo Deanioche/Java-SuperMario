@@ -7,8 +7,8 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-import mario.Frame.ArrayDTO;
 import mario.dao.MarioDAO;
+import mario.dto.ArrayDTO;
 import mario.dto.MarioDTO;
 
 
@@ -148,9 +148,10 @@ public class MarioHandler extends Thread {
 					
 					/* 모든 클라이언트에 보내기  */
 					
-					ArrayDTO arraydto = new ArrayDTO();
-					arraydto.setNickname(array_nickname);
-					arraydto.setCoordinate(array_Coordinate);
+					MarioDTO arraydto = new MarioDTO();
+					arraydto.setProtocol(Protocols.MOVE);
+					arraydto.setArray_nickname(array_nickname);
+					arraydto.setArray_coordinate(array_Coordinate);
 					
 					broadcast(arraydto);
 					
@@ -402,7 +403,7 @@ public class MarioHandler extends Thread {
 		for (MarioHandler handler : list_Handler) {
 			
 			try {
-				System.out.println(sendDTO.getProtocol() + " | 스레드 이름 : " + handler.getName());
+//				System.out.println(sendDTO.getProtocol() + " | 스레드 이름 : " + handler.getName());
 				handler.oos.writeObject(sendDTO);
 
 				handler.oos.flush();
