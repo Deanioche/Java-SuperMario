@@ -44,7 +44,7 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 	boolean isInAir = false; // 공중
 	boolean isFalling = false; // 낙하중 : marioY += gravity
 
-	public int marioX = 50, marioY = 4950, motionNum = 0;
+	public int marioX = 250, marioY = 4950, motionNum = 0;
 	public int gravity = 0;
 
 	// 개체 영역
@@ -631,11 +631,11 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 
 	private void drawAllCharacters(Graphics g) {
 
-		if (marioLogin.arraydto != null && marioLogin.arraydto.getCoordinate().length != 0
+		if (marioLogin.array_coordinate != null && marioLogin.array_coordinate.length != 0
 				&& MarioLogin.serverConnected) {
 
-			String[] nickname = marioLogin.arraydto.getNickname();
-			int[][] coordinate = marioLogin.arraydto.getCoordinate();
+			String[] nickname = marioLogin.array_textNick;
+			int[][] coordinate = marioLogin.array_coordinate;
 
 			for (int i = 0; i < coordinate.length; i++) {
 
@@ -653,7 +653,6 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 					bufferGraphic.setColor(new Color(0, 0, 0));
 					bufferGraphic.drawString(nickname[i], marioX + 7, marioY + 68);
 				}
-
 			}
 		}
 	}
@@ -669,8 +668,8 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 
 		if (list_Balloon.size() != 0) {
 
-			String[] textNick = marioLogin.arraydto.getNickname();
-			int[][] coordinate = marioLogin.arraydto.getCoordinate();
+			String[] textNick = marioLogin.array_textNick;
+			int[][] coordinate = marioLogin.array_coordinate;
 
 			/* 모든 말풍선리스트 */
 			for (BalloonDTO data : list_Balloon) {

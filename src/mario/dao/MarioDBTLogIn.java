@@ -21,6 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import mario.Frame.MarioLogin;
 import mario.dto.MarioDTO;
 
 public class MarioDBTLogIn extends JFrame implements ActionListener {
@@ -40,12 +41,13 @@ public class MarioDBTLogIn extends JFrame implements ActionListener {
    private JButton okBtn, cancleBtn;
    private boolean inputCheck;
 
-   
+   MarioLogin marioLogin;
 
    
-   public MarioDBTLogIn() {
+   public MarioDBTLogIn(MarioLogin marioLogin) {
       
       super("회원확인");
+      this.marioLogin = marioLogin;
       
       //3.컴포넌트 생성
       
@@ -172,10 +174,11 @@ public class MarioDBTLogIn extends JFrame implements ActionListener {
                    label_pwdCheck.setText("아이디와 비밀번호가 일치하지 않습니다");
                    
                 }
+                
            }//for문
           
        } 
-       
+       dispose();
       }else if(e.getSource() == cancleBtn) {
          dispose();
       }
@@ -189,20 +192,21 @@ public class MarioDBTLogIn extends JFrame implements ActionListener {
       attempt.setClientAccount(id);
       attempt.setPassword(pw);
       
-      if(id.equals("admin") && pw.equals("1234")) {
-         MarioDBTable.selectArticle();
-      }else {
-         new MarioDBTable(attempt).event();
-      }
+//      if(id.equals("admin") && pw.equals("1234")) { 
+//         //MarioDBTable.selectArticle(); //▶2020.11.08 수정한 부분 (주석) 10
+//        new MarioDBTable("admin","1234", marioLogin).event();
+//      }else {
+         new MarioDBTable(attempt, marioLogin).event(); //▶2020.11.08 수정한 부분 (추가) 2
+//      }
    }//enterTable
    
      
    
    //7.메인메소드
-   public static void main(String[] args) {
-      new MarioDBTLogIn().event();
-      
-   }
+//   public static void main(String[] args) {
+//      new MarioDBTLogIn(marioLogin).event();
+//      
+//   }
 
    
 }

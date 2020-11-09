@@ -2,7 +2,7 @@ package mario.Server;
 
 public enum Protocols {
 
-	CONNECT, SIGNUP, JOIN, EXIT, MOVE, SEND
+	CONNECT, SIGNUP, JOIN, EXIT, MOVE, SEND, UPDATE, DELETE, TABLELOGIN
 
 	/*
 	 * # 프로토콜 
