@@ -159,9 +159,9 @@ public class MarioDBTLogIn extends JFrame implements ActionListener {
           
           enterTable("admin","1234"); 
        }else {
-           MarioDAO dao = MarioDAO.getInstance();
-           List<MarioDTO> dtoList =  dao.getMarioList();
-           for(MarioDTO dto : dtoList) {
+//           MarioDAO dao = MarioDAO.getInstance();
+//           List<MarioDTO> dtoList =  dao.getMarioList();
+           for(MarioDTO dto : MarioLogin.dtoList) {
               String[] checkID = dto.getClientAccount().split("@");
               String id = checkID[0];
                 if(tf_emailAccount.getText().equals(id) && new String(tf_pwd.getPassword()).equals(dto.getPassword())) {
@@ -196,7 +196,7 @@ public class MarioDBTLogIn extends JFrame implements ActionListener {
 //         //MarioDBTable.selectArticle(); //▶2020.11.08 수정한 부분 (주석) 10
 //        new MarioDBTable("admin","1234", marioLogin).event();
 //      }else {
-         new MarioDBTable(attempt, marioLogin).event(); //▶2020.11.08 수정한 부분 (추가) 2
+         new MarioDBTable(attempt).event(); //▶2020.11.08 수정한 부분 (추가) 2
 //      }
    }//enterTable
    

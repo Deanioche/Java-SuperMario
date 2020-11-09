@@ -37,6 +37,8 @@ import mario.dto.MarioDTO;
 public class MarioLogin extends JFrame implements ActionListener {
 	
 	
+	
+	
 	/* 프레임상에 출력될 개체들 */
 	private JLabel label_id, label_pwd, label_ip, label_port;
 	private JTextField tf_emailAccount, tf_port;
@@ -52,6 +54,7 @@ public class MarioLogin extends JFrame implements ActionListener {
 	public ObjectInputStream ois;
 
 	public static boolean serverConnected = false;
+	public static MarioLogin mLogin;
 	
 	/* 서버세팅, 로그인이 완료되었는지 확인  */
 	private boolean loginSuccess = false;
@@ -73,9 +76,7 @@ public class MarioLogin extends JFrame implements ActionListener {
 	private String ipAddress;
 	private int port = 0;
 	
-	/* 모든 플레이어 좌표 */
-	int[][] array_coordinate;
-	String[] array_textNick;
+	ArrayDTO arraydto;
 	
 	
 	/*************************************************************************************************************/
@@ -103,7 +104,7 @@ public class MarioLogin extends JFrame implements ActionListener {
 
 		super("Login");
 		
-		
+		this.mLogin = MarioLogin.this;
 		/* ******************************************************************* */
 		
 		
@@ -276,6 +277,17 @@ public class MarioLogin extends JFrame implements ActionListener {
 				
 			}
 		});
+		comboBox_IP_Address.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				
+				if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+					System.out.println("서버 세팅 Save 눌림");
+					btn_save_ServerSetting.doClick();
+				}
+				
+			}
+		});
 
 		addWindowListener(new WindowAdapter() {
 			@Override
@@ -365,10 +377,7 @@ public class MarioLogin extends JFrame implements ActionListener {
 			}
 			
 			/* 로그인  실패  */
-			if (!loginSuccess) {
-				JOptionPane.showMessageDialog(this, "로그인 실패!");
-				
-			}else if (new String(tf_pwd.getPassword()).length() != 0) {
+			if (!loginSuccess && new String(tf_pwd.getPassword()).length() != 0) {
 				JOptionPane.showMessageDialog(this, "이메일 계정 또는 비밀번호를 확인해주세요");
 			}
 
@@ -538,10 +547,11 @@ public class MarioLogin extends JFrame implements ActionListener {
 			@Override
 			public void run() {
 				
-				MarioDTO marioDTO = null;
+				Object objectDTO = null;
+//				ListDTO listDTO = null; // TODO
 				
 				while(serverConnected) {
-					dataFromServer(marioDTO);
+					dataFromServer(objectDTO);
 				}
 			}
 				
@@ -571,39 +581,40 @@ public class MarioLogin extends JFrame implements ActionListener {
 	
 	// 서버로부터 데이터 수신
 		
-		private void dataFromServer(MarioDTO dto) {
-			
-			System.out.println("dataFromServer 수신");
+		private void dataFromServer(Object objectDTO) {
 			
 			try {
 			 
 			 /* ******************************************************************* */
-				dto = (MarioDTO)ois.readObject();
+				objectDTO = ois.readObject();
 				
 //				 System.out.println("dataFromServer : dto = (MarioDTO) ois.readObject() : 성공 ");
 				 
 				 /* ******************************************************************* */
 				 // 좌표 수신
-				if(dto.getProtocol() == Protocols.MOVE) {
+				if(objectDTO instanceof ArrayDTO) {
 						 
-					array_coordinate = dto.getCoordinate();
-					array_textNick = dto.getNickname_array();
+					arraydto = (ArrayDTO)objectDTO;
 						 
-					// TODO
-						if(dto.getCoordinate().length != 0) {
-							for(int i = 0; i < dto.getCoordinate().length; i++) {
+						if(arraydto.getCoordinate().length != 0) {
+							for(int i = 0; i < arraydto.getCoordinate().length; i++) {
 								 
-								String nick = dto.getNickname_array()[i];
-								 int x = dto.getCoordinate()[i][0];
-								 int y = dto.getCoordinate()[i][1];
-								 int n = dto.getCoordinate()[i][2];
+								String nick = arraydto.getNickname()[i];
+								 int x = arraydto.getCoordinate()[i][0];
+								 int y = arraydto.getCoordinate()[i][1];
+								 int n = arraydto.getCoordinate()[i][2];
 								 
-							System.out.println("array x, y, n : " + nick + ":" + x + " , " + y + ", " + n);
-							}
+//							System.out.println("array x, y, n : " + nick + ":" + x + " , " + y + ", " + n);
+						}
+					}// for;
+						
+				}else {
+					
 				 /* ******************************************************************* */
 				// 메세지 받기
+				MarioDTO dto = (MarioDTO)objectDTO;
 					
-				}else if(dto.getProtocol() == Protocols.SEND) {			
+				 if(dto.getProtocol() == Protocols.SEND) {			
 					 
 					 System.out.println("dto.getChatMessage() : " + dto.getChatMessage());
 					 MarioClient.textArea_Chat.append(dto.getChatMessage() + "\n");
@@ -664,6 +675,7 @@ public class MarioLogin extends JFrame implements ActionListener {
 				 *  	EXIT 	: 퇴장
 				 *  	CONNECT : 접속
 				 */
+			
 				}
 			} catch (ClassNotFoundException | IOException e) {
 				e.printStackTrace();

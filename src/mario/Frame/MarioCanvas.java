@@ -44,7 +44,7 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 	boolean isInAir = false; // 공중
 	boolean isFalling = false; // 낙하중 : marioY += gravity
 
-	public int marioX = 250, marioY = 4950, motionNum = 0;
+	public int marioX = 100, marioY = 4800, motionNum = 0;
 	public int gravity = 0;
 
 	// 개체 영역
@@ -128,6 +128,95 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 //	
 //		}
 //	}
+
+	/*********************************************************************/
+
+	// 블록 생성
+
+	private void createStage() {
+
+		/* 맵 끝 테두리 */
+		for (int i = -100; i <= 5100; i += 50) {
+
+			list_Block.add(new Block(0, i, 5050));
+		}
+
+		for (int i = 0; i <= 4950; i += 50) {
+
+			list_Block.add(new Block(0, 0, i));
+		}
+
+		for (int i = 0; i <= 4950; i += 50) {
+
+			list_Block.add(new Block(0, 5000, i));
+		}
+		/* 맵 끝 테두리 */
+
+		for (int i = 1000; i <= 2000; i += 50) {
+
+			list_Block.add(new Block(0, i, 4800));
+		}
+
+		for (int i = 2000; i <= 3000; i += 50) {
+
+			list_Block.add(new Block(0, i, 4600));
+		}
+
+		for (int i = 1500; i <= 2500; i += 50) {
+
+			list_Block.add(new Block(1, i, 4400));
+		}
+
+		for (int i = 2500; i <= 3500; i += 50) {
+
+			list_Block.add(new Block(2, i, 4200));
+		}
+
+		for (int i = 1500; i <= 2500; i += 50) {
+
+			list_Block.add(new Block(2, i, 4000));
+		}
+
+		for (int i = 2300; i <= 2800; i += 50) {
+
+			list_Block.add(new Block(2, i, 3800));
+		}
+		for (int i = 3000; i <= 3500; i += 50) {
+
+			list_Block.add(new Block(2, i, 3600));
+		}
+
+		for (int i = 3700; i <= 3900; i += 50) {
+
+			list_Block.add(new Block(2, i, 3350));
+		}
+
+		for (int i = 3000; i <= 3400; i += 50) {
+
+			list_Block.add(new Block(4, i, 3200));
+		}
+
+		for (int i = 2500; i <= 2800; i += 50) {
+
+			list_Block.add(new Block(3, i, 2950));
+		}
+
+		for (int i = 1800; i <= 2300; i += 50) {
+
+			list_Block.add(new Block(3, i, 2700));
+		}
+
+		for (int i = 2500; i <= 3000; i += 50) {
+
+			list_Block.add(new Block(3, i, 2550));
+		}
+
+		for (int i = 2000; i <= 2200; i += 50) {
+
+			list_Block.add(new Block(3, i, 2300));
+		}
+
+	}
 
 	/*********************************************************************/
 
@@ -338,10 +427,27 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 
 		bufferGraphic.drawImage(img, 0, 0, getWidth(), getHeight(), this);
 
-		// 카메라
 		bufferGraphic.translate(-marioX + (MarioClient.WIDTH / 2) - 100, -marioY + (MarioClient.HEIGHT / 2));
 
+		// 패널
+		int i = marioY - 400;
+		mCanvas.bufferGraphic.drawString("Coordinate : " + marioX + ", " + marioY, marioX + 500, i);
+		mCanvas.bufferGraphic.drawString("pushing_Left : " + pushing_Left, marioX + 500, i + 20);
+		mCanvas.bufferGraphic.drawString("pushing_Right : " + pushing_Right, marioX + 500, i + 40);
+		mCanvas.bufferGraphic.drawString("pushing_Up : " + pushing_Up, marioX + 500, i + 60);
+		mCanvas.bufferGraphic.drawString("MoverPower : " + movePower, marioX + 500, i + 80);
+		mCanvas.bufferGraphic.drawString("jumpPower : " + jumpPower, marioX + 500, i + 100);
+		mCanvas.bufferGraphic.drawString("isJumping : " + isJumping, marioX + 500, i + 120);
+		mCanvas.bufferGraphic.drawString("isInAir : " + isInAir, marioX + 500, i + 140);
+		mCanvas.bufferGraphic.drawString("isFalling : " + isFalling, marioX + 500, i + 160);
+		mCanvas.bufferGraphic.drawString("gravity : " + gravity, marioX + 500, i + 180);
+		mCanvas.bufferGraphic.drawString("touchLeft : " + touchLeft, marioX + 500, i + 200);
+		mCanvas.bufferGraphic.drawString("touchRight : " + touchRight, marioX + 500, i + 220);
 
+		bufferGraphic.drawRect(marioX + 15, marioY + 46, 20, 5);
+		bufferGraphic.drawRect(marioX + 15, marioY, 20, 5);
+		bufferGraphic.drawRect(marioX, marioY + 30, 5, 10);
+		bufferGraphic.drawRect(marioX + 45, marioY + 30, 5, 10);
 
 		/* ******************************************************************* */
 
@@ -446,31 +552,6 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 		showChatBalloon(bufferGraphic);
 
 		/* ******************************************************************* */
-		
-		// 패널
-		int i = marioY - 400;
-		mCanvas.bufferGraphic.drawString("Coordinate : " + marioX + ", " + marioY, marioX + 500, i);
-		mCanvas.bufferGraphic.drawString("pushing_Left : " + pushing_Left, marioX + 500, i + 20);
-		mCanvas.bufferGraphic.drawString("pushing_Right : " + pushing_Right, marioX + 500, i + 40);
-		mCanvas.bufferGraphic.drawString("pushing_Up : " + pushing_Up, marioX + 500, i + 60);
-		mCanvas.bufferGraphic.drawString("MoverPower : " + movePower, marioX + 500, i + 80);
-		mCanvas.bufferGraphic.drawString("jumpPower : " + jumpPower, marioX + 500, i + 100);
-		mCanvas.bufferGraphic.drawString("isJumping : " + isJumping, marioX + 500, i + 120);
-		mCanvas.bufferGraphic.drawString("isInAir : " + isInAir, marioX + 500, i + 140);
-		mCanvas.bufferGraphic.drawString("isFalling : " + isFalling, marioX + 500, i + 160);
-		mCanvas.bufferGraphic.drawString("gravity : " + gravity, marioX + 500, i + 180);
-		mCanvas.bufferGraphic.drawString("touchLeft : " + touchLeft, marioX + 500, i + 200);
-		mCanvas.bufferGraphic.drawString("touchRight : " + touchRight, marioX + 500, i + 220);
-
-		bufferGraphic.drawRect(marioX + 15, marioY + 46, 20, 5);
-		bufferGraphic.drawRect(marioX + 15, marioY, 20, 5);
-		bufferGraphic.drawRect(marioX, marioY + 30, 5, 10);
-		bufferGraphic.drawRect(marioX + 45, marioY + 30, 5, 10);
-		
-		
-		
-		
-		/* ******************************************************************* */
 		paint(g);
 
 	} // update();
@@ -520,14 +601,14 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 //			System.out.println("pushing_Up : " + pushing_Up);
 
 		}
-		/* 내려오기 */
-		if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-
+//		/* 내려오기 */
+//		if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+//
 //			pushing_Up = true;
-			marioY += 50;
+//			marioY += 50;
 //			System.out.println("pushing_Up : " + pushing_Up);
-
-		}
+//
+//		}
 	}
 
 	/*********************************************************************/
@@ -631,11 +712,11 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 
 	private void drawAllCharacters(Graphics g) {
 
-		if (marioLogin.array_coordinate != null && marioLogin.array_coordinate.length != 0
+		if (marioLogin.arraydto != null && marioLogin.arraydto.getCoordinate().length != 0
 				&& MarioLogin.serverConnected) {
 
-			String[] nickname = marioLogin.array_textNick;
-			int[][] coordinate = marioLogin.array_coordinate;
+			String[] nickname = marioLogin.arraydto.getNickname();
+			int[][] coordinate = marioLogin.arraydto.getCoordinate();
 
 			for (int i = 0; i < coordinate.length; i++) {
 
@@ -653,6 +734,7 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 					bufferGraphic.setColor(new Color(0, 0, 0));
 					bufferGraphic.drawString(nickname[i], marioX + 7, marioY + 68);
 				}
+
 			}
 		}
 	}
@@ -668,8 +750,8 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 
 		if (list_Balloon.size() != 0) {
 
-			String[] textNick = marioLogin.array_textNick;
-			int[][] coordinate = marioLogin.array_coordinate;
+			String[] textNick = marioLogin.arraydto.getNickname();
+			int[][] coordinate = marioLogin.arraydto.getCoordinate();
 
 			/* 모든 말풍선리스트 */
 			for (BalloonDTO data : list_Balloon) {

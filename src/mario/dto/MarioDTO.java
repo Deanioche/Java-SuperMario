@@ -26,15 +26,6 @@ public class MarioDTO implements Serializable {
 	private int infoAgree;
 	
 	
-	
-	//
-	
-	private String[] nickname_array;
-	private int[][] coordinate;
-	
-	//
-	
-	
 	/*
 	 * 실명, 나이, 계정명, 비밀번호, 비밀번호재확인
 	 */
@@ -210,19 +201,6 @@ public class MarioDTO implements Serializable {
 
 	public void setPlayerMotionNum(int playerMotionNum) {
 		this.playerMotionNum = playerMotionNum;
-	}
-	
-	public String[] getNickname_array() {
-		return nickname_array;
-	}
-	public void setNickname_array(String[] nickname_array) {
-		this.nickname_array = nickname_array;
-	}
-	public int[][] getCoordinate() {
-		return coordinate;
-	}
-	public void setCoordinate(int[][] coordinate) {
-		this.coordinate = coordinate;
 	}
 	
 }

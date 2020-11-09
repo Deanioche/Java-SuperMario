@@ -48,9 +48,10 @@ public class MarioDBTable extends JFrame implements ActionListener {
    
    MarioLogin marioLogin;  //▶2020.11.08 수정한 부분 (추가) 1
    
-   public MarioDBTable(MarioDTO attempt, MarioLogin marioLogin) {
+   public MarioDBTable(MarioDTO attempt) {
+	   this.marioLogin = MarioLogin.mLogin;
+	   
       
-      this.marioLogin = marioLogin;
       this.editorID = attempt.getClientAccount();
       this.editorPW = attempt.getPassword();
       
@@ -82,16 +83,13 @@ public class MarioDBTable extends JFrame implements ActionListener {
       JScrollPane scroll = new JScrollPane(table);
       scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
       
-      MarioDAO dao = MarioDAO.getInstance(); //DAO객체 생성
-      List<MarioDTO> dtoList = dao.getMarioList(); 
-      
-     
+
       //6.DB정보를 List에 담기(테이블에 표기)
-       //일반 사용자 정보 표시(본인 것만 표시)
+      //일반 사용자 정보 표시(본인 것만 표시)
       //DBTLogin에서 입력받은 id/pw(객체 attempt)와 DB에 저장된 id/pw를 조회하여 일치하는 객체를 표시
       if(!editorID.equals("admin")) {
          
-         for(MarioDTO dto : dtoList) {
+         for(MarioDTO dto : MarioLogin.dtoList) {
             String[] checkID = dto.getClientAccount().split("@");
             if(editorID.equals(checkID[0]) && editorPW.equals(dto.getPassword())) {
                Vector<String> v = new Vector<String>();
@@ -198,26 +196,7 @@ public class MarioDBTable extends JFrame implements ActionListener {
    }
    
  
-
-//   public MarioDBTable(String admin, String adminpassword, MarioLogin marioLogin) { //▶2020.11.08 수정한 부분 (추가) 11
-//      
-//         MarioDTO dto = new MarioDTO();
-//        dto.setProtocol(Protocols.TABLELOGIN);
-//        
-//        try {
-//         marioLogin.oos.writeObject(dto);
-//         marioLogin.oos.flush();
-//      } catch (IOException e) {
-//         
-//         e.printStackTrace();
-//      }
-//        
-//      
-//   }
-
-
-
-//7.이벤트메소드
+   //7.이벤트메소드
    public void event() {
       
       updateBtn.addActionListener(this);
@@ -360,46 +339,46 @@ public class MarioDBTable extends JFrame implements ActionListener {
 
 
 
-   public static void selectArticle() { //▶2020.11.08 수정한 부분 (주석) 12
-      
-    
-     
-   //▶2020.11.08 수정한 부분 (주석) 9
-//      MarioDAO dao = MarioDAO.getInstance();
-//      List<MarioDTO> dtoList = dao.getMarioList();
-      
-      
-     
-      for(MarioDTO dto : MarioLogin.dtoList) {
-            String[] checkID = dto.getClientAccount().split("@");
-            
-               Vector<String> v = new Vector<String>();
-               v.add(dto.getSeq()+"");
-               v.add(dto.getClientAccount());
-               v.add(dto.getPassword());
-               v.add(dto.getRealName());
-               v.add(dto.getAge() + "");
-               v.add(dto.getNickname());
-               if(dto.getGender() == 0) {
-                  v.add("남성");
-                  
-               }else if(dto.getGender() == 1) {
-                  v.add("여성");
-               }
-               if(dto.getInfoAgree() == 0) {
-                  v.add("비동의");
-               }else if(dto.getInfoAgree() == 1) {
-                  v.add("동의");
-               }
-               v.add(dto.getScore() + "");
-               v.add(dto.getGoalTime());
-               v.add(dto.getPlayerRank() + "");
-               
-               model.addRow(v);   
-            
- 
-      }
-   }
+//   public static void selectArticle() { //▶2020.11.08 수정한 부분 (주석) 12
+//      
+//    
+//     
+//   //▶2020.11.08 수정한 부분 (주석) 9
+////      MarioDAO dao = MarioDAO.getInstance();
+////      List<MarioDTO> dtoList = dao.getMarioList();
+//      
+//      
+//     
+//      for(MarioDTO dto : MarioLogin.dtoList) {
+//            String[] checkID = dto.getClientAccount().split("@");
+//            
+//               Vector<String> v = new Vector<String>();
+//               v.add(dto.getSeq()+"");
+//               v.add(dto.getClientAccount());
+//               v.add(dto.getPassword());
+//               v.add(dto.getRealName());
+//               v.add(dto.getAge() + "");
+//               v.add(dto.getNickname());
+//               if(dto.getGender() == 0) {
+//                  v.add("남성");
+//                  
+//               }else if(dto.getGender() == 1) {
+//                  v.add("여성");
+//               }
+//               if(dto.getInfoAgree() == 0) {
+//                  v.add("비동의");
+//               }else if(dto.getInfoAgree() == 1) {
+//                  v.add("동의");
+//               }
+//               v.add(dto.getScore() + "");
+//               v.add(dto.getGoalTime());
+//               v.add(dto.getPlayerRank() + "");
+//               
+//               model.addRow(v);   
+//            
+// 
+//      }
+//   }
 
 
   
