@@ -8,6 +8,8 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -108,7 +110,8 @@ public class MarioClient extends JFrame implements ActionListener{
 		label_Timer_MiliSec = new JLabel("00ms");
 
 		/* 채팅창 텍스트필드 */
-		textField_Chat = new JTextField("");
+		textField_Chat = new JTextField("                   Press Enter");
+		textField_Chat.setBackground(new Color(240, 240, 240));
 		textArea_Chat = new JTextArea();
 		textArea_Chat.setEditable(false);
 		textArea_Chat.setLineWrap(true);
@@ -211,10 +214,28 @@ public class MarioClient extends JFrame implements ActionListener{
 					
 					btn_send.doClick();
 					marioCanvas.chatOpen = false;
-					textField_Chat.setBackground(new Color(240, 240, 240));
-					textField_Chat.setText("                   Press Enter");
+
 					
 				}
+				
+			}
+		});
+		
+		textField_Chat.addFocusListener(new FocusListener() {
+			
+			@Override
+			public void focusLost(FocusEvent e) {
+				
+				textField_Chat.setBackground(new Color(240, 240, 240));
+				textField_Chat.setText("                   Press Enter");
+				
+			}
+			
+			@Override
+			public void focusGained(FocusEvent e) {
+				
+				MarioClient.textField_Chat.setText("");
+				MarioClient.textField_Chat.setBackground(new Color(255,255,255));
 				
 			}
 		});

@@ -84,6 +84,7 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 		this.marioLogin = marioLogin;
 		this.marioClient = marioClient;
 		clientData = marioClient.clientData;
+		marioLogin.loginSuccess = true;
 
 		mCanvas = MarioCanvas.this;
 		list_Block = new ArrayList<Block>();
@@ -103,8 +104,6 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 		// 스레드 생성
 		Thread canvasThread = new Thread(this);
 		canvasThread.start();
-
-		requestFocus();
 
 
 	} // MarioCanvas();
@@ -518,9 +517,6 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 		else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 			
 			if(!chatOpen) {
-			MarioClient.textField_Chat.setText("");
-			MarioClient.textField_Chat.setBackground(new Color(255,255,255));
-			System.out.println("엔터키");
 			MarioClient.textField_Chat.requestFocus();
 			chatOpen = true;
 			}

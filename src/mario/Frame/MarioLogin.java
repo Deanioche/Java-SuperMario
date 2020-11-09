@@ -57,7 +57,8 @@ public class MarioLogin extends JFrame implements ActionListener {
 	public static MarioLogin mLogin;
 	
 	/* 서버세팅, 로그인이 완료되었는지 확인  */
-	private boolean loginSuccess = false;
+	boolean connectSuccess = false;
+	boolean loginSuccess = false;
 	private boolean ServerSet = false;
 
 	
@@ -295,7 +296,7 @@ public class MarioLogin extends JFrame implements ActionListener {
 			public void windowClosing(WindowEvent e) {
 				int result = JOptionPane.showConfirmDialog(MarioLogin.this, "종료하시겠습니까?", "종료창",
 						JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-				if (result == JOptionPane.YES_OPTION && !serverConnected) {
+				if (result == JOptionPane.YES_OPTION && !serverConnected  && !loginSuccess) {
 					
 					
 					System.exit(0);
@@ -304,6 +305,7 @@ public class MarioLogin extends JFrame implements ActionListener {
 					
 					MarioDTO sendDTO = new MarioDTO();
 					sendDTO.setProtocol(Protocols.EXIT);
+					loginSuccess = false;
 					
 					try {
 						oos.writeObject(sendDTO);
@@ -364,8 +366,8 @@ public class MarioLogin extends JFrame implements ActionListener {
 						
 						new MarioClient(MarioLogin.this);
 						setVisible(false); 
+						connectSuccess = true;
 						System.out.println("로그인 성공!");
-						loginSuccess = true;
 						break;
 
 					}
@@ -379,7 +381,7 @@ public class MarioLogin extends JFrame implements ActionListener {
 			}
 			
 			/* 로그인  실패  */
-			if (!loginSuccess && new String(tf_pwd.getPassword()).length() != 0) {
+			if (!connectSuccess && new String(tf_pwd.getPassword()).length() != 0) {
 				JOptionPane.showMessageDialog(this, "이메일 계정 또는 비밀번호를 확인해주세요");
 			}
 
@@ -594,7 +596,7 @@ public class MarioLogin extends JFrame implements ActionListener {
 				 
 				 /* ******************************************************************* */
 				 // 좌표 수신
-				if(objectDTO instanceof ArrayDTO && loginSuccess) {
+				if(loginSuccess && objectDTO instanceof ArrayDTO) {
 						 
 					arraydto = (ArrayDTO)objectDTO;
 						 
@@ -610,9 +612,12 @@ public class MarioLogin extends JFrame implements ActionListener {
 						}
 					}// for;
 						
-				}else {
 					
 				 /* ******************************************************************* */
+						
+						
+				}else if(objectDTO instanceof MarioDTO){
+					
 				// 메세지 받기
 				MarioDTO dto = (MarioDTO)objectDTO;
 					
