@@ -13,6 +13,8 @@ public class ImageBox {
     public static Image[] mario_green = new Image[10];
     public static Image[] mario_purple = new Image[10];
     
+    public static Image dooli;
+    
     public static Image background;
 
 	public ImageBox() {
@@ -23,6 +25,8 @@ public class ImageBox {
 		block[2] = Toolkit.getDefaultToolkit().getImage("Image/Blocks/blocks_Piramid.png");
 		block[3] = Toolkit.getDefaultToolkit().getImage("Image/Blocks/blocks_Plate.png");
 		block[4] = Toolkit.getDefaultToolkit().getImage("Image/Blocks/blocks_Question.png");
+		
+		dooli = Toolkit.getDefaultToolkit().getImage("Image/dooli.png");
 		
 		/*
 		 * 0 = 벽돌

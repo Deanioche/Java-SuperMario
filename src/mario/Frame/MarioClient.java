@@ -37,6 +37,7 @@ import javax.swing.table.DefaultTableModel;
 
 import mario.ImageBox;
 import mario.Server.Protocols;
+import mario.dto.BalloonDTO;
 import mario.dto.MarioDTO;
 
 public class MarioClient extends JFrame implements ActionListener{
@@ -278,23 +279,6 @@ public class MarioClient extends JFrame implements ActionListener{
 		});
 		
 		/* ******************************************************************* */
-		// JOIN 프로토콜
-		
-		MarioDTO sendDTO = new MarioDTO();
-		
-		sendDTO.setProtocol(Protocols.JOIN);
-		sendDTO.setNickname(clientData.getNickname());
-		System.out.println("clientData.getNickname()" + clientData.getNickname());
-		
-		try {
-			marioLogin.oos.writeObject(sendDTO);
-			marioLogin.oos.flush();
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-		
-		
-		/* ******************************************************************* */
 		// 타이머 스레드
 		
 		
@@ -341,24 +325,24 @@ public class MarioClient extends JFrame implements ActionListener{
 		
 		if (e.getSource() == btn_start) {
 
-//			if(!timerStart) {
-//				timerStart = true;
-//				
-//				timer_MiliSec = 0;
-//				timer_Second = 0;
-//				timer_Minute = 0;
-//					
-//				/* 접속여부 체크 후 서버로 정보를 송신하는 스레드 시작  */
-//				if(!timerThread.isAlive()) {
-//				timerThread.run();
-//				}
-//			
-//			}else {
-//				
-//				timerStart = false;
-//				
-//			}
-//			
+			if(!timerStart) {
+				timerStart = true;
+				
+				timer_MiliSec = 0;
+				timer_Second = 0;
+				timer_Minute = 0;
+					
+				/* 접속여부 체크 후 서버로 정보를 송신하는 스레드 시작  */
+				if(!timerThread.isAlive()) {
+				timerThread.run();
+				}
+			
+			}else {
+				
+				timerStart = false;
+				
+			}
+			
 		}// if;
 		
 		
@@ -368,14 +352,7 @@ public class MarioClient extends JFrame implements ActionListener{
 		else if( e.getSource() == btn_send) {
 			
 			/* 입력값이 없으면 보내지 않는다. */
-			if(!MarioLogin.serverConnected) {
-				textArea_Chat.append("서버에 접속중이 아니므로 메세지를 보낼 수 없습니다.\n");
-				textArea_Chat.setCaretPosition(textArea_Chat.getText().length());
-				textField_Chat.setText("");
-				marioCanvas.requestFocus();
-				return;
-				
-			}else if(textField_Chat.getText().length() == 0){
+			if(textField_Chat.getText().length() == 0){
 				
 				marioCanvas.requestFocus();
 				return;
@@ -386,7 +363,29 @@ public class MarioClient extends JFrame implements ActionListener{
 			dto.setNickname(clientData.getNickname());
 			dto.setChatMessage(textField_Chat.getText());
 			
+			marioCanvas.list_Balloon.add(new BalloonDTO(122, 1, textField_Chat.getText()));
+			
+			/* 캐릭터 2는 랜덤챗  */
+			int ran = (int)(Math.random() * 5);
+			String text = "";
+			
+			if(ran == 0) {
+				text += "왜";
+			}else if (ran == 1) {
+				text += "뭐";
+			}else if (ran == 2) {
+				text += "ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ";
+			}else if (ran == 3) {
+				text += "야 꺼져";
+			}else if (ran == 4) {
+				text += "하 살기 힘들다";
+			}else {
+				text = "호잇";
+			}
+			marioCanvas.list_Balloon.add(new BalloonDTO(122, 2, text));
+			
 			textField_Chat.setText("");
+			
 			
 				try {
 					marioLogin.oos.writeObject(dto);
@@ -429,20 +428,12 @@ public class MarioClient extends JFrame implements ActionListener{
 		label_Timer_Minute.setText(new DecimalFormat("00").format(timer_Minute) + " : ");
 		
 		
-		
 	}
 	
 	
 	/********************************************************************************************/
 	
-	// 데이터 송신 메소드
-	
-	/* 0.033초마다 보낼 정보들 (좌표, 모션)  */
-	private void sendDataToServer() {
-		
-		
-	} // sendDataToServer()
-	
+
 	
 	/********************************************************************************************/
 

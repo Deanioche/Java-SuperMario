@@ -293,7 +293,7 @@ public class CreateStage {
 	               }
 	            }
 	            
-	            
+	            list_Block.add(new Block(0, 200, 4550));
 
 	      //이벤트 시작
 
@@ -301,6 +301,10 @@ public class CreateStage {
 	      blockdelete =0;
 	         for(int i =5000; i>=4700; i-=100) {
 	            blockdelete += 100;
+	            
+	            if(i == 4900) {
+	            	continue;
+	            }
 	            
 	            for(int y=1850; y<=1950; y+=100) {
 	               list_Block.add(new Block(1, y, i));   //부시는상자

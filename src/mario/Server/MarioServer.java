@@ -14,13 +14,15 @@ public class MarioServer {
 	public MarioServer() {
 		try {
 			
-			svSocket = new ServerSocket(9500);
-			System.out.println(" # 소켓 서버 준비 완료");
+				svSocket = new ServerSocket(9500);
+				System.out.println(" # 소켓 서버 준비 완료");
 			
-			list_Handler = new ArrayList<MarioHandler>();
+				list_Handler = new ArrayList<MarioHandler>();
 			
 			while(true) {
-				System.out.println(" # 소켓 생성 대기 (" + list_Handler.size() + ")");
+				
+				
+				System.out.println(" # 소켓 생성 대기 (" + list_Handler.size());
 			
 				Socket socket = svSocket.accept();
 				
@@ -29,8 +31,10 @@ public class MarioServer {
 				handler.start();
 				
 				list_Handler.add(handler);
+				
 			
 			}
+
 			
 			
 		} catch (IOException e) {

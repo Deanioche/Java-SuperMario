@@ -41,10 +41,30 @@ public class Mario {
      * [9] = 오밀   
 	 */ 
 
-	public void render(Graphics g) {
+	public void render_Red(Graphics g) {
+		
+		g.drawImage(ImageBox.mario_red[picNum], x, y, width, height, MarioCanvas.mCanvas);
+
+	}
+	public void render_Blue(Graphics g) {
+		
+		g.drawImage(ImageBox.mario_blue[picNum], x, y, width, height, MarioCanvas.mCanvas);
+
+	}
+	public void render_Green(Graphics g) {
+		
+		g.drawImage(ImageBox.mario_green[picNum], x, y, width, height, MarioCanvas.mCanvas);
+		
+	}
+	public void render_Purple(Graphics g) {
 		
 		g.drawImage(ImageBox.mario_purple[picNum], x, y, width, height, MarioCanvas.mCanvas);
-
+		
+	}
+	public void render_Yellow(Graphics g) {
+		
+		g.drawImage(ImageBox.mario_yellow[picNum], x, y, width, height, MarioCanvas.mCanvas);
+		
 	}
 	
 

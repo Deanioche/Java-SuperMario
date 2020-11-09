@@ -9,6 +9,14 @@ import mario.Server.Protocols;
 public class MarioDTO implements Serializable {
 
 
+
+	
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	// 필드
 	// 프로토콜
 	private Protocols protocol;

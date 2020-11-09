@@ -148,12 +148,6 @@ public class MarioHandler extends Thread {
 					
 					/* 모든 클라이언트에 보내기  */
 					
-					MarioDTO arraydto = new MarioDTO();
-					arraydto.setProtocol(Protocols.MOVE);
-					arraydto.setArray_nickname(array_nickname);
-					arraydto.setArray_coordinate(array_Coordinate);
-					
-					broadcast(arraydto);
 					
 					
 					
@@ -174,7 +168,7 @@ public class MarioHandler extends Thread {
 					System.out.println("[" + nickname + "] " + dto.getChatMessage());
 					
 					/* 모든 클라이언트에게 전송 */
-					broadcast(sendDTO);
+//					broadcast(sendDTO);
 					
 					
 					
@@ -220,7 +214,7 @@ public class MarioHandler extends Thread {
 					sendDTO.setChatMessage("[" + nickname + "] 님이 입장했습니다. " );
 					System.out.println("[" + nickname + "] 님이 입장했습니다. " );
 					
-					broadcast(sendDTO);
+//					broadcast(sendDTO);
 
 					
 			/* ******************************************************************* */
@@ -260,7 +254,7 @@ public class MarioHandler extends Thread {
 					sendDTO.setProtocol(Protocols.SEND);
 					sendDTO.setChatMessage("[" + nickname + "] 님이 퇴장했습니다. " );
 					System.out.println("[" + nickname + "] 님이 퇴장했습니다. " );
-					broadcast(sendDTO);
+//					broadcast(sendDTO);
 					
 					/* 소켓 종료  */
 					socket.close();
@@ -398,38 +392,24 @@ public class MarioHandler extends Thread {
 	
 	/********************************************************************************/
 	
-	private void broadcast(MarioDTO sendDTO) {
-
-		for (MarioHandler handler : list_Handler) {
-			
-			try {
+//	private void broadcast(MarioDTO sendDTO) {
+//
+//		for (MarioHandler handler : list_Handler) {
+//			
+//			try {
+////				System.out.println(sendDTO.getProtocol() + " | 스레드 이름 : " + handler.getName());
+//				handler.oos.writeObject(sendDTO);
+//
+//				handler.oos.flush();
+//
+//			} catch (IOException e) {
+//				e.printStackTrace();
 //				System.out.println(sendDTO.getProtocol() + " | 스레드 이름 : " + handler.getName());
-				handler.oos.writeObject(sendDTO);
+//			}
+//		}
+//
+//	} // broadcast();
 
-				handler.oos.flush();
-
-			} catch (IOException e) {
-				e.printStackTrace();
-				System.out.println(sendDTO.getProtocol() + " | 스레드 이름 : " + handler.getName());
-			}
-		}
-
-	} // broadcast();
-	
-	private void broadcast(ArrayDTO arraydto) {
-		
-		for (MarioHandler handler : list_Handler) {
-			
-			try {
-				handler.oos.writeObject(arraydto);
-				
-				handler.oos.flush();
-				
-			} catch (IOException e) {
-			}
-		}
-		
-	} // broadcast();
 	
 	public static void main(String[] args) {
 		new MarioServer();

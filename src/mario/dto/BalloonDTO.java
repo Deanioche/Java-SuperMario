@@ -4,12 +4,12 @@ package mario.dto;
 public class BalloonDTO{
 	
 	private int timer;
-	private String nickname;
+	private int chara;
 	private String message;
 	
-	public BalloonDTO(int timer, String nickname, String message) {
+	public BalloonDTO(int timer, int chara, String message) {
 		this.timer = timer;
-		this.nickname = nickname;
+		this.chara = chara;
 		this.message = message;
 	}
 
@@ -21,14 +21,6 @@ public class BalloonDTO{
 		this.timer = timer;
 	}
 
-	public String getNickname() {
-		return nickname;
-	}
-
-	public void setNickname(String nickname) {
-		this.nickname = nickname;
-	}
-
 	public String getMessage() {
 		return message;
 	}
@@ -36,6 +28,16 @@ public class BalloonDTO{
 	public void setMessage(String message) {
 		this.message = message;
 	}
+
+	public int getChara() {
+		return chara;
+	}
+
+	public void setChara(int chara) {
+		this.chara = chara;
+	}
+	
+	
 	
 
 }

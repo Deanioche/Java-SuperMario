@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import mario.ImageBox;
 import mario.Entity.Block;
 import mario.Entity.CreateStage;
 import mario.Entity.Mario;
@@ -36,8 +37,15 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 	boolean pushing_Right = false;
 	boolean pushing_Up = false;
 
+	boolean pushing_Left2 = false;
+	boolean pushing_Right2 = false;
+	boolean pushing_Up2 = false;
+
 	public int movePower = 0; // -30 ~ 30 음수 : 좌, 양수 : 우측
 	public int jumpPower = 0; // 35;
+	
+	public int movePower2 = 0; // -30 ~ 30 음수 : 좌, 양수 : 우측
+	public int jumpPower2 = 0; // 35;
 
 	boolean direction = true; // false = 왼쪽, true = 오른쪽
 	boolean runMotion = false; // true = run1, false = run2
@@ -45,15 +53,28 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 	boolean isInAir = false; // 공중
 	boolean isFalling = false; // 낙하중 : marioY += gravity
 	boolean chatOpen = false;
+	
+	boolean direction2 = true; // false = 왼쪽, true = 오른쪽
+	boolean runMotion2 = false; // true = run1, false = run2
+	boolean isJumping2 = false; // 상승중
+	boolean isInAir2 = false; // 공중
+	boolean isFalling2 = false; // 낙하중 : marioY += gravity
+	boolean chatOpen2 = false;
 
-	public int marioX = 100, marioY = 4800, motionNum = 0;
+	public int marioX = 50, marioY = 4700, motionNum = 0;
+	
+	public int mario2X = 120, mario2Y = 4700, motion2Num = 0;
+	
 	public int gravity = 0;
+	public int gravity2 = 0;
 
 	// 개체 영역
 	Rectangle marioR;
 	Rectangle blockR;
 	private boolean touchLeft = false;
 	private boolean touchRight = false;
+	private boolean touchLeft2 = false;
+	private boolean touchRight2 = false;
 
 	List<Block> list_Block;
 	public MarioDTO clientData;
@@ -109,28 +130,120 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 	} // MarioCanvas();
 
 	/*********************************************************************/
+	// 컨트롤 2
+	
+	private void characterControl2() {
 
-	// 블록 생성하는 메소드
+		/* 좌측 버튼 눌림 */
+		if (pushing_Left2) {
 
-	/* 첫번째 블록의 x좌표, y좌표, 블록이 뻗어나갈 방향(동1,서2,남3,북4), 생성할 블록 갯수, 블록 종류(0 ~ 4) */
-//	private void createBlocks(int x, int y, String toWhere, int length, int type) {
-//		
-//		for(int i = x; i < length * 50; i += 50) { 
-//				
-//			/* # toWhere 블록 생성 방향 */
-//			
-//			/* 1: 동  */
-//			if(toWhere.equals("East")) { list_Block.add(new Block(type, i, y)); }
-//			/* 2: 서  */
-//			if(toWhere.equals("West")) { list_Block.add(new Block(type, x -i, y)); }
-//			/* 3: 남  */
-//			if(toWhere.equals("South")) { list_Block.add(new Block(type, x, i)); }
-//			/* 4: 북  */
-//			if(toWhere.equals("North")) { list_Block.add(new Block(type, x, -i)); }
-//	
-//		}
-//	}
+			if (direction2) {
+				direction2 = false;
+			}
 
+			if (movePower2 > -20 && !isInAir2 && !touchLeft2) {
+				movePower2--;
+			} else if (movePower2 > -5 && isInAir2 && !touchLeft2) {
+				movePower2--;
+			}
+			/*
+			 * 좌측 화살표 버튼이 눌리면, 1. 캐릭터가 우측을 보고 있을 경우, 움직이던 속도를 0으로 만들고 반대 방향을 바라본다. 2. 이동속도가
+			 * -50(좌측방향)이 될때까지 -1씩 천천히 줄인다.
+			 */
+
+			/* 우측 버튼 눌림 */
+		} else if (pushing_Right2) {
+
+			if (!direction2) {
+				direction2 = true;
+			}
+
+			if (movePower2 < 20 && !isInAir2 && !touchRight2) {
+				movePower2++;
+			} else if (movePower2 < 5 && isInAir2 && !touchRight2) {
+				movePower2++;
+			}
+			/*
+			 * 우측 화살표 버튼이 눌리면, 1. 캐릭터가 좌측을 보고 있을 경우, 움직이던 속도를 0으로 만들고 반대 방향을 바라본다. 2. 이동속도가
+			 * 50(우측방향)이 될때까지 1씩 천천히 늘린다.
+			 */
+
+			/* 좌우 버튼 떼짐 */
+		} else if (!pushing_Left2 && !pushing_Right2) {
+
+			if (movePower2 < 0) {
+				movePower2++;
+			}
+
+			if (movePower2 > 0) {
+				movePower2--;
+			}
+		}
+
+		mario2X += movePower2;
+
+		/*
+		 * 좌우 화살표 버튼이 모두 떼지면, 캐릭터가 움직이던 방향으로 천천히 감속한다.
+		 */
+
+		/* 위 버튼 눌림 */
+		if (pushing_Up2) {
+
+			if (jumpPower2 == 0 && !isInAir2) {
+				jumpPower2 = 35; // 점프파워가 있다는건 점프중이라는 뜻
+			}
+			/*
+			 * 위 버튼을 눌렀을때, 점프파워가 0이고 현재 공중이 아닐 경우 점프파워 = 20
+			 */
+
+			/* 위 버튼 떼짐 - 동작 없음 */
+		} else if (!pushing_Up2) {
+
+		}
+
+		if (jumpPower2 > 0) {
+
+			jumpPower2--;
+			isJumping2 = true;
+		}
+		/*
+		 * 점프파워가 0보다 크면 점프파워를 1씩 감소시키고 점프중 = true
+		 */
+
+		else if (jumpPower2 <= 0 && isInAir2) {
+
+			isJumping2 = false;
+			isFalling2 = true;
+		}
+		/*
+		 * 점프파워가 0이면 점프중 = false 낙하중 = true
+		 */
+
+		if (isFalling2 && isInAir2) {
+
+			mario2Y += gravity2;
+			if (gravity2 < 19) {
+				gravity2++;
+			}
+		}
+		/*
+		 * 점프중, 낙하중 = true 이면 마리오 Y좌표에 중력만큼 감소시킨다
+		 */
+
+		mario2Y -= jumpPower2;
+
+		if (mario2X < -25) {
+			mario2X = 5000;
+		} else if (mario2X > 5025) {
+			mario2X = 0;
+		}
+
+		if (mario2Y > 5500) {
+			mario2Y = -50;
+			gravity2 = 0;
+		}
+
+	} // characterControl();
 	/*********************************************************************/
 
 	private void characterControl() {
@@ -237,13 +350,20 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 
 		if (marioX < -25) {
 			marioX = 5000;
+			list_Balloon.add(new BalloonDTO(122, 1, "밖으로 나가면 안돼"));
+			list_Balloon.add(new BalloonDTO(122, 2, "ㅗ"));
 		} else if (marioX > 5025) {
+			list_Balloon.add(new BalloonDTO(122, 1, "밖으로 나가면 안돼"));
+			list_Balloon.add(new BalloonDTO(122, 2, "ㅗㅗ"));
 			marioX = 0;
 		}
 
 		if (marioY > 5500) {
-			marioY = -50;
+			marioX = 100;
+			marioY = 4700; // TODO
 			gravity = 0;
+			list_Balloon.add(new BalloonDTO(122, 1, "떨어지면 안돼"));
+			list_Balloon.add(new BalloonDTO(122, 2, "깐따삐야"));
 		}
 
 	} // characterControl();
@@ -324,7 +444,126 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 		}
 
 	}
+	
+	/*********************************************************************/
 
+	// 지상, 공중 판별
+
+	private void checkGround2() {
+
+		Rectangle marioRBottom = new Rectangle(mario2X + 20, mario2Y + 46, 10, 5);
+		Rectangle marioRTop = new Rectangle(mario2X + 20, mario2Y, 10, 5);
+		Rectangle marioRLeft = new Rectangle(mario2X, mario2Y + 30, 5, 10);
+		Rectangle marioRRight = new Rectangle(mario2X + 45, mario2Y + 30, 5, 10);
+
+		isFalling2 = true;
+		isInAir2 = true;
+		touchLeft2 = false;
+		touchRight2 = false;
+
+		for (int i = 0; i < list_Block.size(); i++) {
+
+			int blockX = list_Block.get(i).getX();
+			int blockY = list_Block.get(i).getY();
+
+			blockR = new Rectangle(blockX, blockY, 50, 50);
+
+			/* 블록 위에 서있기 */
+			if (marioRBottom.intersects(blockR)) {
+
+				if (new Rectangle(mario2X + 10, mario2Y + 46 + gravity2, 30, 5).intersects(blockR)) {
+				}
+
+				mario2Y = blockY - 50;
+				gravity2 = 0;
+				isFalling2 = false;
+				isInAir2 = false;
+
+			}
+			/* 블록에 머리가 닿으면 */
+			else if (marioRTop.intersects(blockR)) {
+
+				if (new Rectangle(mario2X + 10, mario2Y + 4 + jumpPower, 30, 5).intersects(blockR)) {
+				}
+
+				mario2Y = blockY + 51;
+				jumpPower2 = 0;
+				isFalling2 = true;
+				isInAir2 = true;
+				pushing_Up2 = false;
+
+			}
+
+			/* 왼쪽 충돌 */
+			if (marioRLeft.intersects(blockR)) {
+
+				if (new Rectangle(mario2X + movePower2, mario2Y + 20, 5, 10).intersects(blockR)) {
+					mario2X = blockX + 51;
+				}
+
+//					movePower = 0;
+				mario2X = blockX + 51;
+				touchLeft2 = true;
+			}
+
+			/* 우측 충돌 */
+			else if (marioRRight.intersects(blockR)) {
+
+				if (new Rectangle(mario2X + 50 + movePower2, mario2Y + 20, 5, 10).intersects(blockR)) {
+					mario2X = blockX - 51;
+				}
+
+				mario2X = blockX - 51;
+//					movePower = 0;
+				touchRight2 = true;
+			}
+
+		}
+
+	}
+
+	/*********************************************************************/
+	// 충돌
+	
+	private void collisionMario() {
+
+		Rectangle mario = new Rectangle(marioX, marioY, 50, 50);
+		Rectangle mario2 = new Rectangle(mario2X, mario2Y, 50, 50);
+		
+		if(mario.intersects(mario2)) {
+			
+			
+			if(movePower > movePower2 && movePower2 > 0) {
+				jumpPower2 = 2;
+				movePower2 = movePower;
+				
+			}else if (movePower < movePower2 && movePower2 > 0) {
+				jumpPower = 2;
+				movePower = movePower2;
+			}
+			else if (movePower > movePower2 && movePower < 0) {
+				jumpPower = 2;
+				movePower = movePower2;
+			}
+			else if (movePower < movePower2 && movePower < 0) {
+				jumpPower2 = 2;
+				movePower2 = movePower;
+			}
+		
+			else {
+				jumpPower2 = 10;
+				movePower2 = + 20;
+				jumpPower = 10;
+				movePower = - 20;
+				list_Balloon.add(new BalloonDTO(122, 1, "어이쿠"));
+				list_Balloon.add(new BalloonDTO(122, 2, "처신 잘하라고"));
+			}
+		}// TODO
+		
+		
+	}
+	
+	
 	/*********************************************************************/
 
 	@Override
@@ -333,7 +572,10 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 		// 컨트롤
 
 		checkGround();
+		checkGround2();
 		characterControl();
+		characterControl2();
+		collisionMario();
 
 		bufferImage = createImage(this.getWidth(), this.getHeight());
 		bufferGraphic = bufferImage.getGraphics();
@@ -341,7 +583,8 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 		bufferGraphic.drawImage(img, 0, 0, getWidth(), getHeight(), this);
 
 		bufferGraphic.translate(-marioX + (MarioClient.WIDTH / 2) - 100, -marioY + (MarioClient.HEIGHT / 2));
-
+		
+		bufferGraphic.drawImage(ImageBox.dooli, 50, 4680, 300, 300, this);
 		// 패널
 		int i = marioY - 400;
 		mCanvas.bufferGraphic.drawString("Coordinate : " + marioX + ", " + marioY, marioX + 500, i);
@@ -357,10 +600,10 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 		mCanvas.bufferGraphic.drawString("touchLeft : " + touchLeft, marioX + 500, i + 200);
 		mCanvas.bufferGraphic.drawString("touchRight : " + touchRight, marioX + 500, i + 220);
 
-		bufferGraphic.drawRect(marioX + 15, marioY + 46, 20, 5);
-		bufferGraphic.drawRect(marioX + 15, marioY, 20, 5);
-		bufferGraphic.drawRect(marioX, marioY + 30, 5, 10);
-		bufferGraphic.drawRect(marioX + 45, marioY + 30, 5, 10);
+//		bufferGraphic.drawRect(marioX + 15, marioY + 46, 20, 5);
+//		bufferGraphic.drawRect(marioX + 15, marioY, 20, 5);
+//		bufferGraphic.drawRect(marioX, marioY + 30, 5, 10);
+//		bufferGraphic.drawRect(marioX + 45, marioY + 30, 5, 10);
 
 		/* ******************************************************************* */
 
@@ -400,54 +643,82 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 		if (pushing_Left || pushing_Right) {
 			if (direction) { // 오른쪽
 				if (runMotion) {
-					new Mario(3, marioX, marioY).render(bufferGraphic);
+					new Mario(3, marioX, marioY).render_Red(bufferGraphic);
 					motionNum = 3;
 				} else {
-					new Mario(5, marioX, marioY).render(bufferGraphic);
+					new Mario(5, marioX, marioY).render_Red(bufferGraphic);
 					motionNum = 5;
 				}
 			} else { // 왼쪽
 				if (runMotion) {
-					new Mario(2, marioX, marioY).render(bufferGraphic);
+					new Mario(2, marioX, marioY).render_Red(bufferGraphic);
 					motionNum = 2;
 				} else {
-					new Mario(4, marioX, marioY).render(bufferGraphic);
+					new Mario(4, marioX, marioY).render_Red(bufferGraphic);
 					motionNum = 4;
 				}
 			}
 
 		} else if (pushing_Up) {
 			if (direction) { // 오른쪽
-				new Mario(7, marioX, marioY).render(bufferGraphic);
+				new Mario(7, marioX, marioY).render_Red(bufferGraphic);
 				motionNum = 7;
 			} else { // 왼쪽
-				new Mario(6, marioX, marioY).render(bufferGraphic);
+				new Mario(6, marioX, marioY).render_Red(bufferGraphic);
 				motionNum = 6;
 			}
 
 		} else {
 			if (direction) { // 오른쪽
-				new Mario(1, marioX, marioY).render(bufferGraphic);
+				new Mario(1, marioX, marioY).render_Red(bufferGraphic);
 				motionNum = 1;
 			} else { // 왼쪽
-				new Mario(0, marioX, marioY).render(bufferGraphic);
+				new Mario(0, marioX, marioY).render_Red(bufferGraphic);
 				motionNum = 0;
 			}
 		}
+		
+		
+		/* 내 캐릭터 */
+		if (pushing_Left2 || pushing_Right2) {
+			if (direction2) { // 오른쪽
+				if (runMotion2) {
+					new Mario(3, mario2X, mario2Y).render_Blue(bufferGraphic);
+					motion2Num = 3;
+				} else {
+					new Mario(5, mario2X, mario2Y).render_Blue(bufferGraphic);
+					motion2Num = 5;
+				}
+			} else { // 왼쪽
+				if (runMotion2) {
+					new Mario(2, mario2X, mario2Y).render_Blue(bufferGraphic);
+					motion2Num = 2;
+				} else {
+					new Mario(4, mario2X, mario2Y).render_Blue(bufferGraphic);
+					motion2Num = 4;
+				}
+			}
 
-		/* 모든 플레이어 캐릭터 그리기 */
-//		MarioLogin.list_PlayerInfo;
+		} else if (pushing_Up2) {
+			if (direction2) { // 오른쪽
+				new Mario(7, mario2X, mario2Y).render_Blue(bufferGraphic);
+				motion2Num = 7;
+			} else { // 왼쪽
+				new Mario(6, mario2X, mario2Y).render_Blue(bufferGraphic);
+				motion2Num = 6;
+			}
 
-//		if(list_PlayerInfo.size() != 0) {
-//			System.out.println("list_PlayerInfo.size() : " + list_PlayerInfo.size());
-//			
-//			for(MarioDTO data : list_PlayerInfo) {
-//			
-//			System.out.println(data.getNickname() + " : "+data.getPlayerCoordinateX() +  ", " + data.getPlayerCoordinateY());
-//			}
-//		}
+		} else {
+			if (direction2) { // 오른쪽
+				new Mario(1, mario2X, mario2Y).render_Blue(bufferGraphic);
+				motion2Num = 1;
+			} else { // 왼쪽
+				new Mario(0, mario2X, mario2Y).render_Blue(bufferGraphic);
+				motion2Num = 0;
+			}
+		}
 
-		drawAllCharacters(bufferGraphic);
+		showChatBalloon(bufferGraphic);
 
 		// 캐릭터가 공중이면 중력의 힘을 받는다.
 		// 캐릭터다 공중이다?
@@ -457,10 +728,39 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 		bufferGraphic.setColor(new Color(0, 0, 0));
 		bufferGraphic.drawRoundRect(marioX - 5, marioY + 55, 60, 16, 10, 10);
 		bufferGraphic.setColor(new Color(0, 0, 0));
-		bufferGraphic.drawString(clientData.getNickname(), marioX + 7, marioY + 68);
+		bufferGraphic.drawString("고길동", marioX + 7, marioY + 68);
+		
+		bufferGraphic.setColor(new Color(255, 255, 255));
+		bufferGraphic.fillRoundRect(mario2X - 5, mario2Y + 55, 60, 16, 10, 10);
+		bufferGraphic.setColor(new Color(0, 0, 0));
+		bufferGraphic.drawRoundRect(mario2X - 5, mario2Y + 55, 60, 16, 10, 10);
+		bufferGraphic.setColor(new Color(0, 0, 0));
+		bufferGraphic.drawString("둘리", mario2X + 15, mario2Y + 68);
+		
+		
+		
 		
 		/* ******************************************************************* */
 		
+		/* 마리오끼리 거리가 너무 떨어지면 순간이동 */
+		if(Math.sqrt( Math.pow((marioX - mario2X), 2) + 
+						Math.pow((marioY - mario2Y), 2)) > 700) {
+			 
+			mario2X = marioX;
+			mario2Y = marioY;
+		}
+		
+		/* 점프대 */
+		if(marioX >= 50 && marioX <= 100 && marioY == 4500) {
+			jumpPower = 90;
+			System.out.println("a");
+			list_Balloon.add(new BalloonDTO(122, 1, "호~잇"));
+		}
+		
+		if(mario2X >= 50 && mario2X <= 100 && mario2Y == 4500) {
+			list_Balloon.add(new BalloonDTO(122, 2, "깐따삐야"));
+			jumpPower2 = 90;
+		}
 		
 
 		/* ******************************************************************* */
@@ -496,23 +796,40 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 		if (e.getKeyCode() == KeyEvent.VK_LEFT) {
 
 			pushing_Left = true;
-//			System.out.println("pushing_Left : " + pushing_Left);
 
 		}
 		/* 우로 이동 */
 		else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
 
 			pushing_Right = true;
-//			System.out.println("pushing_Right : " + pushing_Right);
 
 		}
 		/* 점프 */
 		if (e.getKeyCode() == KeyEvent.VK_UP) {
 
 			pushing_Up = true;
-//			System.out.println("pushing_Up : " + pushing_Up);
 
 		}
+		
+		/* 좌로 이동 */
+		if (e.getKeyCode() == KeyEvent.VK_A) {
+			
+			pushing_Left2 = true;
+			
+		}
+		/* 우로 이동 */
+		else if (e.getKeyCode() == KeyEvent.VK_D) {
+			
+			pushing_Right2 = true;
+			
+		}
+		/* 점프 */
+		if (e.getKeyCode() == KeyEvent.VK_W) {
+			
+			pushing_Up2 = true;
+			
+		}
+		
 		/* 채팅창 */
 		else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 			
@@ -534,24 +851,40 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 		if (e.getKeyCode() == KeyEvent.VK_LEFT) {
 
 			pushing_Left = false;
-//			System.out.println("pushing_Left : " + pushing_Left);
 
 		}
 		/* 우로 이동 */
 		else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
 
 			pushing_Right = false;
-//			System.out.println("pushing_Right : " + pushing_Right);
 
 		}
 		/* 점프 */
 		else if (e.getKeyCode() == KeyEvent.VK_UP) {
 
 			pushing_Up = false;
-//			System.out.println("pushing_Up : " + pushing_Up);
 
 		}
 
+		/* 좌로 이동 */
+		if (e.getKeyCode() == KeyEvent.VK_A) {
+			
+			pushing_Left2 = false;
+			
+		}
+		/* 우로 이동 */
+		else if (e.getKeyCode() == KeyEvent.VK_D) {
+			
+			pushing_Right2 = false;
+			
+		}
+		/* 점프 */
+		if (e.getKeyCode() == KeyEvent.VK_W) {
+			
+			pushing_Up2 = false;
+			
+		}
+		
 	}
 
 	@Override
@@ -562,7 +895,7 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 	/*********************************************************************/
 
 	@Override
-	public void run() {
+	public synchronized void run() {
 
 		int runTimer = 2;
 
@@ -571,41 +904,19 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 			try {
 
 				/* ******************************************************************* */
-				// 좌표 전송
-
-				if (MarioLogin.serverConnected) {
-
-					MarioDTO sendDTO = new MarioDTO();
-
-					sendDTO.setProtocol(Protocols.MOVE);
-					sendDTO.setNickname(clientData.getNickname());
-					sendDTO.setPlayerCoordinateX(marioX);
-					sendDTO.setPlayerCoordinateY(marioY);
-					sendDTO.setPlayerMotionNum(motionNum);
-
-					try {
-						marioLogin.oos.writeObject(sendDTO);
-						marioLogin.oos.flush();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-
-				}
-
-	
-
-				/* ******************************************************************* */
 				// 달리기 모션
 
 				runTimer--;
 				if (runTimer <= 0 && runMotion) {
 
 					runMotion = false;
+					runMotion2 = true;
 					runTimer = 3;
 
 				} else if (runTimer <= 0 && !runMotion) {
 
 					runMotion = true;
+					runMotion2 = false;
 					runTimer = 3;
 
 				}
@@ -618,74 +929,34 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 				e.printStackTrace();
 			}
 		}
-
 	}
 
-	/*********************************************************************/
-
-	private void drawAllCharacters(Graphics g) {
-
-		if (marioLogin.arraydto != null && marioLogin.arraydto.getCoordinate().length != 0
-				&& MarioLogin.serverConnected) {
-
-			String[] nickname = marioLogin.arraydto.getNickname();
-			int[][] coordinate = marioLogin.arraydto.getCoordinate();
-
-			for (int i = 0; i < coordinate.length; i++) {
-
-				if (!(nickname[i].equals(clientData.getNickname()))) {
-					int marioX = coordinate[i][0];
-					int marioY = coordinate[i][1];
-					int motion = coordinate[i][2];
-
-					new Mario(motion, marioX, marioY).render(g);
-
-					bufferGraphic.setColor(new Color(255, 255, 255));
-					bufferGraphic.fillRoundRect(marioX - 5, marioY + 55, 60, 16, 10, 10);
-					bufferGraphic.setColor(new Color(0, 0, 0));
-					bufferGraphic.drawRoundRect(marioX - 5, marioY + 55, 60, 16, 10, 10);
-					bufferGraphic.setColor(new Color(0, 0, 0));
-					bufferGraphic.drawString(nickname[i], marioX + 7, marioY + 68);
-						
-					
-				}
-			}
-			showChatBalloon(g, nickname, coordinate);
-		}
-	}
-
-	/*********************************************************************/
-	
-	
+	/*********************************************************************/	
 	
 	// 말풍선
-	public void showChatBalloon(Graphics bufferGraphic, String[] textNick, int[][] coordinate) {
+	public void showChatBalloon(Graphics bufferGraphic) {
 		/* ******************************************************************* */
 		// 말풍선 그리기 TODO
 
 		if (list_Balloon.size() != 0) {
 
-//			String[] textNick = marioLogin.arraydto.getNickname();
-//			int[][] coordinate = marioLogin.arraydto.getCoordinate();
-
 			/* 모든 말풍선리스트 */
 			for (BalloonDTO data : list_Balloon) {
 
-//				System.out.println("nickname.length : " + textNick.length);
-				for (int i = 0; i < textNick.length; i++) {
-
-					/* 좌표값을 가져오는 배열에서 일치하는 닉네임 찾기 */
-					if (data.getNickname().equals(textNick[i])) {
-
-						if (data.getTimer() > 0) {
-
 							/* 타이머 -1 */
 							data.setTimer((data.getTimer() - 1));
-//							System.out.println("data.getTimer() : " + data.getTimer() + " / 91");
-							int xT = coordinate[i][0] - 40;
-							int yT = coordinate[i][1] - 55;
 							
-//							System.out.println("mario : " + coordinate[i][0] + ", "+ coordinate[i][1]);
+							int xT = marioX - 40;
+							int yT = marioY - 55;
+							
+							if(data.getChara() == 1) {
+								xT = marioX - 40;
+								yT = marioY - 55;
+							}else {
+								xT = mario2X - 40;
+								yT = mario2Y - 55;
+							}
+							
 
 							int x2[] = { xT, xT + 90, xT + 90, xT + 70, xT + 60, xT + 55, xT };
 							int y2[] = { yT, yT, yT + 40, yT + 40, yT + 50, yT + 40, yT + 40 };
@@ -732,18 +1003,12 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 									bufferGraphic.drawString(text, xT + 5, yT + 15);
 								}
 							}
-
-							break;
-						}
-					}
-				}
-				
+				/* 남은시간이 0이되면 말풍선 리스트에서 해당 말풍선 제거 */
 				if(data.getTimer() <= 0) {
 					list_Balloon.remove(data);
 					break;
 				}
 			}
-
 		}
 		
 		
