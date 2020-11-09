@@ -31,6 +31,7 @@ import javax.swing.JTextField;
 import mario.Server.Protocols;
 import mario.dao.MarioDAO;
 import mario.dao.MarioDBTLogIn;
+import mario.dto.ArrayDTO;
 import mario.dto.BalloonDTO;
 import mario.dto.MarioDTO;
 
@@ -106,6 +107,7 @@ public class MarioLogin extends JFrame implements ActionListener {
 		super("Login");
 		
 		this.mLogin = MarioLogin.this;
+		arraydto = new ArrayDTO();
 		/* ******************************************************************* */
 		
 		
@@ -551,7 +553,7 @@ public class MarioLogin extends JFrame implements ActionListener {
 			@Override
 			public void run() {
 				
-				Object objectDTO = null;
+				MarioDTO objectDTO = null;
 //				ListDTO listDTO = null; // TODO
 				
 				while(serverConnected) {
@@ -585,43 +587,44 @@ public class MarioLogin extends JFrame implements ActionListener {
 	
 	// 서버로부터 데이터 수신
 		
-		private void dataFromServer(Object objectDTO) {
+		private void dataFromServer(MarioDTO dto) {
 			
 			try {
 			 
 			 /* ******************************************************************* */
-				objectDTO = ois.readObject();
+				dto = (MarioDTO)ois.readObject();
 				
 //				 System.out.println("dataFromServer : dto = (MarioDTO) ois.readObject() : 성공 ");
 				 
 				 /* ******************************************************************* */
 				 // 좌표 수신
-				if(loginSuccess && objectDTO instanceof ArrayDTO) {
-						 
-					arraydto = (ArrayDTO)objectDTO;
-						 
-						if(arraydto.getCoordinate().length != 0) {
-							for(int i = 0; i < arraydto.getCoordinate().length; i++) {
-								 
-								String nick = arraydto.getNickname()[i];
-								 int x = arraydto.getCoordinate()[i][0];
-								 int y = arraydto.getCoordinate()[i][1];
-								 int n = arraydto.getCoordinate()[i][2];
-								 
+				if(dto.getProtocol() == Protocols.MOVE && loginSuccess) {
+					
+						arraydto.setNickname(dto.getArray_nickname());
+						arraydto.setCoordinate(dto.getArray_coordinate());
+					
+//						if(arraydto.getCoordinate().length != 0) {
+//							for(int i = 0; i < arraydto.getCoordinate().length; i++) {
+//								 
+//								String nick = arraydto.getNickname()[i];
+//								 int x = arraydto.getCoordinate()[i][0];
+//								 int y = arraydto.getCoordinate()[i][1];
+//								 int n = arraydto.getCoordinate()[i][2];
+//								 
 //							System.out.println("array x, y, n : " + nick + ":" + x + " , " + y + ", " + n);
-						}
-					}// for;
+//						}
+//					}// for;
 						
 				} // ArrayDTO
 					
 				 /* ******************************************************************* */
 						
-				else if(objectDTO instanceof MarioDTO){
+//				else if(objectDTO instanceof MarioDTO){
+//					
+//				// 메세지 받기
+//				MarioDTO dto = (MarioDTO)objectDTO;
 					
-				// 메세지 받기
-				MarioDTO dto = (MarioDTO)objectDTO;
-					
-					if(dto.getProtocol() == Protocols.SEND && loginSuccess) {			
+				else if(dto.getProtocol() == Protocols.SEND && loginSuccess) {			
 						 
 						 if(dto.getChatMessage() != null) {
 							 System.out.println("dto.getChatMessage() : " + dto.getChatMessage());
@@ -689,7 +692,7 @@ public class MarioLogin extends JFrame implements ActionListener {
 				 *  	CONNECT : 접속
 				 */
 			
-				} // else if(objectDTO instanceof MarioDTO);
+			 // else if(objectDTO instanceof MarioDTO);
 				
 			} catch (ClassNotFoundException | IOException e) {
 				e.printStackTrace();

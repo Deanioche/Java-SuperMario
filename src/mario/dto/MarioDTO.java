@@ -29,7 +29,26 @@ public class MarioDTO implements Serializable {
 	/*
 	 * 실명, 나이, 계정명, 비밀번호, 비밀번호재확인
 	 */
+	
+	private String[] array_nickname;
+	private int[][] array_coordinate;
+	
 
+	public String[] getArray_nickname() {
+		return array_nickname;
+	}
+
+	public void setArray_nickname(String[] array_nickname) {
+		this.array_nickname = array_nickname;
+	}
+
+	public int[][] getArray_coordinate() {
+		return array_coordinate;
+	}
+
+	public void setArray_coordinate(int[][] array_coordinate) {
+		this.array_coordinate = array_coordinate;
+	}
 
 	// 게임 종료 후 받을 정보
 	private int score;
