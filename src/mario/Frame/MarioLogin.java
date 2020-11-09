@@ -31,6 +31,7 @@ import javax.swing.JTextField;
 import mario.Server.Protocols;
 import mario.dao.MarioDAO;
 import mario.dao.MarioDBTLogIn;
+import mario.dto.BalloonDTO;
 import mario.dto.MarioDTO;
 
 public class MarioLogin extends JFrame implements ActionListener {
@@ -123,7 +124,7 @@ public class MarioLogin extends JFrame implements ActionListener {
 		
 		// 콤보박스 생성
 		comboBox_Email = new JComboBox<String>( new String[] {" @ naver.com", " @ gmail.com"} );
-		comboBox_IP_Address = new JComboBox<String>( new String[] {"192.168.1.3", "192.168.0.28", "192.168.0.98", "직접 입력 후 반드시 엔터"});
+		comboBox_IP_Address = new JComboBox<String>( new String[] {"192.168.0.28", "192.168.1.3", "192.168.0.98", "직접 입력 후 반드시 엔터"});
 		comboBox_IP_Address.setEditable(true);
 		comboBox_IP_Address.setSelectedIndex(0);
 
@@ -605,7 +606,7 @@ public class MarioLogin extends JFrame implements ActionListener {
 					 MarioClient.textArea_Chat.append(dto.getChatMessage() + "\n");
 					 MarioClient.textArea_Chat.setCaretPosition(MarioClient.textArea_Chat.getText().length());
 					 
-					 MarioCanvas.mCanvas.list_Balloon.add(new BalloonDTO(270, dto.getNickname(), dto.getChatMessage()));
+					 MarioCanvas.mCanvas.list_Balloon.add(new BalloonDTO(91, dto.getNickname(), dto.getChatMessage()));
 					 
 					 
 				 /* ******************************************************************* */
