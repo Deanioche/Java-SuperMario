@@ -277,7 +277,8 @@ public class MarioLogin extends JFrame implements ActionListener {
 				
 			}
 		});
-		comboBox_IP_Address.addKeyListener(new KeyAdapter() {
+		
+		tf_port.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				
@@ -340,6 +341,7 @@ public class MarioLogin extends JFrame implements ActionListener {
 				if(!serverConnected) {
 					
 					btn_ServerSetting.doClick();
+//					btn_save_ServerSetting.doClick();
 					JOptionPane.showMessageDialog(this, "서버 세팅을 확인 후, Connect 버튼을 눌러주세요");
 					return;
 				}
@@ -565,7 +567,7 @@ public class MarioLogin extends JFrame implements ActionListener {
 	} catch (IOException e) {
 //		e.printStackTrace();
 		btn_save_ServerSetting.setBackground(new Color(250, 150, 50));
-		btn_save_ServerSetting.setText("서버 접속 실패!");
+//		btn_save_ServerSetting.setText("Connect");
 		System.out.println("서버 접속 실패!");
 		btn_ServerSetting.doClick();
 		serverConnected = false;
@@ -592,7 +594,7 @@ public class MarioLogin extends JFrame implements ActionListener {
 				 
 				 /* ******************************************************************* */
 				 // 좌표 수신
-				if(objectDTO instanceof ArrayDTO) {
+				if(objectDTO instanceof ArrayDTO && loginSuccess) {
 						 
 					arraydto = (ArrayDTO)objectDTO;
 						 
@@ -614,19 +616,20 @@ public class MarioLogin extends JFrame implements ActionListener {
 				// 메세지 받기
 				MarioDTO dto = (MarioDTO)objectDTO;
 					
-				 if(dto.getProtocol() == Protocols.SEND) {			
+				 if(dto.getProtocol() == Protocols.SEND && loginSuccess) {			
 					 
-					 System.out.println("dto.getChatMessage() : " + dto.getChatMessage());
-					 MarioClient.textArea_Chat.append(dto.getChatMessage() + "\n");
-					 MarioClient.textArea_Chat.setCaretPosition(MarioClient.textArea_Chat.getText().length());
-					 
-					 MarioCanvas.mCanvas.list_Balloon.add(new BalloonDTO(91, dto.getNickname(), dto.getChatMessage()));
-					 
+					 if(dto.getChatMessage() != null) {
+						 System.out.println("dto.getChatMessage() : " + dto.getChatMessage());
+						 MarioClient.textArea_Chat.append(dto.getChatMessage() + "\n");
+						 MarioClient.textArea_Chat.setCaretPosition(MarioClient.textArea_Chat.getText().length());
+						 
+						 MarioCanvas.mCanvas.list_Balloon.add(new BalloonDTO(91, dto.getNickname(), dto.getChatMessage()));
+					 }
 					 
 				 /* ******************************************************************* */
 				// 입장
 					 
-				 }else if(dto.getProtocol() == Protocols.JOIN) {	
+				 }else if(dto.getProtocol() == Protocols.JOIN && loginSuccess) {	
 					 
 					 MarioClient.textArea_Chat.append(dto.getChatMessage() + "\n");
 					 MarioClient.textArea_Chat.setCaretPosition(MarioClient.textArea_Chat.getText().length());
@@ -635,7 +638,7 @@ public class MarioLogin extends JFrame implements ActionListener {
 				 /* ******************************************************************* */
 				 // 퇴장
 					 
-				 }else if(dto.getProtocol() == Protocols.EXIT) {	
+				 }else if(dto.getProtocol() == Protocols.EXIT && loginSuccess) {	
 					 
 					serverConnected = false;
 					ois.close();

@@ -118,7 +118,7 @@ public class MarioClient extends JFrame implements ActionListener{
 
 		/* 버튼 */
 		btn_start = new JButton("게임생성");
-		btn_send = new JButton("보내기");
+		btn_send = new JButton("Send");
 		btn_start = new JButton("시작");
 
 		/* JTable 랭킹창 */
@@ -210,6 +210,9 @@ public class MarioClient extends JFrame implements ActionListener{
 				if(e.getKeyCode() == KeyEvent.VK_ENTER) {
 					
 					btn_send.doClick();
+					marioCanvas.chatOpen = false;
+					textField_Chat.setBackground(new Color(240, 240, 240));
+					textField_Chat.setText("                   Press Enter");
 					
 				}
 				
@@ -325,7 +328,7 @@ public class MarioClient extends JFrame implements ActionListener{
 			timer_MiliSec = 0;
 			timer_Second = 0;
 			timer_Minute = 0;
-			
+				
 			/* 접속여부 체크 후 서버로 정보를 송신하는 스레드 시작  */
 			if(!timerThread.isAlive()) {
 			timerThread.start();
@@ -341,15 +344,19 @@ public class MarioClient extends JFrame implements ActionListener{
 		else if( e.getSource() == btn_send) {
 			
 			/* 입력값이 없으면 보내지 않는다. */
-			if(textField_Chat.getText().length() == 0 || !MarioLogin.serverConnected) {
+			if(!MarioLogin.serverConnected) {
 				textArea_Chat.append("서버에 접속중이 아니므로 메세지를 보낼 수 없습니다.\n");
 				textArea_Chat.setCaretPosition(textArea_Chat.getText().length());
 				textField_Chat.setText("");
 				marioCanvas.requestFocus();
 				return;
 				
+			}else if(textField_Chat.getText().length() == 0){
+				
+				marioCanvas.requestFocus();
+				return;
+		
 			}else {
-			
 			MarioDTO dto = new MarioDTO();
 			dto.setProtocol(Protocols.SEND);
 			dto.setNickname(clientData.getNickname());

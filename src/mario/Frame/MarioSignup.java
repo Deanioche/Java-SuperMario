@@ -83,6 +83,7 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 		super("입소신청서");
 		
 		this.marioLogin = marioLogin;
+		this.dtoList = MarioLogin.dtoList;
 		
 		// 윈도우 창 설정
 		
@@ -126,7 +127,7 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 			btn_EmailAuth = new JButton("인증받기");
 			btn_signup = new JButton("회원가입");
 			btn_cancel = new JButton("취소");
-			btn_nickname_check = new JButton("check");
+			btn_nickname_check = new JButton("Use");
 			btn_AuthCancel = new JButton("인증 취소");
 		
 			// 성별 체크박스 & 버튼 그룹
@@ -296,6 +297,7 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 		background.add(btn_signup);
 		background.add(btn_EmailAuth);
 		background.add(btn_nickname_check);
+		btn_nickname_check.setVisible(false);
 		
 		background.add(checkBox_man);
 		background.add(checkBox_woman);
@@ -336,6 +338,66 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 			public void focusGained(FocusEvent e) {
 				tf_emailAuth.setText("");
 				tf_emailAuth.setForeground(Color.BLACK);
+				
+			}
+		});
+		/* 닉네임 중복검사 */
+		tf_nickname.addFocusListener( new FocusListener() {
+			
+			@Override
+			public void focusLost(FocusEvent e) {
+				
+				btn_nickname_check.setVisible(false);
+				
+				/* 이메일 인증이 완료되기 전에는 닉네임 중복검사는 동작하지 않는다. */
+				if (!AuthSuccess) {
+					label_NicknameChkLabel.setForeground(new Color(200, 50, 50));
+					label_NicknameChkLabel.setText("이메일 인증을 먼저 완료해주세요.");
+					label_NicknameChkLabel.setVisible(true);
+					return;
+
+					/* 이메일 인증시에 받은 dtoList로 닉네임 비교 */
+				} else {
+
+					if (tf_nickname.getText().length() < 3 || tf_nickname.getText() == null) {
+
+						label_NicknameChkLabel.setForeground(new Color(250, 100, 0));
+						label_NicknameChkLabel.setText("닉네임을 3자 이상 입력해주세요.");
+						label_NicknameChkLabel.setVisible(true);
+						nicknameCheck = false;
+						return;
+					}
+
+					if (dtoList != null) {
+						for (MarioDTO dto : MarioLogin.dtoList) {
+							if (tf_nickname.getText().equals(dto.getNickname())) {
+								label_NicknameChkLabel.setForeground(new Color(100, 50, 50));
+								label_NicknameChkLabel.setText("해당 닉네임이 이미 존재합니다.");
+								label_NicknameChkLabel.setVisible(true);
+								nicknameCheck = false;
+
+								return;
+							}
+						}
+					}
+					
+						System.out.println(dtoList);
+						label_NicknameChkLabel.setForeground(new Color(100, 200, 150));
+						label_NicknameChkLabel.setText("해당 닉네임을 사용할 수 있습니다.");
+						label_NicknameChkLabel.setVisible(true);
+						btn_nickname_check.setVisible(true);
+						nicknameCheck = true;
+					
+				}
+				
+			}
+			
+			@Override
+			public void focusGained(FocusEvent e) {
+				btn_nickname_check.setVisible(false);
+				tf_nickname.setText("");
+				nicknameCheck = false;
+				label_NicknameChkLabel.setVisible(false);
 				
 			}
 		});
@@ -524,39 +586,20 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 		/* ******************************************************************* */
 			
 		// 닉네임 중복검사 버튼 이벤트
-			
-		 else if (e.getSource() == btn_nickname_check) {
-			 
-			 /* 이메일 인증이 완료되기 전에는 닉네임 중복검사는 동작하지 않는다. */
-			 if(!AuthSuccess) {
-				 label_NicknameChkLabel.setForeground(new Color(200, 50, 50));
-				 label_NicknameChkLabel.setVisible(true);
-				 return;
-				 
-				 /* 이메일 인증시에 받은 dtoList로 닉네임 비교 */
-			 }else {
-				 
-				if(dtoList != null) {
-					for (MarioDTO dto : MarioLogin.dtoList) {
-						if (tf_nickname.getText().equals(dto.getNickname())) {
-							 label_NicknameChkLabel.setForeground(new Color(100, 50, 50));
-							 label_NicknameChkLabel.setText("해당 닉네임이 이미 존재합니다.");
-							 label_NicknameChkLabel.setVisible(true);
-							 nicknameCheck = false;
-							 
-							return;
-						}
-					} 
-				}
-				
-			label_NicknameChkLabel.setForeground(new Color(100, 200, 150));
-			label_NicknameChkLabel.setText("해당 닉네임을 사용할 수 있습니다.");
-			label_NicknameChkLabel.setVisible(true);
-			nicknameCheck = true;
+
+		else if (e.getSource() == btn_nickname_check) {
+
+			//TODO 닉네임 잠금
+			if(nicknameCheck) {
+			tf_nickname.setEnabled(false);
+			btn_nickname_check.setVisible(false);
+			label_NicknameChkLabel.setText("입력한 닉네임을 사용합니다.");
+			}else {
+				label_NicknameChkLabel.setText("[오류!]" + label_NicknameChkLabel.getText());
 			}
+			
 		}
-		
-		
+
 		/* ******************************************************************* */
 		
 		// 이메일 인증 버튼 이벤트
@@ -567,7 +610,6 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 			/* 이메일 인증키 입력란이 빈칸이 아니고, 코드가 일치하면  */
 			if(tf_emailAuth.getText().length() != 0 && tf_emailAuth.getText().equals(authCode + "")){
 				
-				
 				/* 인증키 입력란 비활성화, 타이머 정지&사라짐, 인증 성공 true */
 				tf_emailAuth.setEnabled(false);
 				tf_emailAuth.setFont(new Font("MD개성체", Font.BOLD, 13));
@@ -575,9 +617,12 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 				AuthSuccess = true;
 				timerStart = false;
 				label_timer.setVisible(false);
+				tf_pwd.requestFocus();
+				
 				
 				/* 인증 실패  */
 			}else {
+				tf_pwd.requestFocus();
 				tf_emailAuth.setForeground(new Color(250, 100, 100));
 				tf_emailAuth.setFont(new Font("MD개성체", Font.BOLD, 13));
 				tf_emailAuth.setText("   error!");
@@ -655,26 +700,24 @@ public class MarioSignup extends JFrame implements ActionListener, Runnable {
 				/* ******************************************************************* */
 				
 				// 비밀번호 체크
-				
+
 				String pwd = new String(tf_pwd.getPassword());
 				String pwd_check = new String(tf_pwd_check.getPassword());
-				
+
 				/* 비밀번호와 비번확인이 모두 입력되었을 때, */
-				if(pwd.length() != 0 && pwd_check.length() != 0) {
-					
+				if (pwd.length() != 0 && pwd_check.length() != 0) {
+
 					/* 일치여부 라벨 출력 */
 					label_pwdChkLabel.setVisible(true);
-					
-					if(pwd.equals(pwd_check)) {
+
+					if (pwd.equals(pwd_check)) {
 						label_pwdChkLabel.setForeground(new Color(50, 200, 50));
 						label_pwdChkLabel.setText("비밀번호가 일치합니다.");
-					}else {
+					} else {
 						label_pwdChkLabel.setForeground(new Color(200, 50, 50));
 						label_pwdChkLabel.setText("비밀번호가 일치하지 않습니다.");
 					}
 				}
-				
-				
 				
 				/* ******************************************************************* */
 				

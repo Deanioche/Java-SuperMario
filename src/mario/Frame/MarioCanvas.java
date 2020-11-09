@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
@@ -43,6 +44,7 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 	boolean isJumping = false; // 상승중
 	boolean isInAir = false; // 공중
 	boolean isFalling = false; // 낙하중 : marioY += gravity
+	boolean chatOpen = false;
 
 	public int marioX = 100, marioY = 4800, motionNum = 0;
 	public int gravity = 0;
@@ -104,6 +106,7 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 
 		requestFocus();
 
+
 	} // MarioCanvas();
 
 	/*********************************************************************/
@@ -128,95 +131,6 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 //	
 //		}
 //	}
-
-	/*********************************************************************/
-
-	// 블록 생성
-
-	private void createStage() {
-
-		/* 맵 끝 테두리 */
-		for (int i = -100; i <= 5100; i += 50) {
-
-			list_Block.add(new Block(0, i, 5050));
-		}
-
-		for (int i = 0; i <= 4950; i += 50) {
-
-			list_Block.add(new Block(0, 0, i));
-		}
-
-		for (int i = 0; i <= 4950; i += 50) {
-
-			list_Block.add(new Block(0, 5000, i));
-		}
-		/* 맵 끝 테두리 */
-
-		for (int i = 1000; i <= 2000; i += 50) {
-
-			list_Block.add(new Block(0, i, 4800));
-		}
-
-		for (int i = 2000; i <= 3000; i += 50) {
-
-			list_Block.add(new Block(0, i, 4600));
-		}
-
-		for (int i = 1500; i <= 2500; i += 50) {
-
-			list_Block.add(new Block(1, i, 4400));
-		}
-
-		for (int i = 2500; i <= 3500; i += 50) {
-
-			list_Block.add(new Block(2, i, 4200));
-		}
-
-		for (int i = 1500; i <= 2500; i += 50) {
-
-			list_Block.add(new Block(2, i, 4000));
-		}
-
-		for (int i = 2300; i <= 2800; i += 50) {
-
-			list_Block.add(new Block(2, i, 3800));
-		}
-		for (int i = 3000; i <= 3500; i += 50) {
-
-			list_Block.add(new Block(2, i, 3600));
-		}
-
-		for (int i = 3700; i <= 3900; i += 50) {
-
-			list_Block.add(new Block(2, i, 3350));
-		}
-
-		for (int i = 3000; i <= 3400; i += 50) {
-
-			list_Block.add(new Block(4, i, 3200));
-		}
-
-		for (int i = 2500; i <= 2800; i += 50) {
-
-			list_Block.add(new Block(3, i, 2950));
-		}
-
-		for (int i = 1800; i <= 2300; i += 50) {
-
-			list_Block.add(new Block(3, i, 2700));
-		}
-
-		for (int i = 2500; i <= 3000; i += 50) {
-
-			list_Block.add(new Block(3, i, 2550));
-		}
-
-		for (int i = 2000; i <= 2200; i += 50) {
-
-			list_Block.add(new Block(3, i, 2300));
-		}
-
-	}
 
 	/*********************************************************************/
 
@@ -548,8 +462,7 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 		
 		/* ******************************************************************* */
 		
-		// TODO
-		showChatBalloon(bufferGraphic);
+		
 
 		/* ******************************************************************* */
 		paint(g);
@@ -601,14 +514,18 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 //			System.out.println("pushing_Up : " + pushing_Up);
 
 		}
-//		/* 내려오기 */
-//		if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-//
-//			pushing_Up = true;
-//			marioY += 50;
-//			System.out.println("pushing_Up : " + pushing_Up);
-//
-//		}
+		/* 채팅창 */
+		else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+			
+			if(!chatOpen) {
+			MarioClient.textField_Chat.setText("");
+			MarioClient.textField_Chat.setBackground(new Color(255,255,255));
+			System.out.println("엔터키");
+			MarioClient.textField_Chat.requestFocus();
+			chatOpen = true;
+			}
+
+		}
 	}
 
 	/*********************************************************************/
@@ -733,9 +650,11 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 					bufferGraphic.drawRoundRect(marioX - 5, marioY + 55, 60, 16, 10, 10);
 					bufferGraphic.setColor(new Color(0, 0, 0));
 					bufferGraphic.drawString(nickname[i], marioX + 7, marioY + 68);
+						
+					
 				}
-
 			}
+			showChatBalloon(g, nickname, coordinate);
 		}
 	}
 
@@ -744,14 +663,14 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 	
 	
 	// 말풍선
-	public void showChatBalloon(Graphics bufferGraphic) {
+	public void showChatBalloon(Graphics bufferGraphic, String[] textNick, int[][] coordinate) {
 		/* ******************************************************************* */
 		// 말풍선 그리기 TODO
 
 		if (list_Balloon.size() != 0) {
 
-			String[] textNick = marioLogin.arraydto.getNickname();
-			int[][] coordinate = marioLogin.arraydto.getCoordinate();
+//			String[] textNick = marioLogin.arraydto.getNickname();
+//			int[][] coordinate = marioLogin.arraydto.getCoordinate();
 
 			/* 모든 말풍선리스트 */
 			for (BalloonDTO data : list_Balloon) {
