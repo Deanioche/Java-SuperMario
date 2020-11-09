@@ -612,65 +612,70 @@ public class MarioLogin extends JFrame implements ActionListener {
 						}
 					}// for;
 						
+				} // ArrayDTO
 					
 				 /* ******************************************************************* */
 						
-						
-				}else if(objectDTO instanceof MarioDTO){
+				else if(objectDTO instanceof MarioDTO){
 					
 				// 메세지 받기
 				MarioDTO dto = (MarioDTO)objectDTO;
 					
-				 if(dto.getProtocol() == Protocols.SEND && loginSuccess) {			
-					 
-					 if(dto.getChatMessage() != null) {
-						 System.out.println("dto.getChatMessage() : " + dto.getChatMessage());
+					if(dto.getProtocol() == Protocols.SEND && loginSuccess) {			
+						 
+						 if(dto.getChatMessage() != null) {
+							 System.out.println("dto.getChatMessage() : " + dto.getChatMessage());
+							 MarioClient.textArea_Chat.append(dto.getChatMessage() + "\n");
+							 MarioClient.textArea_Chat.setCaretPosition(MarioClient.textArea_Chat.getText().length());
+							 
+							 MarioCanvas.mCanvas.list_Balloon.add(new BalloonDTO(91, dto.getNickname(), dto.getChatMessage()));
+						 }
+						 
+					} // SEND
+						 
+					 /* ******************************************************************* */
+					// 입장
+						 
+					 else if(dto.getProtocol() == Protocols.JOIN && loginSuccess) {	
+						 
 						 MarioClient.textArea_Chat.append(dto.getChatMessage() + "\n");
 						 MarioClient.textArea_Chat.setCaretPosition(MarioClient.textArea_Chat.getText().length());
 						 
-						 MarioCanvas.mCanvas.list_Balloon.add(new BalloonDTO(91, dto.getNickname(), dto.getChatMessage()));
-					 }
+					 } // JOIN
+					
+					 /* ******************************************************************* */
+					 // 퇴장
+						 
+					 else if(dto.getProtocol() == Protocols.EXIT && loginSuccess) {	
+						 
+						serverConnected = false;
+						ois.close();
+						oos.close();
+						socket.close();
+	
+						System.exit(0);
+						 
+					 } // EXIT
+					
+					 /* ******************************************************************* */
+					 // 접속 - DB 리스트 수신
 					 
-				 /* ******************************************************************* */
-				// 입장
-					 
-				 }else if(dto.getProtocol() == Protocols.JOIN && loginSuccess) {	
-					 
-					 MarioClient.textArea_Chat.append(dto.getChatMessage() + "\n");
-					 MarioClient.textArea_Chat.setCaretPosition(MarioClient.textArea_Chat.getText().length());
-					 
-					 
-				 /* ******************************************************************* */
-				 // 퇴장
-					 
-				 }else if(dto.getProtocol() == Protocols.EXIT && loginSuccess) {	
-					 
-					serverConnected = false;
-					ois.close();
-					oos.close();
-					socket.close();
-
-					System.exit(0);
-					 
-				 
-				 /* ******************************************************************* */
-				 // 접속 - DB 리스트 수신
-				 }else if(dto.getProtocol() == Protocols.CONNECT) {	
-					 
-						dtoList = dto.getList_PlayerInfo();
-						
-						if(dtoList != null) {
-							for(MarioDTO data : dtoList) {
-								System.out.println("2 data : " + data);
-								System.out.println("3 data.getNickname() : " + data.getNickname());
-							}	
-						}else {
-							System.out.println("1 dtoList : " + dtoList);
-						}
-						
-						//TODO DB 연결 및 수신 추가
-						
-					 }
+					 else if(dto.getProtocol() == Protocols.CONNECT) {	
+						 
+							dtoList = dto.getList_PlayerInfo();
+							
+							if(dtoList != null) {
+								for(MarioDTO data : dtoList) {
+									System.out.println("2 data : " + data);
+									System.out.println("3 data.getNickname() : " + data.getNickname());
+								}	
+							}else {
+								System.out.println("1 dtoList : " + dtoList);
+							}
+							
+							//TODO DB 연결 및 수신 추가
+							
+					}  // CONNECT
 				 
 				/*
 				 * 	# 사용 빈도수가 높은 순서대로
@@ -684,7 +689,8 @@ public class MarioLogin extends JFrame implements ActionListener {
 				 *  	CONNECT : 접속
 				 */
 			
-				}
+				} // else if(objectDTO instanceof MarioDTO);
+				
 			} catch (ClassNotFoundException | IOException e) {
 				e.printStackTrace();
 			} 
