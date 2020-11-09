@@ -63,7 +63,6 @@ public class MarioClient extends JFrame implements ActionListener{
 	private JTable scoreTable;
 	public DefaultTableModel model;
 	public JButton btn_send, btn_start;
-	private Thread clientThread;
 	
 	/* 타이머  */
 	Thread timerThread;
@@ -303,22 +302,20 @@ public class MarioClient extends JFrame implements ActionListener{
 			
 			@Override
 			public void run() {
-			while(true) {
-					
-					/* ******************************************************************* */
-					
-					runTimer();
-					
-					/* ******************************************************************* */
-						
-					try {
-						Thread.sleep(33); // 1초에 30번 반복
-					} catch (InterruptedException e) {
-			
-						e.printStackTrace();
-					}
-				}
 				
+				while(timerStart) {
+						/* ******************************************************************* */
+						
+						runTimer();
+						
+						/* ******************************************************************* */
+						try {
+							Thread.sleep(33); // 1초에 30번 반복
+						} catch (InterruptedException e) {
+				
+							e.printStackTrace();
+						}
+					}
 			} // run();
 		}); // timerThread;
 		
@@ -344,18 +341,24 @@ public class MarioClient extends JFrame implements ActionListener{
 		
 		if (e.getSource() == btn_start) {
 
-			timerStart = true;
-			
-			timer_MiliSec = 0;
-			timer_Second = 0;
-			timer_Minute = 0;
-				
-			/* 접속여부 체크 후 서버로 정보를 송신하는 스레드 시작  */
-			if(!timerThread.isAlive()) {
-			timerThread.start();
-			
-			}
-			
+//			if(!timerStart) {
+//				timerStart = true;
+//				
+//				timer_MiliSec = 0;
+//				timer_Second = 0;
+//				timer_Minute = 0;
+//					
+//				/* 접속여부 체크 후 서버로 정보를 송신하는 스레드 시작  */
+//				if(!timerThread.isAlive()) {
+//				timerThread.run();
+//				}
+//			
+//			}else {
+//				
+//				timerStart = false;
+//				
+//			}
+//			
 		}// if;
 		
 		

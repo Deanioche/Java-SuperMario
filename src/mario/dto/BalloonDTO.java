@@ -1,6 +1,7 @@
 package mario.dto;
 
-public class BalloonDTO {
+
+public class BalloonDTO{
 	
 	private int timer;
 	private String nickname;

@@ -8,6 +8,7 @@ import mario.Server.Protocols;
 
 public class MarioDTO implements Serializable {
 
+
 	// 필드
 	// 프로토콜
 	private Protocols protocol;
