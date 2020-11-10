@@ -14,6 +14,9 @@ public class ImageBox {
     public static Image[] mario_purple = new Image[10];
     
     public static Image dooli;
+    public static Image flag;
+    public static Image finish;
+    public static Image backG;
     
     public static Image background;
 
@@ -27,6 +30,10 @@ public class ImageBox {
 		block[4] = Toolkit.getDefaultToolkit().getImage("Image/Blocks/blocks_Question.png");
 		
 		dooli = Toolkit.getDefaultToolkit().getImage("Image/dooli.png");
+		flag = Toolkit.getDefaultToolkit().getImage("Image/flag.jpg");
+		finish = Toolkit.getDefaultToolkit().getImage("Image/finish.jpg");
+		backG = Toolkit.getDefaultToolkit().getImage("Image/background.jpg");
+//		backG = Toolkit.getDefaultToolkit().createImage("Image/backG.gif");
 		
 		/*
 		 * 0 = 벽돌

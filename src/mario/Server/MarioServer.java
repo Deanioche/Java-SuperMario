@@ -22,7 +22,7 @@ public class MarioServer {
 			while(true) {
 				
 				
-				System.out.println(" # 소켓 생성 대기 (" + list_Handler.size());
+				System.out.println(" # 소켓 생성 대기 (" + list_Handler.size() + ")	");
 			
 				Socket socket = svSocket.accept();
 				
