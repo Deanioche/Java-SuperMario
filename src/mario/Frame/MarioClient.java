@@ -334,13 +334,11 @@ public class MarioClient extends JFrame implements ActionListener{
 					
 				/* 접속여부 체크 후 서버로 정보를 송신하는 스레드 시작  */
 				if(!timerThread.isAlive()) {
-				timerThread.run();
+					
+				timerThread.start();
 				}
 			
-			}else {
-				
-				timerStart = false;
-				
+				btn_start.setVisible(false);
 			}
 			
 		}// if;

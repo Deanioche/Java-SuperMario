@@ -634,7 +634,7 @@ public class MarioLogin extends JFrame implements ActionListener {
 				ois.close();
 				oos.close();
 				socket.close();
-
+				
 				System.exit(0);
 
 			} // EXIT

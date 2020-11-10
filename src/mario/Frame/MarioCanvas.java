@@ -62,9 +62,7 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 	boolean isFalling2 = false; // 낙하중 : marioY += gravity
 	boolean chatOpen2 = false;
 
-	public int marioX = 2000, marioY = -3100, motionNum = 0;
-//	public int marioX = 100, marioY = 4700, motionNum = 0;
-	
+	public int marioX = 100, marioY = 4700, motionNum = 0;
 	public int mario2X = 120, mario2Y = 4700, motion2Num = 0;
 	
 	public int gravity = 0;
@@ -776,6 +774,7 @@ public class MarioCanvas extends Canvas implements KeyListener, Runnable {
 				marioY = 0;
 				marioX = -2000;
 				finish = true;
+				marioClient.timerStart = false;
 				
 				//TODO
 			}
