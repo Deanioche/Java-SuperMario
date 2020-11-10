@@ -361,25 +361,30 @@ public class MarioLogin extends JFrame implements ActionListener {
 				 */
 
 				/* 서버에서 받은 dtoList로 비교 */
+				
+				clientData = dtoList.get(0);
 
-				for (MarioDTO dto : dtoList) {
+				new MarioClient(MarioLogin.this);
+				setVisible(false);
 
-					String[] checkId = dto.getClientAccount().split("@");
-					if ((tf_emailAccount.getText().equals(checkId[0])
-							&& new String(tf_pwd.getPassword()).equals(dto.getPassword()))) {
-
-						/* 로그인한 클라이언트 정보 저장 */
-						clientData = dto;
-
-						new MarioClient(MarioLogin.this);
-						setVisible(false);
-//						connectSuccess = true;
-						System.out.println("로그인 성공!");
-						break;
-
-					}
-
-				}
+//				for (MarioDTO dto : dtoList) {
+//
+//					String[] checkId = dto.getClientAccount().split("@");
+//					if ((tf_emailAccount.getText().equals(checkId[0])
+//							&& new String(tf_pwd.getPassword()).equals(dto.getPassword()))) {
+//
+//						/* 로그인한 클라이언트 정보 저장 */
+//						clientData = dto;
+//
+//						new MarioClient(MarioLogin.this);
+//						setVisible(false);
+////						connectSuccess = true;
+//						System.out.println("로그인 성공!");
+//						break;
+//
+//					}
+//
+//				}
 
 				/* 빈칸 로그인 */
 			} else {

@@ -92,8 +92,6 @@ public class MarioClient extends JFrame implements ActionListener{
 		
 		showDTOdata();
 		
-		System.out.println(clientData.getNickname() + " 접속");
-
 		/* 다른 클래스 생성 */
 		new ImageBox();
 		marioCanvas = new MarioCanvas(MarioClient.this, marioLogin);
