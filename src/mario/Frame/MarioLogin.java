@@ -1,7 +1,6 @@
 package mario.Frame;
 
 import java.awt.Color;
-
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -16,7 +15,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
-import java.net.MalformedURLException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +34,6 @@ import mario.Server.Protocols;
 import mario.dao.MarioDAO;
 import mario.dao.MarioDBTLogIn;
 import mario.dto.ArrayDTO;
-import mario.dto.BalloonDTO;
 import mario.dto.MarioDTO;
 
 class MyPanel extends JPanel {
@@ -362,8 +359,9 @@ public class MarioLogin extends JFrame implements ActionListener {
 
 				/* 서버에서 받은 dtoList로 비교 */
 				
-				clientData = dtoList.get(0);
-
+				/*
+				 * clientData = dtoList.get(0);
+				 */
 				new MarioClient(MarioLogin.this);
 				setVisible(false);
 
