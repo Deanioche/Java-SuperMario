@@ -23,7 +23,7 @@ drop sequence seq_mario;
 
 select * from tab;
 
--- Çà Ãß°¡, »èÁ¦, º¯°æ ¸í·É¾î
+-- Ã‡Ã  ÃƒÃŸÂ°Â¡, Â»Ã¨ÃÂ¦, ÂºÂ¯Â°Ã¦ Â¸Ã­Â·Ã‰Â¾Ã®
 delete mario where seq = 6;
 
 update mario set clientaccount = ?;
